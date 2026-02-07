@@ -11,6 +11,7 @@ class AppTextStyle {
   static const double titleFontSize = 24;
   static const double subtitleFontSize = 14;
   static const double subtitleMediumFontSize = 14;
+  static const double loginTitleFontSize = 16;
 
   static const TextStyle titleStyle = TextStyle(
     fontFamily: titleFontFamily,
@@ -37,5 +38,26 @@ class AppTextStyle {
     fontSize: subtitleMediumFontSize,
     fontWeight: FontWeight.w500,
     color: AppColor.landingAccountColor,
+  );
+
+  static const TextStyle loginTitleStyle = TextStyle(
+    fontFamily: subtitleFontFamily,
+    fontSize: loginTitleFontSize,
+    fontWeight: FontWeight.w600,
+    color: AppColor.loginTitleColor,
+  );
+
+  static const TextStyle loginSubTitleStyle = TextStyle(
+    fontFamily: subtitleFontFamily,
+    fontSize: subtitleFontSize,
+    fontWeight: FontWeight.w400,
+    color: AppColor.loginSubTitleColor,
+  );
+
+  static const TextStyle loginButtonStyle = TextStyle(
+    fontFamily: subtitleFontFamily,
+    fontSize: subtitleFontSize,
+    fontWeight: FontWeight.w400,
+    color: AppColor.loginButtonColor,
   );
 }

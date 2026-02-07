@@ -13,4 +13,11 @@ class AppColor{
   static const Color landingTitleColor = Color(0xFF0F172A);
   static const Color landingAccountColor = Color(0xFF9CA3AF);
   static const Color landingCardColor = Color(0xFFF8FAFC);
+
+  // login colors
+  static const Color loginTitleColor = Color(0xFFF2F2F2);
+  static const Color loginSubTitleColor = Color(0xFF9CA3AF);
+  static const Color loginButtonColor = Color(0xFFFFFFFF);
+  static const Color loginButtonBackgroundColor = Color(0xFF134CC7);
+  static const Color linkedInButtonBorderColor = Color(0xFF082F82);
 }
