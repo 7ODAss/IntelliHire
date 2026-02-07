@@ -14,7 +14,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: CandidateSignUp(),
-      theme: ThemeData(useMaterial3: true),
+      theme: ThemeData.light().copyWith(
+        scaffoldBackgroundColor: Color(0xffF8FAFC),
+      ),
     );
   }
 }
