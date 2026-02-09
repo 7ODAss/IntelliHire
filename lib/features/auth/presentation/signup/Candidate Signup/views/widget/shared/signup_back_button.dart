@@ -3,16 +3,17 @@ import 'package:intelli_hire/core/utils/app_font.dart';
 import 'package:intelli_hire/core/utils/app_styles.dart';
 
 class SignupBackButton extends StatelessWidget {
-  const SignupBackButton({super.key});
+  const SignupBackButton({super.key, this.onPressed});
+  final void Function()? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 36, top: 55),
+      padding: const EdgeInsets.only(left: 24, top: 55),
       child: Row(
         children: [
           IconButton(
-            onPressed: () {},
+            onPressed: onPressed ?? () => Navigator.pop(context),
             icon: Icon(Icons.arrow_back, color: Colors.white),
           ),
 
