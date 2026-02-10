@@ -30,7 +30,7 @@ class UploadCvCubit extends Cubit<UploadCvState> {
     }
 
     selectedFile = file;
-    emit(UploadCvPicked(file));
+    uploadCv();
   }
 
   /// Upload CV (مؤقت) waiting for backend
@@ -40,7 +40,7 @@ class UploadCvCubit extends Cubit<UploadCvState> {
       return;
     }
 
-    for (int i = 1; i <= 1000; i += 10) {
+    for (int i = 1; i <= 100; i += 10) {
       await Future.delayed(const Duration(milliseconds: 250));
       emit(UploadCvUploading(i / 100));
     }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_styles.dart';
 
 class SocialButtons extends StatelessWidget {
@@ -13,6 +12,7 @@ class SocialButtons extends StatelessWidget {
           child: OutlinedButton.icon(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -30,10 +30,10 @@ class SocialButtons extends StatelessWidget {
         const SizedBox(width: 16),
 
         Expanded(
-          child: ElevatedButton.icon(
+          child: OutlinedButton.icon(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF082F82),
+              backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -45,7 +45,7 @@ class SocialButtons extends StatelessWidget {
             ),
             label: Text(
               "LinkedIn",
-              style: AppStyles.textstyle14.copyWith(color: AppColor.white),
+              style: AppStyles.textstyle14.copyWith(color: Color(0xff0F172A)),
             ),
           ),
         ),

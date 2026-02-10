@@ -1,5 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:intelli_hire/core/utils/app_color.dart';
+import 'package:intelli_hire/core/utils/app_styles.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/custom_button.dart';
 
 class UploadCvUploadingState extends StatelessWidget {
@@ -41,21 +43,31 @@ class UploadCvUploadingState extends StatelessWidget {
                     Text("${(progress * 100).toInt()}%"),
                     SizedBox(height: 10),
 
-                    LinearProgressIndicator(value: progress),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 70),
+                      child: Container(
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey, width: 1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: LinearProgressIndicator(
+                          value: progress,
+                          color: AppColor.primary,
+                          backgroundColor: Colors.transparent,
+                        ),
+                      ),
+                    ),
 
                     SizedBox(height: 20),
                     Text(
                       "Uploading CV",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF263238),
-                        fontWeight: FontWeight.w500,
+                      style: AppStyles.textstyle14.copyWith(
+                        color: Color(0xff0F172A),
                       ),
                     ),
-                    Text(
-                      fileName,
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
+                    Text(fileName, style: AppStyles.textstyle12),
                   ],
                 ),
               ),
@@ -63,7 +75,7 @@ class UploadCvUploadingState extends StatelessWidget {
           ),
           const SizedBox(height: 48),
 
-          CustomButton(onPressed: onPressed, title: "Upload CV"),
+          CustomButton(isDisabled: true, title: "Upload CV"),
         ],
       ),
     );

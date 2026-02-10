@@ -2,62 +2,56 @@ import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_styles.dart';
 
-class TermsCheckbox extends StatefulWidget {
-  const TermsCheckbox({super.key});
+class TermsCheckbox extends StatelessWidget {
+  const TermsCheckbox({
+    super.key,
+    required this.value,
+    required this.onChanged,
+    this.side,
+  });
 
-  @override
-  State<TermsCheckbox> createState() => _TermsCheckboxState();
-}
-
-class _TermsCheckboxState extends State<TermsCheckbox> {
-  bool _agree = false;
+  final bool value;
+  final ValueChanged<bool?> onChanged;
+  final BorderSide? side;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Checkbox(
-          activeColor: AppColor.primary,
-          value: _agree,
-
-          onChanged: (val) {
-            setState(() {
-              _agree = val ?? false;
-            });
-          },
-          side: BorderSide(color: AppColor.grey),
-        ),
-
-        Expanded(
-          child: Text.rich(
-            TextSpan(
-              text: "I agree to the ",
-              style: AppStyles.textstyle14.copyWith(color: AppColor.grey),
-
-              children: [
-                TextSpan(
-                  text: "Terms",
-
-                  style: AppStyles.textstyle14.copyWith(
-                    color: AppColor.primary,
-                  ),
-                ),
-
-                TextSpan(
-                  text: " and ",
-                  style: AppStyles.textstyle14.copyWith(color: AppColor.grey),
-                ),
-
-                TextSpan(
-                  text: "Privacy Policy",
-
-                  style: AppStyles.textstyle14.copyWith(
-                    color: AppColor.primary,
-                  ),
-                ),
-              ],
+        Row(
+          children: [
+            Checkbox(
+              activeColor: AppColor.primary,
+              value: value,
+              onChanged: onChanged,
+              side: side,
+              
             ),
-          ),
+            Expanded(
+              child: Text.rich(
+                TextSpan(
+                  text: "I agree to the ",
+                  style: AppStyles.textstyle14.copyWith(color: AppColor.grey),
+                  children: [
+                    TextSpan(
+                      text: "Terms",
+                      style: AppStyles.textstyle14.copyWith(
+                        color: AppColor.primary,
+                      ),
+                    ),
+                    const TextSpan(text: " and "),
+                    TextSpan(
+                      text: "Privacy Policy",
+                      style: AppStyles.textstyle14.copyWith(
+                        color: AppColor.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );

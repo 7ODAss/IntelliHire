@@ -19,6 +19,7 @@ class SignupHeader extends StatelessWidget {
           children: [
             SignupBackButton(),
             Text("Welcome to IntelliHire", style: AppStyles.textstyle20),
+            const SizedBox(height: 8),
             Text(
               "Step into the future of hiring",
               style: AppStyles.textstyle12,

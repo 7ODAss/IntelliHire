@@ -18,23 +18,15 @@ class UploadCv extends StatelessWidget {
         builder: (context, state) {
           final cubit = context.read<UploadCvCubit>();
 
-          if (state is UploadCvInitial ) {
-            return UploadCvIdleState(
-              onPressed: cubit.pickCv,
-            );
-          }
-
-          if (state is UploadCvPicked) {
-            return UploadCvIdleState(
-              onPressed: cubit.uploadCv,
-            );
+          if (state is UploadCvInitial) {
+            return UploadCvIdleState(onPressed: cubit.pickCv);
           }
 
           if (state is UploadCvUploading) {
             return UploadCvUploadingState(
               progress: state.progress,
-              fileName: cubit.selectedFile!.path.split('/').last, 
-              onPressed: () {  },
+              fileName: cubit.selectedFile!.path.split('/').last,
+              onPressed: () {},
             );
           }
 
@@ -51,10 +43,7 @@ class UploadCv extends StatelessWidget {
               children: [
                 UploadCvIdleState(onPressed: cubit.pickCv),
                 const SizedBox(height: 12),
-                Text(
-                  state.message,
-                  style: const TextStyle(color: Colors.red),
-                ),
+                Text(state.message, style: const TextStyle(color: Colors.red)),
               ],
             );
           }

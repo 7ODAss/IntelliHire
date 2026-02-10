@@ -13,6 +13,7 @@ class AccountSetupView extends StatefulWidget {
 
 class _AccountSetupViewState extends State<AccountSetupView> {
   int activeStep = 0;
+  
 
   final List<String> titles = [
     'Enter your phone number',

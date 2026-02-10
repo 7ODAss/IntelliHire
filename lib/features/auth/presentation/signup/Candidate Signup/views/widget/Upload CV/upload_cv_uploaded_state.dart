@@ -1,5 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intelli_hire/core/utils/app_styles.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/custom_button.dart';
 
 class UploadCvUploadedState extends StatelessWidget {
@@ -36,31 +38,29 @@ class UploadCvUploadedState extends StatelessWidget {
               child: Center(
                 child: Column(
                   children: [
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     Image(image: AssetImage("assets/image/done_icon.png")),
 
                     SizedBox(height: 24),
                     Text(
                       "Upload complete",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF263238),
-                        fontWeight: FontWeight.w500,
+                      style: AppStyles.textstyle14.copyWith(
+                        color: Color(0xff0F172A),
                       ),
                     ),
-                    Text(
-                      fileName,
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
+                    Text(fileName, style: AppStyles.textstyle12),
+                    const SizedBox(height: 12),
                     TextButton.icon(
                       onPressed: onClear,
                       icon: const Icon(
-                        Icons.delete_outline,
-                        color: Colors.black87,
+                        FontAwesomeIcons.trashCan,
+                        color: Color(0xff0F172A),
                       ),
-                      label: const Text(
+                      label: Text(
                         "Clear upload",
-                        style: TextStyle(color: Colors.black87),
+                        style: AppStyles.textstyle14.copyWith(
+                          color: Color(0xff0F172A),
+                        ),
                       ),
                     ),
                   ],

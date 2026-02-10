@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/account_setup_view.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/custom_button.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/custom_text_field.dart';
@@ -20,6 +21,8 @@ class _CandidateSignUpState extends State<CandidateSignUp> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool agreeToTerms = false;
+  bool showTermsError = false;
 
   @override
   void dispose() {
@@ -89,19 +92,39 @@ class _CandidateSignUpState extends State<CandidateSignUp> {
                     ),
                     const SizedBox(height: 16),
 
-                    TermsCheckbox(),
+                    TermsCheckbox(
+                      value: agreeToTerms,
+                      side: showTermsError
+                          ? BorderSide(color: Colors.red,)
+                          : BorderSide(color: AppColor.grey),
+                      onChanged: (val) {
+                        setState(() {
+                          agreeToTerms = val ?? false;
+                          showTermsError = false;
+                        });
+                      },
+                    ),
                     const SizedBox(height: 16),
 
                     CustomButton(
                       onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AccountSetupView(),
-                            ),
-                          );
+                        final isValid = _formKey.currentState!.validate();
+
+                        if (!agreeToTerms) {
+                          setState(() {
+                            showTermsError = true;
+                          });
+                          return;
                         }
+                        if (!isValid) {
+                          return;
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AccountSetupView(),
+                          ),
+                        );
                       },
                       title: "Create Account",
                     ),
@@ -114,7 +137,7 @@ class _CandidateSignUpState extends State<CandidateSignUp> {
                     const SizedBox(height: 24),
 
                     Footer(onPressed: () {}),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 109),
                   ],
                 ),
               ),

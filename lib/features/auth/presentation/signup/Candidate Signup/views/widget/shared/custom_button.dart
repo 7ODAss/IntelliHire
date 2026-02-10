@@ -3,10 +3,16 @@ import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_styles.dart';
 
 class CustomButton extends StatelessWidget {
-  const CustomButton({required this.onPressed, super.key, required this.title});
+  const CustomButton({
+    this.onPressed,
+    super.key,
+    required this.title,
+    this.isDisabled = false,
+  });
 
-  final void Function() onPressed;
+  final void Function()? onPressed;
   final String title;
+  final bool isDisabled;
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +20,10 @@ class CustomButton extends StatelessWidget {
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: isDisabled ? null : onPressed,
 
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColor.primary,
+          backgroundColor: isDisabled ? Color(0xffafafaf) : AppColor.primary,
 
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
