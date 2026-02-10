@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/candidate_signup_view.dart';
+import 'package:intelli_hire/features/splash/presentation/view/splash_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CandidateSignUp(),
+      home: SplashView(),
       theme: ThemeData.light().copyWith(
         scaffoldBackgroundColor: Color(0xffF8FAFC),
       ),
