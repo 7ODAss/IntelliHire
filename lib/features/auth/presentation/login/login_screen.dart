@@ -25,11 +25,12 @@ class LoginScreen extends StatelessWidget {
             ],
           ),
         ),
-        child: Column(
-          children: [
-            Flexible(
-              flex: 2,
-              child: Container(
+        child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.25,
                 decoration: const BoxDecoration(
                   color: Color(0xFF0F172A),
                   borderRadius: BorderRadius.only(
@@ -62,10 +63,8 @@ class LoginScreen extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-            Flexible(
-              flex: 6,
-              child: Container(
+              Container(
+                height: MediaQuery.of(context).size.height * 0.75,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -148,8 +147,8 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
