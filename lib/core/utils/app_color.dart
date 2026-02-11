@@ -20,4 +20,15 @@ class AppColor{
   static const Color loginButtonColor = Color(0xFFFFFFFF);
   static const Color loginButtonBackgroundColor = Color(0xFF134CC7);
   static const Color linkedInButtonBorderColor = Color(0xFF082F82);
+
+  //signup company fields colors
+  static const Color signUpTitleColor = Color(0xFFF2F2F2);
+  static const Color signUpFieldColor = Color(0xFF0F172A);
+  static const Color signUpConditionColor1 = Color(0xFF9CA3AF);
+  static const Color signUpConditionColor2 = Color(0xFF134CC7);
+  static const Color signUpTitleInformationCompanyColor = Color(0xFFFFFFFF);
+  static const Color hintColor = Color(0xFF898989);
+  static const Color searchTitleColor = Color(0xFF0F172A);
+  static const Color searchItemColor = Color(0xFF134CC7);
+  static const Color searchCardItemColor = Color(0xFFEDEFFE);
 }

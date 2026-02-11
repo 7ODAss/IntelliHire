@@ -10,35 +10,44 @@ class SignupCard extends StatelessWidget {
   final String subtitle;
   final String icon;
   final Color color;
-  const SignupCard({super.key, required this.title, required this.subtitle, required this.icon, required this.color});
+  final void Function()? opTap;
+
+  const SignupCard({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.color,
+    this.opTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: color,
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Row(
-          children: [
-            SvgPicture.asset(icon),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyle.landingTitleStyle.copyWith(
-                    fontSize: 20,
+    return GestureDetector(
+      onTap: opTap,
+      child: Card(
+        color: color,
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Row(
+            children: [
+              SvgPicture.asset(icon),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: AppTextStyle.landingTitleStyle.copyWith(
+                      fontSize: 20,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  subtitle,
-                  style: AppTextStyle.subTitleStyle,
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(height: 10),
+                  Text(subtitle, style: AppTextStyle.subTitleStyle),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

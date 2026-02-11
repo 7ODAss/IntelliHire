@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../core/utils/app_text_style.dart';
 import '../../../../../core/utils/shared/my_form_field.dart';
 
 class FieldItem extends StatelessWidget {
@@ -11,6 +12,8 @@ class FieldItem extends StatelessWidget {
   final Color? suffixIconColor;
   final VoidCallback? onSuffixPressed;
   final bool obscureText;
+  final String? Function(String?)? validator;
+  final String? hintText;
 
   const FieldItem({
     super.key,
@@ -22,6 +25,8 @@ class FieldItem extends StatelessWidget {
     this.suffixIconColor,
     this.onSuffixPressed,
     this.obscureText = false,
+    this.validator,
+    this.hintText,
   });
 
   @override
@@ -31,22 +36,19 @@ class FieldItem extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: AppTextStyle.fieldTitleStyle,
         ),
         SizedBox(height: 8),
         MyFormField(
           controller: controller,
           type: type,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return message;
-            }
-            return null;
-          },
+          validator: validator,
           suffixIcon: suffixIcon,
           suffixIconColor: suffixIconColor,
           onSuffixPressed: onSuffixPressed,
           obscureText: obscureText,
+          hintText: hintText,
+
         ),
       ],
     );

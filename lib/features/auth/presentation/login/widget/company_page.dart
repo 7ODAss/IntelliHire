@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,6 +8,8 @@ import 'package:intelli_hire/features/auth/presentation/login/widget/signup_acti
 
 import '../../../../../core/utils/app_color.dart';
 import '../../../../../core/utils/app_text_style.dart';
+import '../../signup/company/sign_up_company.dart';
+import '../../signup/widget/navigator_to_account.dart';
 import 'field_item.dart';
 
 class CompanyPage extends StatelessWidget {
@@ -30,6 +33,16 @@ class CompanyPage extends StatelessWidget {
                 title: "Work Email",
                 message: "Please enter your email",
                 type: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Email is required";
+                  } else if (!RegExp(
+                    r"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$",
+                  ).hasMatch(value)) {
+                    return "Enter a valid email address";
+                  }
+                  return null;
+                },
               ),
               SizedBox(height: 16),
               BlocSelector<LoginCubit, LoginState, bool>(
@@ -48,6 +61,14 @@ class CompanyPage extends StatelessWidget {
                     onSuffixPressed: () {
                       context.read<LoginCubit>().changeSuffix();
                     },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Password is required";
+                      } else if (value.length < 6) {
+                        return "Password must be at least 6 characters long";
+                      }
+                      return null;
+                    },
                   );
                 },
               ),
@@ -57,28 +78,19 @@ class CompanyPage extends StatelessWidget {
                 child: SignupAction(
                   formKey: cubit.companyFormKey,
                   title: "Create Account",
+                  onPressed: () {
+                    if (cubit.companyFormKey.currentState!.validate()) {
+
+                    }
+                  },
                 ),
               ),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Already have account?',
-                    style: AppTextStyle.landingLoginStyle,
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-                    },
-                    child: Text(
-                      'Sign up',
-                      style: AppTextStyle.subTitleStyle.copyWith(
-                        color: AppColor.logicColor,
-                      ),
-                    ),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 80),
+                child: NavigatorToAccount(text: 'Don\'t have account?', actionText: ' Sign Up',onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpCompany()));
+                },),
               ),
             ],
           ),

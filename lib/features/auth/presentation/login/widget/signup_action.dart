@@ -6,7 +6,8 @@ import '../../../../../core/utils/app_text_style.dart';
 class SignupAction extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final String title;
-  const SignupAction({super.key, required this.formKey, required this.title});
+  final void Function()? onPressed;
+  const SignupAction({super.key, required this.formKey, required this.title, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +19,7 @@ class SignupAction extends StatelessWidget {
           borderRadius: BorderRadius.circular(15.0),
         ),
       ),
-      onPressed: () {
-        if (formKey.currentState?.validate() == true) {
-          // Navigate to next screen or handle login
-        }
-      },
+      onPressed: onPressed,
       child: Text(
         title,
         style: AppTextStyle.loginButtonStyle,

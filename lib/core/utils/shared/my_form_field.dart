@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intelli_hire/core/utils/app_text_style.dart';
 
 class MyFormField extends StatelessWidget {
   final TextEditingController controller;
@@ -8,6 +9,7 @@ class MyFormField extends StatelessWidget {
   final VoidCallback? onSuffixPressed;
   final bool obscureText;
   final String? Function(String?)? validator;
+  final String? hintText;
 
 
   const MyFormField({
@@ -19,6 +21,7 @@ class MyFormField extends StatelessWidget {
     this.onSuffixPressed,
     this.obscureText = false,
     this.validator,
+    this.hintText,
   });
 
   @override
@@ -30,6 +33,8 @@ class MyFormField extends StatelessWidget {
       validator: validator,
       decoration: InputDecoration(
         fillColor: const Color(0xFFFFFFFF),
+        hintText: hintText,
+        hintStyle: AppTextStyle.hintTextStyle,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
           borderSide: BorderSide(color: Color(0xFF898989)),

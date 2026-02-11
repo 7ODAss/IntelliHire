@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_information_company.dart';
 import 'features/auth/presentation/login/login_screen.dart';
+import 'features/auth/presentation/signup/company/sign_up_company.dart';
+import 'features/auth/presentation/signup/company/sign_up_location_company.dart';
 import 'features/onboarding/presentation/onboarding_screen.dart';
 import 'features/splash/splash_screen.dart';
 
@@ -14,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: SignUpLocationCompany(selectedPage: 1),
     );
   }
 }

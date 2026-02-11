@@ -1,9 +1,12 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_company.dart';
 import '../../../core/utils/app_color.dart';
 import '../../../core/utils/app_icon.dart';
 import '../../../core/utils/app_text_style.dart';
 import '../../auth/presentation/login/login_screen.dart';
+import '../../auth/presentation/signup/widget/navigator_to_account.dart';
 import '../widgets/signup_card.dart';
 
 class LandingScreen extends StatelessWidget {
@@ -36,27 +39,23 @@ class LandingScreen extends StatelessWidget {
               subtitle: 'Hire talent & Track stats',
               icon: AppIcon.landingImage3,
               color: AppColor.landingCardColor,
+              opTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignUpCompany()),
+                );
+              },
             ),
             const SizedBox(height: 50),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Already have account?',
-                  style: AppTextStyle.landingLoginStyle,
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-                  },
-                  child: Text(
-                    'Log in',
-                    style: AppTextStyle.subTitleStyle.copyWith(
-                      color: AppColor.logicColor,
-                    ),
-                  ),
-                ),
-              ],
+            NavigatorToAccount(
+              text: 'Already have account?',
+              actionText: ' Log in',
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                );
+              },
             ),
           ],
         ),
