@@ -36,7 +36,7 @@ class AccountSetupHeader extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
-                fontFamily: AppFont.inter,
+                fontFamily: AppFont.interRegular,
                 color: Colors.white,
               ),
             ),

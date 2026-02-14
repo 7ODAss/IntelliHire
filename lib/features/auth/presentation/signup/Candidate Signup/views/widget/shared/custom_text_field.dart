@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_styles.dart';
 
+import '../../../../../../../../core/utils/app_text_style.dart';
+
 class CustomTextField extends StatefulWidget {
   const CustomTextField({
     super.key,
@@ -48,7 +50,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.hint, style: AppStyles.textstyle14),
+        Text(widget.hint, style: AppTextStyle.textstyle14),
         const SizedBox(height: 8),
         TextFormField(
           keyboardType: widget.keyboardType,
