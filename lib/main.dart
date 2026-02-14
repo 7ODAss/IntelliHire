@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intelli_hire/features/onboarding/presentation/onboarding_screen.dart';
-import 'features/auth/presentation/login/login_screen.dart';
+import 'package:intelli_hire/features/splash/presentation/view/splash_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +12,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: OnboardingScreen(),
+      home: SplashView(),
+      theme: ThemeData.light().copyWith(
+        scaffoldBackgroundColor: Color(0xffF8FAFC),
+      ),
     );
   }
 }
