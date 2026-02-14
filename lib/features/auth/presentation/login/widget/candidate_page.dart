@@ -7,6 +7,7 @@ import 'package:intelli_hire/features/auth/presentation/login/widget/signup_acti
 import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_company.dart';
 import '../../../../../core/utils/app_color.dart';
 import '../../../../../core/utils/app_text_style.dart';
+import '../../signup/Candidate Signup/views/candidate_signup_view.dart';
 import '../../signup/widget/navigator_to_account.dart';
 import 'field_item.dart';
 
@@ -40,11 +41,10 @@ class CandidatePage extends StatelessWidget {
                   }
                   return null;
                 },
-
               ),
               SizedBox(height: 16),
-              BlocSelector<LoginCubit,LoginState , bool>(
-                selector: (state) =>state.changeSuffix,
+              BlocSelector<LoginCubit, LoginState, bool>(
+                selector: (state) => state.changeSuffix,
                 builder: (context, state) {
                   return FieldItem(
                     controller: cubit.candidatePasswordController,
@@ -52,9 +52,7 @@ class CandidatePage extends StatelessWidget {
                     message: "Please enter your password",
                     type: TextInputType.visiblePassword,
                     obscureText: state,
-                    suffixIcon: state
-                        ? Icons.visibility_off
-                        : Icons.visibility,
+                    suffixIcon: state ? Icons.visibility_off : Icons.visibility,
                     suffixIconColor: Color(0xFF134CC7),
                     onSuffixPressed: () {
                       context.read<LoginCubit>().changeSuffix();
@@ -77,19 +75,14 @@ class CandidatePage extends StatelessWidget {
                   formKey: cubit.candidateFormKey,
                   title: "Create Account",
                   onPressed: () {
-                    if (cubit.candidateFormKey.currentState!.validate()) {
-
-                    }
+                    if (cubit.candidateFormKey.currentState!.validate()) {}
                   },
                 ),
               ),
               Row(
                 children: [
                   Expanded(
-                    child: Divider(
-                      color: Color(0xFF9CA3AF),
-                      thickness: 1.5,
-                    ),
+                    child: Divider(color: Color(0xFF9CA3AF), thickness: 1.5),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -103,10 +96,7 @@ class CandidatePage extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                    child: Divider(
-                      color: Color(0xFF9CA3AF),
-                      thickness: 1.5,
-                    ),
+                    child: Divider(color: Color(0xFF9CA3AF), thickness: 1.5),
                   ),
                 ],
               ),
@@ -128,7 +118,12 @@ class CandidatePage extends StatelessWidget {
                         children: [
                           SvgPicture.asset("assets/images/login/google.svg"),
                           SizedBox(width: 8),
-                          Text("Google", style: AppTextStyle.loginSubTitleStyle.copyWith(color: Colors.black),),
+                          Text(
+                            "Google",
+                            style: AppTextStyle.loginSubTitleStyle.copyWith(
+                              color: Colors.black,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -149,7 +144,12 @@ class CandidatePage extends StatelessWidget {
                         children: [
                           SvgPicture.asset("assets/images/login/linkedin.svg"),
                           SizedBox(width: 8),
-                          Text("LinkedIn", style: AppTextStyle.loginSubTitleStyle.copyWith(color: Colors.white),),
+                          Text(
+                            "LinkedIn",
+                            style: AppTextStyle.loginSubTitleStyle.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -157,8 +157,22 @@ class CandidatePage extends StatelessWidget {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 32.0,horizontal: 80),
-                child: NavigatorToAccount(text: 'Don\'t have account?', actionText: ' Sign Up',),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 32.0,
+                  horizontal: 80,
+                ),
+                child: NavigatorToAccount(
+                  text: 'Don\'t have account?',
+                  actionText: ' Sign Up',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CandidateSignUp(),
+                      ),
+                    );
+                  },
+                ),
               ),
             ],
           ),

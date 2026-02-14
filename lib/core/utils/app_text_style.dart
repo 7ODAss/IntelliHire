@@ -1,114 +1,121 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'app_color.dart';
+import 'app_font.dart';
 
 class AppTextStyle {
-  static const String poppinsBold = 'Poppins_Bold';
-  static const String poppinsSemiBold = 'Poppins_Semi_Bold';
-  static const String poppinsRegular = 'Poppins_Regular';
-  static const String interRegular = 'Inter_Regular';
-  static const String interMedium = 'Inter_Medium';
-  static const String interSemiBold = 'Inter_Semi_Bold';
-
-  //onboarding
-  static const double titleFontSize = 24;
-  static const double subtitleFontSize = 14;
-  static const double subtitleMediumFontSize = 14;
-  static const double loginTitleFontSize = 16;
-  static const double signUpTitleFontSize = 20;
-  static const double signUpTitleInformationCompanyFontSize = 20;
-  static const double searchTitleCompanyFontSize = 18;
-
   static const TextStyle titleStyle = TextStyle(
-    fontFamily: poppinsBold,
-    fontSize: titleFontSize,
+    fontFamily: AppFont.poppinsBold,
+    fontSize: AppFont.titleFontSize,
     fontWeight: FontWeight.bold,
     color: AppColor.titleColor,
   );
 
   static const TextStyle subTitleStyle = TextStyle(
-    fontFamily: interRegular,
-    fontSize: subtitleFontSize,
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.subtitleFontSize,
     fontWeight: FontWeight.normal,
     color: AppColor.subTitleColor,
   );
 
   static const TextStyle landingTitleStyle = TextStyle(
-    fontFamily: interRegular,
-    fontSize: subtitleFontSize,
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.subtitleFontSize,
     fontWeight: FontWeight.normal,
     color: AppColor.landingTitleColor,
   );
   static const TextStyle landingLoginStyle = TextStyle(
-    fontFamily: interMedium,
-    fontSize: subtitleMediumFontSize,
+    fontFamily: AppFont.interMedium,
+    fontSize: AppFont.subtitleMediumFontSize,
     fontWeight: FontWeight.w500,
     color: AppColor.landingAccountColor,
   );
 
   static const TextStyle loginTitleStyle = TextStyle(
-    fontFamily: interRegular,
-    fontSize: loginTitleFontSize,
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.loginTitleFontSize,
     fontWeight: FontWeight.w600,
     color: AppColor.loginTitleColor,
   );
 
   static const TextStyle loginSubTitleStyle = TextStyle(
-    fontFamily: interRegular,
-    fontSize: subtitleFontSize,
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.subtitleFontSize,
     fontWeight: FontWeight.w400,
     color: AppColor.loginSubTitleColor,
   );
 
   static const TextStyle loginButtonStyle = TextStyle(
-    fontFamily: interRegular,
-    fontSize: subtitleFontSize,
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.subtitleFontSize,
     fontWeight: FontWeight.w400,
     color: AppColor.loginButtonColor,
   );
 
   static const TextStyle signUpTitleStyle = TextStyle(
-    fontFamily: poppinsRegular,
-    fontSize: signUpTitleFontSize,
+    fontFamily: AppFont.poppinsRegular,
+    fontSize: AppFont.signUpTitleFontSize,
     fontWeight: FontWeight.w400,
     color: AppColor.signUpTitleColor,
   );
 
   static const TextStyle fieldTitleStyle = TextStyle(
-    fontFamily: interRegular,
-    fontSize: subtitleMediumFontSize,
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.subtitleMediumFontSize,
     fontWeight: FontWeight.w400,
     color: AppColor.signUpFieldColor,
   );
 
   static const TextStyle signUpConditionStyle = TextStyle(
-    fontFamily: interRegular,
-    fontSize: subtitleMediumFontSize,
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.subtitleMediumFontSize,
     fontWeight: FontWeight.w400,
     color: AppColor.signUpConditionColor1,
   );
 
   static const TextStyle signUpTitleInformationCompanyStyle = TextStyle(
-    fontFamily: interSemiBold,
-    fontSize: signUpTitleInformationCompanyFontSize,
+    fontFamily: AppFont.interSemiBold,
+    fontSize: AppFont.signUpTitleInformationCompanyFontSize,
     color: AppColor.signUpTitleInformationCompanyColor,
   );
 
   static const TextStyle signUpDropDownCompanyStyle = TextStyle(
-    fontFamily: interRegular,
-    fontSize: loginTitleFontSize,
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.loginTitleFontSize,
     color: AppColor.signUpFieldColor,
   );
 
   static const TextStyle hintTextStyle = TextStyle(
-    fontFamily: interRegular,
-    fontSize: loginTitleFontSize,
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.loginTitleFontSize,
     color: AppColor.hintColor,
   );
 
   static const TextStyle searchTitleStyle = TextStyle(
-    fontFamily: poppinsSemiBold,
-    fontSize: searchTitleCompanyFontSize,
+    fontFamily: AppFont.poppinsSemiBold,
+    fontSize: AppFont.searchTitleCompanyFontSize,
     color: AppColor.searchTitleColor,
+  );
+
+  //omar
+  static const textstyle12 = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    fontFamily: AppFont.interRegular,
+    color: AppColor.grey,
+  );
+
+  static const textstyle14 = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    fontFamily: AppFont.interRegular,
+    color: Color(0xff0F172A),
+  );
+
+  static const textstyle20 = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w400,
+    fontFamily: AppFont.poppinsRegular,
+    color: AppColor.white,
   );
 }

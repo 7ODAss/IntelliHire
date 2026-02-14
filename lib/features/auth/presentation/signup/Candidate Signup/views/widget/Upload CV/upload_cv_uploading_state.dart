@@ -4,6 +4,8 @@ import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_styles.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/custom_button.dart';
 
+import '../../../../../../../../core/utils/app_text_style.dart';
+
 class UploadCvUploadingState extends StatelessWidget {
   const UploadCvUploadingState({
     super.key,
@@ -63,11 +65,11 @@ class UploadCvUploadingState extends StatelessWidget {
                     SizedBox(height: 20),
                     Text(
                       "Uploading CV",
-                      style: AppStyles.textstyle14.copyWith(
+                      style: AppTextStyle.textstyle14.copyWith(
                         color: Color(0xff0F172A),
                       ),
                     ),
-                    Text(fileName, style: AppStyles.textstyle12),
+                    Text(fileName, style: AppTextStyle.textstyle12),
                   ],
                 ),
               ),

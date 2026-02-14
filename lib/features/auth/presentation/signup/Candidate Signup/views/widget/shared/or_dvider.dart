@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_styles.dart';
 
+import '../../../../../../../../core/utils/app_text_style.dart';
+
 class OrDvider extends StatelessWidget {
   const OrDvider({super.key});
 
@@ -14,7 +16,7 @@ class OrDvider extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 8.0),
 
-          child: Text("OR CONTINUE WITH", style: AppStyles.textstyle12),
+          child: Text("OR CONTINUE WITH", style: AppTextStyle.textstyle12),
         ),
 
         Expanded(child: Divider(color: AppColor.grey)),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_styles.dart';
 
+import '../../../../../../../../core/utils/app_text_style.dart';
+
 class TermsCheckbox extends StatelessWidget {
   const TermsCheckbox({
     super.key,
@@ -32,18 +34,18 @@ class TermsCheckbox extends StatelessWidget {
               child: Text.rich(
                 TextSpan(
                   text: "I agree to the ",
-                  style: AppStyles.textstyle14.copyWith(color: AppColor.grey),
+                  style: AppTextStyle.textstyle14.copyWith(color: AppColor.grey),
                   children: [
                     TextSpan(
                       text: "Terms",
-                      style: AppStyles.textstyle14.copyWith(
+                      style: AppTextStyle.textstyle14.copyWith(
                         color: AppColor.primary,
                       ),
                     ),
                     const TextSpan(text: " and "),
                     TextSpan(
                       text: "Privacy Policy",
-                      style: AppStyles.textstyle14.copyWith(
+                      style: AppTextStyle.textstyle14.copyWith(
                         color: AppColor.primary,
                       ),
                     ),

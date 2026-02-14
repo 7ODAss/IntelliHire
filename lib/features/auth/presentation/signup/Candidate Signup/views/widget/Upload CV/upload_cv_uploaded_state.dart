@@ -4,6 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intelli_hire/core/utils/app_styles.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/custom_button.dart';
 
+import '../../../../../../../../core/utils/app_text_style.dart';
+
 class UploadCvUploadedState extends StatelessWidget {
   const UploadCvUploadedState({
     super.key,
@@ -44,11 +46,11 @@ class UploadCvUploadedState extends StatelessWidget {
                     SizedBox(height: 24),
                     Text(
                       "Upload complete",
-                      style: AppStyles.textstyle14.copyWith(
+                      style: AppTextStyle.textstyle14.copyWith(
                         color: Color(0xff0F172A),
                       ),
                     ),
-                    Text(fileName, style: AppStyles.textstyle12),
+                    Text(fileName, style: AppTextStyle.textstyle12),
                     const SizedBox(height: 12),
                     TextButton.icon(
                       onPressed: onClear,
@@ -58,7 +60,7 @@ class UploadCvUploadedState extends StatelessWidget {
                       ),
                       label: Text(
                         "Clear upload",
-                        style: AppStyles.textstyle14.copyWith(
+                        style: AppTextStyle.textstyle14.copyWith(
                           color: Color(0xff0F172A),
                         ),
                       ),

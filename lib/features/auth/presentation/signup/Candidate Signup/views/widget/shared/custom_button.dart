@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_styles.dart';
+import 'package:intelli_hire/core/utils/app_text_style.dart';
 
 class CustomButton extends StatelessWidget {
   const CustomButton({
@@ -32,7 +33,7 @@ class CustomButton extends StatelessWidget {
 
         child: Text(
           title,
-          style: AppStyles.textstyle14.copyWith(color: AppColor.white),
+          style: AppTextStyle.textstyle14.copyWith(color: AppColor.white),
         ),
       ),
     );
