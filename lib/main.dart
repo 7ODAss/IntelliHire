@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intelli_hire/core/utils/api_constant.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_information_company.dart';
+import 'core/utils/api_config.dart';
+import 'core/utils/dio_config.dart';
 import 'features/auth/presentation/login/login_screen.dart';
 import 'features/auth/presentation/signup/company/sign_up_company.dart';
 import 'features/auth/presentation/signup/company/sign_up_location_company.dart';
