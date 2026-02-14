@@ -43,3 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Android build (IMPORTANT)
+android/.gradle/
+android/build/
+android/app/build/
+
+# VS Code (اختياري)
+.vscode/
