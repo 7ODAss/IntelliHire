@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
-
 import '../../../../../core/utils/app_text_style.dart';
 
 class CustomStepper extends StatelessWidget {
@@ -11,7 +10,6 @@ class CustomStepper extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(3, (index) {
-        final isActive = index == screenNumber;
         return Row(
           children: [
             AnimatedContainer(

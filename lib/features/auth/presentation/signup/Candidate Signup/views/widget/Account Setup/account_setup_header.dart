@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/custom_stepper.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/signup_back_button.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/widget/custom_stepper.dart';
 
 class AccountSetupHeader extends StatelessWidget {
   const AccountSetupHeader({
     super.key,
     required this.screenNumber,
-    required this.title, required this.onPressed,
+    required this.title,
+    required this.onPressed,
   });
   final int screenNumber;
   final String title;
-    final void Function() onPressed;
+  final void Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +26,8 @@ class AccountSetupHeader extends StatelessWidget {
         const SizedBox(height: 16),
         Column(
           children: [
-            SignupBackButton(onPressed: onPressed,),
+            SignupBackButton(onPressed: onPressed),
             const SizedBox(height: 8),
-
             CustomStepper(screenNumber: screenNumber),
             const SizedBox(height: 16),
 
