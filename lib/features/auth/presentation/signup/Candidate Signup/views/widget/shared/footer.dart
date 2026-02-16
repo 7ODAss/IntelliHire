@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_styles.dart';
 
+import '../../../../../../../../core/utils/app_text_style.dart';
+
 class Footer extends StatelessWidget {
   const Footer({super.key, required this.onPressed});
   final void Function() onPressed;
@@ -13,7 +15,7 @@ class Footer extends StatelessWidget {
       children: [
         Text(
           "Already have account? ",
-          style: AppStyles.textstyle14.copyWith(
+          style: AppTextStyle.textstyle14.copyWith(
             fontWeight: FontWeight.w500,
             color: AppColor.grey,
           ),
@@ -25,7 +27,7 @@ class Footer extends StatelessWidget {
           child:  Text(
             "Log In",
 
-            style: AppStyles.textstyle14.copyWith(
+            style: AppTextStyle.textstyle14.copyWith(
             fontWeight: FontWeight.w500,
             color: AppColor.primary,
           ),

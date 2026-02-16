@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intelli_hire/core/utils/app_styles.dart';
+import 'package:intelli_hire/core/utils/app_font.dart';
+import 'package:intelli_hire/core/utils/app_text_style.dart';
+
 
 class SignupBackButton extends StatelessWidget {
   const SignupBackButton({super.key, this.onPressed});
@@ -41,11 +43,14 @@ class SignupBackButton extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Text(
-              'Sign Up',
-              style: AppStyles.textstyle14.copyWith(color: Colors.white),
+
+
+          const SizedBox(width: 4),
+          Text(
+            'Sign up',
+            style: AppTextStyle.textstyle14.copyWith(
+              fontFamily: AppFont.poppinsRegular,
+              color: Colors.white,
             ),
           ),
         ],

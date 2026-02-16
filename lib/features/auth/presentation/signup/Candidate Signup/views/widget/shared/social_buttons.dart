@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/utils/app_styles.dart';
 
+import '../../../../../../../../core/utils/app_text_style.dart';
+
 class SocialButtons extends StatelessWidget {
   const SocialButtons({super.key});
 
@@ -23,7 +25,7 @@ class SocialButtons extends StatelessWidget {
               height: 20,
             ),
 
-            label: const Text("Google", style: AppStyles.textstyle14),
+            label: const Text("Google", style: AppTextStyle.textstyle14),
           ),
         ),
 
@@ -45,7 +47,7 @@ class SocialButtons extends StatelessWidget {
             ),
             label: Text(
               "LinkedIn",
-              style: AppStyles.textstyle14.copyWith(color: Color(0xff0F172A)),
+              style: AppTextStyle.textstyle14.copyWith(color: Color(0xff0F172A)),
             ),
           ),
         ),

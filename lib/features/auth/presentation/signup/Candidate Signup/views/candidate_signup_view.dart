@@ -9,6 +9,8 @@ import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signu
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/social_buttons.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/terms_checkbox.dart';
 
+import '../../../login/login_screen.dart';
+
 class CandidateSignUp extends StatefulWidget {
   const CandidateSignUp({super.key});
 
@@ -136,7 +138,14 @@ class _CandidateSignUpState extends State<CandidateSignUp> {
                     SocialButtons(),
                     const SizedBox(height: 24),
 
-                    Footer(onPressed: () {}),
+                    Footer(onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const LoginScreen(),
+                        ),
+                      );
+                    }),
                     const SizedBox(height: 109),
                   ],
                 ),

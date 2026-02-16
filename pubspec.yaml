@@ -44,7 +44,7 @@ dependencies:
   google_fonts: ^6.3.0
   shimmer: ^3.0.0
   shared_preferences: ^2.5.3
-  smooth_page_indicator: ^1.2.1
+  smooth_page_indicator: ^2.0.1
   flutter_svg: ^2.2.0
   google_generative_ai: ^0.4.7
   flutter_native_splash: ^2.4.7
@@ -78,6 +78,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/images/splash_png/
+    - assets/images/onboarding_svg/
+    - assets/images/landing_svg/
+    - assets/images/login/
     - assets/image/
     - assets/animations/
 
@@ -94,14 +98,36 @@ flutter:
   # example:
 
   fonts:
-    - family: Poppins
+    - family: Poppins_Bold
       fonts:
-        - asset: assets/fonts/Poppins/Poppins-Regular.ttf
-   
-    - family: Inter
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+
+    - family: Poppins_Semi_Bold
       fonts:
-        - asset: assets/fonts/Inter/static/Inter_24pt-Regular.ttf
-      
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+
+    - family: Poppins_Regular
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+
+    - family: Inter_Regular
+      fonts:
+        - asset: assets/fonts/Inter_18pt-Regular.ttf
+          weight: 400
+
+    - family: Inter_Medium
+      fonts:
+        - asset: assets/fonts/Inter_18pt-Medium.ttf
+          weight: 500
+
+    - family: Inter_Semi_Bold
+      fonts:
+        - asset: assets/fonts/Inter_18pt-SemiBold.ttf
+          weight: 600
+
 
   #
   # For details regarding fonts from package dependencies,
