@@ -9,26 +9,27 @@ class CustomStepper extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(3, (index) {
-        final isActive = index == screenNumber;
         return Row(
           children: [
             AnimatedContainer(
               duration: Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              width: 20,
-              height: 20,
+              width: 30,
+              height: 30,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isActive ? AppColor.primary : Colors.transparent,
+                color: (screenNumber >= index)
+                    ? AppColor.primary
+                    : Colors.transparent,
                 border: Border.all(color: AppColor.primary, width: 2),
               ),
               child: AnimatedDefaultTextStyle(
                 duration: Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 style: TextStyle(
-                  color: isActive ? Colors.white : Colors.blue,
-                  fontSize: 8,
+                  color: Colors.white,
+                  fontSize: 14,
                   fontWeight: FontWeight.w400,
                 ),
                 child: Text('${index + 1}'),
