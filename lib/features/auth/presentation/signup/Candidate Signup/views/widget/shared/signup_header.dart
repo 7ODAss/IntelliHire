@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intelli_hire/core/utils/app_styles.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/signup_back_button.dart';
 
 import '../../../../../../../../core/utils/app_text_style.dart';

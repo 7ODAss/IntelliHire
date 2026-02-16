@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../core/utils/app_color.dart';
-import '../../../core/utils/app_icon.dart';
 import '../../../core/utils/app_text_style.dart';
 
 class SignupCard extends StatelessWidget {

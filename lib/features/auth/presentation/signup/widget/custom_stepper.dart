@@ -22,8 +22,13 @@ class CustomStepper extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: (screenNumber >= index) ? AppColor.signUpConditionColor2 : Colors.transparent,
-                border: Border.all(color: AppColor.signUpConditionColor2, width: 2),
+                color: (screenNumber >= index)
+                    ? AppColor.signUpConditionColor2
+                    : Colors.transparent,
+                border: Border.all(
+                  color: AppColor.signUpConditionColor2,
+                  width: 2,
+                ),
               ),
               child: AnimatedDefaultTextStyle(
                 duration: Duration(milliseconds: 300),

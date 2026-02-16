@@ -40,7 +40,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     Timer(const Duration(milliseconds: 3000), () {
       // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-      print("Go to Login Screen");
     });
   }
 

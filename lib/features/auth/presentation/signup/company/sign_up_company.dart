@@ -1,9 +1,7 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/field_item.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_information_company.dart';
-import '../../../../../core/utils/app_color.dart';
 import '../../../../../core/utils/app_text_style.dart';
 import '../../../controller/sign_up_cubit.dart';
 import '../../login/login_screen.dart';
@@ -120,6 +118,8 @@ class SignUpCompany extends StatelessWidget {
                                   message: 'Enter Your Phone Number',
                                   type: TextInputType.phone,
                                   validator: (value) {
+                                    return null;
+                                  
                                     // if (value == null || value.isEmpty) {
                                     //   return "Phone number is required";
                                     // }
@@ -146,6 +146,8 @@ class SignUpCompany extends StatelessWidget {
                                         cubit.changeSuffix();
                                       },
                                       validator: (value) {
+                                        return null;
+                                      
                                         // if (value == null || value.isEmpty) {
                                         //   return "Password is required";
                                         // } else if (value.length < 6) {

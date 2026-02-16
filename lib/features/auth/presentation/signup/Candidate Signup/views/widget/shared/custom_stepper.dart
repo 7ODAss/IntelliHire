@@ -15,7 +15,7 @@ class CustomStepper extends StatelessWidget {
               duration: Duration(milliseconds: 300),
               curve: Curves.easeInOut,
               width: 30,
-              height: 30,
+              height: 0,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
