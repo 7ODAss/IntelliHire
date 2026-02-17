@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_information_company.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_link_company.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_location_company.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/company/process/sign_up_information_company.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/company/process/sign_up_link_company.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/company/process/sign_up_location_company.dart';
 
 import '../../../controller/sign_up_cubit.dart';
 import 'company_sign_up_header.dart';
@@ -45,7 +45,6 @@ class SignUpProcess extends StatelessWidget {
                 child: IndexedStack(
                   index: currentScreen,
                   children: [
-                    // Step 0: Company Information
                     SignUpInformationCompany(
                       onNext: () {
                         if (cubit.validateCurrentStep()) {
@@ -54,7 +53,6 @@ class SignUpProcess extends StatelessWidget {
                       },
                     ),
 
-                    // Step 1: Company Location
                     SignUpLocationCompany(
                       onNext: () {
                         if (cubit.validateCurrentStep()) {
