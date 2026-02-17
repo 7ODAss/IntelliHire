@@ -14,7 +14,6 @@ class SignUpInformationCompany extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("sign up information company");
     return BlocBuilder<SignUpCubit, SignUpState>(
       builder: (context, state) {
         final cubit = context.read<SignUpCubit>();
@@ -108,6 +107,8 @@ class SignUpInformationCompany extends StatelessWidget {
                               },
                               hintText: 'Industry',
                               validator: (value) {
+                                return null;
+                              
                                 // if (value!.isEmpty) {
                                 //   return 'Please select an industry';
                                 // }

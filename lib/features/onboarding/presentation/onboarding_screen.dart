@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:intelli_hire/core/utils/app_text_style.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -7,7 +6,6 @@ import '../../../core/utils/app_color.dart';
 import '../model/onboarding_model.dart';
 import '../widgets/onboarding_action.dart';
 import '../widgets/onboarding_item.dart';
-import 'landing_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});

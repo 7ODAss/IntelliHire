@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
-
 import '../../../../../core/utils/app_text_style.dart';
 
 class CustomStepper extends StatelessWidget {
@@ -11,7 +10,6 @@ class CustomStepper extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(3, (index) {
-        final isActive = index == screenNumber;
         return Row(
           children: [
             AnimatedContainer(
@@ -22,8 +20,13 @@ class CustomStepper extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: (screenNumber >= index) ? AppColor.signUpConditionColor2 : Colors.transparent,
-                border: Border.all(color: AppColor.signUpConditionColor2, width: 2),
+                color: (screenNumber >= index)
+                    ? AppColor.signUpConditionColor2
+                    : Colors.transparent,
+                border: Border.all(
+                  color: AppColor.signUpConditionColor2,
+                  width: 2,
+                ),
               ),
               child: AnimatedDefaultTextStyle(
                 duration: Duration(milliseconds: 300),

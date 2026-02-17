@@ -1,10 +1,8 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intelli_hire/features/auth/controller/login_cubit.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/signup_action.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_company.dart';
 import '../../../../../core/utils/app_color.dart';
 import '../../../../../core/utils/app_text_style.dart';
 import '../../signup/Candidate Signup/views/candidate_signup_view.dart';
