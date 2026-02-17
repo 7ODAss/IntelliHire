@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/field_item.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_information_company.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_process.dart';
 import '../../../../../core/utils/app_text_style.dart';
 import '../../../controller/sign_up_cubit.dart';

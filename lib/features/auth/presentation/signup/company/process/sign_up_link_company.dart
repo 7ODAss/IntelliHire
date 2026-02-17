@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/field_item.dart';
-import '../../../../../core/utils/app_text_style.dart';
-import '../../../controller/sign_up_cubit.dart';
-import '../../login/widget/signup_action.dart';
-import '../widget/custom_stepper.dart';
-import '../widget/pop_action.dart';
+
+import '../../../../../../core/utils/app_text_style.dart';
+import '../../../../controller/sign_up_cubit.dart';
+import '../../../login/widget/signup_action.dart';
 
 class SignUpLinkCompany extends StatelessWidget {
   final VoidCallback onNext;
