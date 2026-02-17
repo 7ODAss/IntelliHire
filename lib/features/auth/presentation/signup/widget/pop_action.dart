@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/utils/app_text_style.dart';
 
 class PopAction extends StatelessWidget {
-  const PopAction({super.key});
+  final void Function()? onPressed;
+  const PopAction({super.key, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +33,7 @@ class PopAction extends StatelessWidget {
               alignment: Alignment.topRight,
               child: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.white,size: 20,),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                onPressed: onPressed ?? () =>Navigator.pop(context),
               ),
             ),
           ),

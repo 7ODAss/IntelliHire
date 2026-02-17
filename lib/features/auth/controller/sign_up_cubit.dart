@@ -129,4 +129,48 @@ class SignUpCubit extends Cubit<SignUpState> {
   void changeSelectedGovernorate(String governorate) {
     emit(state.copyWith(selectedGovernorate: governorate));
   }
+  void changeCurrentScreen(int screen) {
+    emit(state.copyWith(currentScreen: screen));
+  }
+  void nextStep() {
+    if (state.currentScreen < 2) {
+      changeCurrentScreen(state.currentScreen + 1);
+    }
+  }
+  void previousStep() {
+    if (state.currentScreen > 0) {
+      changeCurrentScreen(state.currentScreen - 1);
+    }
+  }
+  void clearAllControllers() {
+    companyNameController.clear();
+    selectedIndustry = null;
+    countryController.clear();
+    govController.clear();
+    addressController.clear();
+    searchCountryController.clear();
+    searchGovController.clear();
+    linkCompanyController.clear();
+    emit(state.copyWith(
+      currentScreen: 0,
+      selectedCountry: '',
+      selectedGovernorate: '',
+    ));
+  }
+  bool validateCurrentStep() {
+    switch (state.currentScreen) {
+      case 0:
+
+        return industryFormKey.currentState?.validate() ?? false;
+      case 1:
+        // if (countryController.text.isEmpty) return false;
+        // if (govController.text.isEmpty) return false;
+        return locationFormKey.currentState?.validate() ?? false;
+      case 2:
+        //if (linkCompanyController.text.isEmpty) return false;
+        return linkCompanyFormKey.currentState?.validate() ?? false;
+      default:
+        return false;
+    }
+  }
 }

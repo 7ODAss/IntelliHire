@@ -19,7 +19,6 @@ class SignupHeader extends StatelessWidget {
         const SizedBox(height: 16),
         Column(
           children: [
-            //SignupBackButton(),
             Padding(
               padding: const EdgeInsets.only(left: 24, top: 55),
               child: PopAction(),

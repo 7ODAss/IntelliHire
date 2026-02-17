@@ -5,12 +5,14 @@ class SignUpState extends Equatable {
   final bool checkBoxTermsConditions;
   final String? selectedCountry;
   final String? selectedGovernorate;
+  final int currentScreen;
 
   const SignUpState({
     this.changeSuffix = true,
     this.checkBoxTermsConditions = false,
     this.selectedCountry,
     this.selectedGovernorate,
+    this.currentScreen = 0,
   });
 
   SignUpState copyWith({
@@ -18,6 +20,7 @@ class SignUpState extends Equatable {
     bool? checkBoxTermsConditions,
     String? selectedCountry,
     String? selectedGovernorate,
+    int? currentScreen,
   }) {
     return SignUpState(
       changeSuffix: changeSuffix ?? this.changeSuffix,
@@ -25,6 +28,7 @@ class SignUpState extends Equatable {
           checkBoxTermsConditions ?? this.checkBoxTermsConditions,
       selectedCountry: selectedCountry ?? this.selectedCountry,
       selectedGovernorate: selectedGovernorate ?? this.selectedGovernorate,
+      currentScreen: currentScreen ?? this.currentScreen,
     );
   }
 
@@ -34,5 +38,6 @@ class SignUpState extends Equatable {
     checkBoxTermsConditions,
     selectedCountry,
     selectedGovernorate,
+    currentScreen,
   ];
 }

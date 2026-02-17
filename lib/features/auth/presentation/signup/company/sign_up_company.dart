@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/field_item.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_information_company.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_process.dart';
 import '../../../../../core/utils/app_text_style.dart';
 import '../../../controller/sign_up_cubit.dart';
 import '../../login/login_screen.dart';
@@ -17,8 +18,8 @@ class SignUpCompany extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => SignUpCubit(),
-      child: Builder(
-        builder: (context) {
+      child: BlocBuilder<SignUpCubit, SignUpState>(
+        builder: (context,  state) {
           final cubit = context.read<SignUpCubit>();
           return Form(
             key: cubit.workFormKey,
@@ -59,7 +60,7 @@ class SignUpCompany extends StatelessWidget {
                               ),
                               child: PopAction(),
                             ),
-
+                            SizedBox(height: 20,),
                             Text(
                               'Welcome to IntelliHire',
                               style: AppTextStyle.signUpTitleStyle,
@@ -119,7 +120,7 @@ class SignUpCompany extends StatelessWidget {
                                   type: TextInputType.phone,
                                   validator: (value) {
                                     return null;
-                                  
+
                                     // if (value == null || value.isEmpty) {
                                     //   return "Phone number is required";
                                     // }
@@ -147,7 +148,7 @@ class SignUpCompany extends StatelessWidget {
                                       },
                                       validator: (value) {
                                         return null;
-                                      
+
                                         // if (value == null || value.isEmpty) {
                                         //   return "Password is required";
                                         // } else if (value.length < 6) {
@@ -165,14 +166,14 @@ class SignUpCompany extends StatelessWidget {
                                   formKey: cubit.workFormKey,
                                   title: 'Create Account',
                                   onPressed: () {
-                                    if (cubit.workFormKey.currentState!
-                                        .validate()) {
+                                    if (cubit.workFormKey.currentState!.validate()) {
+                                      cubit.clearAllControllers();
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) {
                                             return BlocProvider.value(value: cubit,
-                                              child: SignUpInformationCompany(),
+                                              child: SignUpProcess(),
                                             );
                                           },
                                         ),
