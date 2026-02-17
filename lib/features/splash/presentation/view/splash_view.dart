@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/candidate_signup_view.dart';
 import 'package:lottie/lottie.dart';
 
+import '../../../onboarding/presentation/onboarding_screen.dart';
+
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
 
@@ -21,7 +23,7 @@ class _SplashViewState extends State<SplashView> {
           repeat: false,
           onLoaded: (composition) {
             Future.delayed(
-              composition.duration + const Duration(seconds: 1),
+              composition.duration + const Duration(seconds: 3),
               () {
                 if (!mounted) return;
                 Navigator.pushReplacement(
@@ -30,7 +32,7 @@ class _SplashViewState extends State<SplashView> {
 
                   MaterialPageRoute(
                     builder: (_) {
-                      return CandidateSignUp();
+                      return OnboardingScreen();
                     },
                   ),
                 );

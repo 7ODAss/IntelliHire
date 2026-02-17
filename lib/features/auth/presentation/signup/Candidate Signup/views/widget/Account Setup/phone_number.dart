@@ -29,15 +29,15 @@ class _PhoneNumberState extends State<PhoneNumber> {
                     CustomTextField(
                       hint: "Phone Number",
                       keyboardType: TextInputType.phone,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Phone Number is required";
-                        }
-                        if (value.length < 10 || value.length > 15) {
-                          return 'Invalid phone number length';
-                        }
-                        return null;
-                      },
+                      // validator: (value) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return "Phone Number is required";
+                      //   }
+                      //   if (value.length < 10 || value.length > 15) {
+                      //     return 'Invalid phone number length';
+                      //   }
+                      //   return null;
+                      // },
                       controller: _passwordController,
                     ),
                     const SizedBox(height: 48),

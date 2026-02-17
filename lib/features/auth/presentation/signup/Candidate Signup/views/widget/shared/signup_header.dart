@@ -3,6 +3,7 @@ import 'package:intelli_hire/core/utils/app_styles.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/signup_back_button.dart';
 
 import '../../../../../../../../core/utils/app_text_style.dart';
+import '../../../../widget/pop_action.dart';
 
 class SignupHeader extends StatelessWidget {
   const SignupHeader({super.key});
@@ -19,7 +20,11 @@ class SignupHeader extends StatelessWidget {
         const SizedBox(height: 16),
         Column(
           children: [
-            SignupBackButton(),
+            //SignupBackButton(),
+            Padding(
+              padding: const EdgeInsets.only(left: 24, top: 55),
+              child: PopAction(),
+            ),
             Text("Welcome to IntelliHire", style: AppTextStyle.textstyle20),
             const SizedBox(height: 8),
             Text(

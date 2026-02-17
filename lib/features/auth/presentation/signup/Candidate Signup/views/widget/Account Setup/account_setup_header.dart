@@ -26,6 +26,7 @@ class AccountSetupHeader extends StatelessWidget {
         Column(
           children: [
             SignupBackButton(onPressed: onPressed,),
+
             const SizedBox(height: 8),
 
             CustomStepper(screenNumber: screenNumber),

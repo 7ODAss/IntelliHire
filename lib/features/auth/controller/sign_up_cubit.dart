@@ -111,6 +111,10 @@ class SignUpCubit extends Cubit<SignUpState> {
     ],
   };
 
+  //company location
+  final TextEditingController linkCompanyController = TextEditingController();
+  final GlobalKey<FormState> linkCompanyFormKey = GlobalKey<FormState>();
+
 
   SignUpCubit() : super(const SignUpState());
 

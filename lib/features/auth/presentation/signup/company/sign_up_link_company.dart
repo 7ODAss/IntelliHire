@@ -18,7 +18,7 @@ class SignUpLinkCompany extends StatelessWidget {
       builder: (context, state) {
         final cubit = context.read<SignUpCubit>();
         return Form(
-          key: cubit.locationFormKey,
+          key: cubit.linkCompanyFormKey,
           child: Scaffold(
             body: Container(
               decoration: const BoxDecoration(
@@ -88,9 +88,9 @@ class SignUpLinkCompany extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Address Field
+                            // link Field
                             FieldItem(
-                              controller: cubit.addressController,
+                              controller: cubit.linkCompanyController,
                               title: 'Website or LinkedIn URL',
                               message: 'Enter your Website Company',
                               type: TextInputType.streetAddress,
@@ -110,10 +110,10 @@ class SignUpLinkCompany extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 SignupAction(
-                                  formKey: cubit.locationFormKey,
+                                  formKey: cubit.linkCompanyFormKey,
                                   title: 'Complete Registration',
                                   onPressed: () {
-                                    if (cubit.locationFormKey.currentState!
+                                    if (cubit.linkCompanyFormKey.currentState!
                                         .validate()) {}
                                   },
                                 ),

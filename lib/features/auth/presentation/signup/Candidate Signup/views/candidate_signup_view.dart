@@ -8,6 +8,7 @@ import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signu
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/signup_header.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/social_buttons.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/terms_checkbox.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/widget/pop_action.dart';
 
 import '../../../login/login_screen.dart';
 
@@ -44,37 +45,36 @@ class _CandidateSignUpState extends State<CandidateSignUp> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               SignupHeader(),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
                     CustomTextField(
                       hint: "Full Name",
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Full Name is required";
-                        } else if (value.length < 3) {
-                          return "Full Name must be at least 3 characters";
-                        }
-                        return null;
-                      },
+                      // validator: (value) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return "Full Name is required";
+                      //   } else if (value.length < 3) {
+                      //     return "Full Name must be at least 3 characters";
+                      //   }
+                      //   return null;
+                      // },
                       controller: _nameController,
                     ),
                     const SizedBox(height: 16),
 
                     CustomTextField(
                       hint: "Email",
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Email is required";
-                        } else if (!RegExp(
-                          r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$",
-                        ).hasMatch(value)) {
-                          return "Enter a valid email address";
-                        }
-                        return null;
-                      },
+                      // validator: (value) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return "Email is required";
+                      //   } else if (!RegExp(
+                      //     r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$",
+                      //   ).hasMatch(value)) {
+                      //     return "Enter a valid email address";
+                      //   }
+                      //   return null;
+                      // },
                       controller: _emailController,
                     ),
                     const SizedBox(height: 16),
@@ -82,14 +82,14 @@ class _CandidateSignUpState extends State<CandidateSignUp> {
                     CustomTextField(
                       hint: "Password",
                       isPassword: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Password is required";
-                        } else if (value.length < 6) {
-                          return "Password must be at least 6 characters";
-                        }
-                        return null;
-                      },
+                      // validator: (value) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return "Password is required";
+                      //   } else if (value.length < 6) {
+                      //     return "Password must be at least 6 characters";
+                      //   }
+                      //   return null;
+                      // },
                       controller: _passwordController,
                     ),
                     const SizedBox(height: 16),
@@ -111,16 +111,16 @@ class _CandidateSignUpState extends State<CandidateSignUp> {
                     CustomButton(
                       onPressed: () {
                         final isValid = _formKey.currentState!.validate();
-
-                        if (!agreeToTerms) {
-                          setState(() {
-                            showTermsError = true;
-                          });
-                          return;
-                        }
-                        if (!isValid) {
-                          return;
-                        }
+                        //
+                        // if (!agreeToTerms) {
+                        //   setState(() {
+                        //     showTermsError = true;
+                        //   });
+                        //   return;
+                        // }
+                        // if (!isValid) {
+                        //   return;
+                        // }
                         Navigator.push(
                           context,
                           MaterialPageRoute(
