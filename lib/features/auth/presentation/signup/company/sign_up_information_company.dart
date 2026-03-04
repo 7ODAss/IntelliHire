@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/features/auth/controller/sign_up_cubit.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_location_company.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/widget/custom_drop_down.dart';
 import '../../../../../core/utils/app_text_style.dart';
 import '../../login/widget/field_item.dart';
 import '../../login/widget/signup_action.dart';
-import '../widget/custom_drop_down.dart';
 import '../widget/custom_stepper.dart';
 import '../widget/pop_action.dart';
 

@@ -84,6 +84,7 @@ flutter:
     - assets/images/login/
     - assets/image/
     - assets/animations/
+    - assets/image/bottom nav icon svg/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -127,6 +128,11 @@ flutter:
       fonts:
         - asset: assets/fonts/Inter_18pt-SemiBold.ttf
           weight: 600
+    
+    - family: Inter_Bold
+      fonts:
+        - asset: assets/fonts/Inter/static/Inter_18pt-Bold.ttf
+          weight: 700
 
 
   #
