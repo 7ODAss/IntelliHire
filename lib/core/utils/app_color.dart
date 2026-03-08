@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
-class AppColor{
+class AppColor {
   // onboarding_svg colors
   static const Color titleColor = Color(0xFF0F172A);
   static const Color subTitleColor = Color(0xFF475569);
@@ -32,10 +32,10 @@ class AppColor{
   static const Color searchItemColor = Color(0xFF134CC7);
   static const Color searchCardItemColor = Color(0xFFEDEFFE);
 
-
   //omar
   static const Color primary = Color(0xFF134CC7);
   static const Color secondary = Color(0xFF0B1B3F);
+  static const Color darkBlue = Color(0xff0F172A);
   static const Color grey = Color(0xff9CA3AF);
   static const Color white = Color(0xffF2F2F2);
 }

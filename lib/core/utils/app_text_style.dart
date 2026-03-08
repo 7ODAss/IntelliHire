@@ -117,4 +117,10 @@ class AppTextStyle {
     fontFamily: AppFont.poppinsRegular,
     color: AppColor.white,
   );
+  static const textstyle16 = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    fontFamily: AppFont.interRegular,
+    color: AppColor.darkBlue,
+  );
 }
