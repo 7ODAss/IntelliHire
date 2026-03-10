@@ -67,7 +67,6 @@ class SignUpLocationCompany extends StatelessWidget {
               
                   // Next Button
                   SignupAction(
-                    formKey: cubit.locationFormKey,
                     title: 'Next',
                     onPressed: () {
                       onNext();

@@ -68,7 +68,7 @@ class SignUpLinkCompany extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SignupAction(
-                      formKey: cubit.linkCompanyFormKey,
+
                       title: 'Complete Registration',
                       onPressed: () {
                         if (cubit.linkCompanyFormKey.currentState!

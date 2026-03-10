@@ -162,7 +162,6 @@ class SignUpCompany extends StatelessWidget {
                                 TermsConditions(),
                                 const SizedBox(height: 16),
                                 SignupAction(
-                                  formKey: cubit.workFormKey,
                                   title: 'Create Account',
                                   onPressed: () {
                                     if (cubit.workFormKey.currentState!.validate()) {

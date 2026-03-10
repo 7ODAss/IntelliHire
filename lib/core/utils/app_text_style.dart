@@ -61,7 +61,6 @@ class AppTextStyle {
   static const TextStyle fieldTitleStyle = TextStyle(
     fontFamily: AppFont.interRegular,
     fontSize: AppFont.subtitleMediumFontSize,
-    fontWeight: FontWeight.w400,
     color: AppColor.signUpFieldColor,
   );
 
@@ -123,4 +122,38 @@ class AppTextStyle {
     fontFamily: AppFont.interRegular,
     color: AppColor.darkBlue,
   );
+  //////////////
+
+  static const TextStyle titlePostScreen = TextStyle(
+    fontFamily: AppFont.poppinsBold,
+    fontSize: AppFont.titlePostScreen,
+    color: AppColor.titlePostScreenColor,
+  );
+
+  static const TextStyle iconNamePostScreen = TextStyle(
+    fontFamily: AppFont.poppinsRegular,
+    fontSize: AppFont.iconNamePostScreen,
+    color: AppColor.iconProfileBorderColor,
+  );
+
+  static const TextStyle accountNamePostScreen = TextStyle(
+    fontFamily: AppFont.interBold,
+    fontSize: AppFont.accountNamePostScreen,
+    color: AppColor.accountNameProfileColor,
+  );
+
+  static const TextStyle accountSubNamePostScreen = TextStyle(
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.accountSubNamePostScreen,
+    color: AppColor.accountSubNameProfileColor,
+  );
+
+  //Personal information
+  static const TextStyle nameTitleField = TextStyle(
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.accountTitleFieldInformationScreen,
+    color: AppColor.accountTitleFieldColor,
+  );
+
+
 }

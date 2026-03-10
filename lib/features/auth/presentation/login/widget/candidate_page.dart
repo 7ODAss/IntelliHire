@@ -70,7 +70,6 @@ class CandidatePage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 24.0),
                 child: SignupAction(
-                  formKey: cubit.candidateFormKey,
                   title: "Create Account",
                   onPressed: () {
                     if (cubit.candidateFormKey.currentState!.validate()) {}

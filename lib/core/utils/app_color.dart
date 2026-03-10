@@ -38,4 +38,17 @@ class AppColor {
   static const Color darkBlue = Color(0xff0F172A);
   static const Color grey = Color(0xff9CA3AF);
   static const Color white = Color(0xffF2F2F2);
+
+  //////////////////////
+
+  //postScreen
+  static const Color titlePostScreenColor = Color(0xFF475569);
+  static const Color iconProfileBorderColor = Color(0xFF134CC7);
+  static const Color iconProfileColor = Color(0xFFF1F0F1);
+  static const Color accountNameProfileColor = Color(0xFF0F172A);
+  static const Color accountSubNameProfileColor = Color(0xFF475569);
+  static const Color accountTitleFieldColor = Color(0xFF0F172A);
+  //company details edit
+  static const Color addLocationButtonBackGroundColor = Color(0xFFEDEFFE);
+  static const Color addLocationButtonTextColor = Color(0xFF426FF9);
 }

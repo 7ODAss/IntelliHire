@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intelli_hire/core/utils/app_text_style.dart';
 
 class MyFormField extends StatelessWidget {
   final TextEditingController controller;
   final TextInputType type;
   final IconData? suffixIcon;
+  final IconData? prefixIcon;
   final Color? suffixIconColor;
+  final Color? prefixIconColor;
   final VoidCallback? onSuffixPressed;
   final bool obscureText;
   final String? Function(String?)? validator;
   final String? hintText;
+  final List<TextInputFormatter>? inputFormatters;
 
 
   const MyFormField({
@@ -22,6 +26,9 @@ class MyFormField extends StatelessWidget {
     this.obscureText = false,
     this.validator,
     this.hintText,
+    this.prefixIcon,
+    this.prefixIconColor,
+    this.inputFormatters,
   });
 
   @override
@@ -31,6 +38,7 @@ class MyFormField extends StatelessWidget {
       keyboardType: type,
       obscureText: obscureText,
       validator: validator,
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
         fillColor: const Color(0xFFFFFFFF),
         hintText: hintText,
@@ -52,7 +60,8 @@ class MyFormField extends StatelessWidget {
             color: Colors.red,
             width: 1.5,
           ),
-        ),focusedErrorBorder: OutlineInputBorder(
+        ),
+        focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.0),
         borderSide: const BorderSide(
           color: Colors.red,
@@ -66,7 +75,10 @@ class MyFormField extends StatelessWidget {
             color: suffixIconColor,
           ),
         ) : null,
-
+        prefixIcon: prefixIcon != null ? Icon(
+            prefixIcon,
+            color: prefixIconColor,
+          ) : null,
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/features/auth/controller/sign_up_cubit.dart';
 
+import '../../../../../Organization/Post Job/presentation/widget/custom_dropdown_menu.dart';
 import '../../../login/widget/field_item.dart';
 import '../../../login/widget/signup_action.dart';
 import '../../widget/custom_drop_down.dart';
@@ -59,23 +60,15 @@ class SignUpInformationCompany extends StatelessWidget {
                   // },
                 ),
                 const SizedBox(height: 16),
-                CustomDropDown(
+                CustomDropdownMenu(
+                  title: "Industry",
+                  hint: 'Select Industry',
                   items: cubit.industries,
-                  selectedValue: cubit.selectedIndustry,
-                  onChanged: (value) {
-                    cubit.selectedIndustry = value;
-                  },
-                  hintText: 'Industry',
-                  // validator: (value) {
-                  //   if (value == null || value.isEmpty) {
-                  //     return 'Please select an industry';
-                  //   }
-                  //   return null;
-                  // },
+                  value: cubit.selectedIndustry,
+                  onChanged: (val) => cubit.selectedIndustry = val!,
                 ),
                 const SizedBox(height: 48),
                 SignupAction(
-                  formKey: cubit.industryFormKey,
                   title: 'Next',
                   onPressed: onNext,
                 ),

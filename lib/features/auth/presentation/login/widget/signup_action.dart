@@ -4,10 +4,9 @@ import '../../../../../core/utils/app_color.dart';
 import '../../../../../core/utils/app_text_style.dart';
 
 class SignupAction extends StatelessWidget {
-  final GlobalKey<FormState> formKey;
   final String title;
   final void Function()? onPressed;
-  const SignupAction({super.key, required this.formKey, required this.title, this.onPressed});
+  const SignupAction({super.key,required this.title, this.onPressed});
 
   @override
   Widget build(BuildContext context) {

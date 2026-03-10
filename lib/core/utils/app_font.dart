@@ -15,4 +15,9 @@ class AppFont {
   static const double signUpTitleFontSize = 20;
   static const double signUpTitleInformationCompanyFontSize = 20;
   static const double searchTitleCompanyFontSize = 18;
+  static const double titlePostScreen = 16;
+  static const double iconNamePostScreen = 20;
+  static const double accountNamePostScreen = 20;
+  static const double accountSubNamePostScreen = 14;
+  static const double accountTitleFieldInformationScreen = 14;
 }
