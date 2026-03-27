@@ -1,7 +1,8 @@
+import 'dart:io';
+
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 
 class ProfilePhotoPicker extends StatefulWidget {

@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class AppColor {
@@ -19,7 +20,7 @@ class AppColor {
   static const Color loginSubTitleColor = Color(0xFF9CA3AF);
   static const Color loginButtonColor = Color(0xFFFFFFFF);
   static const Color loginButtonBackgroundColor = Color(0xFF134CC7);
-  static const Color linkedInButtonBorderColor = Color(0xFF082F82);
+  static const Color mircoSoftButtonBorderColor = Color(0xFFFFFFFF);
 
   //signup company fields colors
   static const Color signUpTitleColor = Color(0xFFF2F2F2);

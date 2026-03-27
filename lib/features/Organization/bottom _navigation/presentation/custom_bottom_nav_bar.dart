@@ -5,11 +5,12 @@ import 'package:intelli_hire/features/Organization/Job%20Managment/controller/jo
 import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/job_management_view.dart';
 import 'package:intelli_hire/features/Organization/Notification/presentation/notifications_view.dart';
 import 'package:intelli_hire/features/Organization/Home/presentation/organization_home_view.dart';
-import 'package:intelli_hire/features/Organization/Profile/presentation/profile_view.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/controller/post_job_cubit.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/post_job_view.dart';
 import 'package:intelli_hire/features/Organization/bottom%20_navigation/controller/bottom_nav_cubit.dart';
 import 'package:intelli_hire/features/Organization/bottom%20_navigation/presentation/widget/nav_item.dart';
+
+import '../../Profile/presentation/screen/profile_view.dart';
 
 class CustomBottomNavBar extends StatefulWidget {
   const CustomBottomNavBar({super.key});

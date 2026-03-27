@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
+
 import '../../../../../core/utils/app_text_style.dart';
 import '../../../controller/sign_up_cubit.dart';
 
@@ -309,9 +310,7 @@ class LocationSelectionSection extends StatelessWidget {
         SharedBottomSheetSelector(
           title: 'Select Governorate',
           hintText: 'Search...',
-          items: cubit.state.selectedCountry != null
-              ? (cubit.countryGovernorates[cubit.state.selectedCountry!] ?? [])
-              : [],
+          items: (cubit.countryGovernorates[cubit.state.selectedCountry] ?? []),
           selectedItem: cubit.state.selectedGovernorate, // Use state value directly
           isEnabled: cubit.state.selectedCountry != null,
           disabledMessage: 'Please select a country first',

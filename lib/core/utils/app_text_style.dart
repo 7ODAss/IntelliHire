@@ -47,7 +47,6 @@ class AppTextStyle {
   static const TextStyle loginButtonStyle = TextStyle(
     fontFamily: AppFont.interRegular,
     fontSize: AppFont.subtitleFontSize,
-    fontWeight: FontWeight.w400,
     color: AppColor.loginButtonColor,
   );
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/Account%20Setup/phone_number.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/Account%20Setup/account_setup_header.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/Account%20Setup/profile_photo.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/upload_cv_view.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/Account%20Setup/account_setup_header.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/Account%20Setup/phone_number.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/Account%20Setup/profile_photo.dart';
 
 class AccountSetupView extends StatefulWidget {
   const AccountSetupView({super.key});

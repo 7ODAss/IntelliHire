@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/candidate_signup_view.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../onboarding/presentation/onboarding_screen.dart';

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/account_setup_view.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/custom_button.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/custom_text_field.dart';
@@ -8,8 +7,8 @@ import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signu
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/signup_header.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/social_buttons.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/terms_checkbox.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/widget/pop_action.dart';
 
+import '../../../../../../core/utils/app_color.dart';
 import '../../../login/login_screen.dart';
 
 class CandidateSignUp extends StatefulWidget {

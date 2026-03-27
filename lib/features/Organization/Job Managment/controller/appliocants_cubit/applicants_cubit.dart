@@ -1,5 +1,5 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/features/Organization/Job%20Managment/models/applicant_model.dart';
 
 part 'applicants_state.dart';

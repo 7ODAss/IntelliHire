@@ -20,10 +20,7 @@ class TermsConditions extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Checkbox(
-              value: context
-                  .read<SignUpCubit>()
-                  .state
-                  .checkBoxTermsConditions,
+              value: state,
               onChanged: (value) {
                 context.read<SignUpCubit>().changeCheckBoxTermsConditions();
               },

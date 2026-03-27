@@ -16,11 +16,7 @@ class SignUpProcess extends StatelessWidget {
       builder: (context, state) {
         final cubit = context.read<SignUpCubit>();
         final currentScreen = state.currentScreen;
-        final List<String> titles = [
-          'Company Info',
-          'Location',
-          'Website',
-        ];
+        final List<String> titles = ['Company Info', 'Location', 'Website'];
         final List<String> subtitles = [
           'Let\'s get to know your organization better',
           'Where is your company headquarters located?',
@@ -47,7 +43,20 @@ class SignUpProcess extends StatelessWidget {
                   children: [
                     SignUpInformationCompany(
                       onNext: () {
-                        if (cubit.validateCurrentStep()) {
+                        if (cubit.industryController.text.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Please Select Your Industry',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else if (cubit.validateCurrentStep()) {
                           cubit.nextStep();
                         }
                       },
@@ -55,7 +64,36 @@ class SignUpProcess extends StatelessWidget {
 
                     SignUpLocationCompany(
                       onNext: () {
-                        if (cubit.validateCurrentStep()) {
+                        final country = cubit.countryController.text.isEmpty;
+                        final gov = cubit.govController.text.isEmpty;
+
+                        if (country) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Please Select Your Country',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else if (gov) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Please Select Your Governorate',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else if (cubit.validateCurrentStep()) {
                           cubit.nextStep();
                         }
                       },
@@ -65,7 +103,17 @@ class SignUpProcess extends StatelessWidget {
                     SignUpLinkCompany(
                       onNext: () {
                         if (cubit.validateCurrentStep()) {
-
+                            cubit.signUpCompany(
+                              email: cubit.workEmailController.text,
+                              password: cubit.workPasswordController.text,
+                              phoneNumber: cubit.workPhoneController.text,
+                              companyName: cubit.companyNameController.text,
+                              industry: cubit.state.selectedIndustry,
+                              country: cubit.state.selectedCountry,
+                              gov: cubit.state.selectedGovernorate,
+                              address: cubit.addressController.text,
+                              linkCompany: cubit.linkCompanyController.text,
+                            );
                         }
                       },
                     ),

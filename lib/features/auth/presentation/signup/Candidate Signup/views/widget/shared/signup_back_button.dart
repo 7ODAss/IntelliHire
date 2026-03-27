@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intelli_hire/core/utils/app_font.dart';
 import 'package:intelli_hire/core/utils/app_text_style.dart';
+
+import '../../../../../../../../core/utils/app_font.dart';
 
 
 class SignupBackButton extends StatelessWidget {
