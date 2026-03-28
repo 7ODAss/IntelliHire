@@ -38,7 +38,9 @@ class PostJobView extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            "Post New Job",
+                            cubit.editingJobId != null
+                                ? "Update Job"
+                                : "Post New Job",
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
                               color: AppColor.darkBlue,

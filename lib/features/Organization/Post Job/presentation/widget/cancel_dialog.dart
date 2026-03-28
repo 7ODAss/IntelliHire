@@ -70,10 +70,10 @@ class CancelDialog extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () {
+                   onPressed: () {
                       context.read<PostJobCubit>().reset();
-                      Navigator.pop(context);
-                      Navigator.pop(context);
+                      
+                      Navigator.pop(context, true); 
                     },
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.only(top: 14, bottom: 16),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/candidate_signup_view.dart';
+import 'package:intelli_hire/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:lottie/lottie.dart';
 
 class SplashView extends StatefulWidget {
@@ -30,7 +30,7 @@ class _SplashViewState extends State<SplashView> {
 
                   MaterialPageRoute(
                     builder: (_) {
-                      return CandidateSignUp();
+                      return OnboardingScreen();
                     },
                   ),
                 );

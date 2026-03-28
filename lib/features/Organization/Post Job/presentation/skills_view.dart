@@ -33,7 +33,7 @@ class SkillsView extends StatelessWidget {
                     border: Border.all(
                       color: const Color(0xffF1F1F1),
                       width: 1.5,
-                    ), 
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,7 +67,7 @@ class SkillsView extends StatelessWidget {
                                   if (cubit.addedSkills.contains(typedSkill)) {
                                     return 'This skill is already added!';
                                   }
-                                  return 'Please press (+) to add this skill';
+                                  return 'Please press (+) to add skill';
                                 }
                                 return null;
                               },

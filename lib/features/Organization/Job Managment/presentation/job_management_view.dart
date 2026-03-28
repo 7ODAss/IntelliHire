@@ -46,7 +46,7 @@ class JobManagementView extends StatelessWidget {
                         child: Column(
                           children: [
                             SvgPicture.asset(
-                              "assets/image/bottom nav icon svg/suitcase.svg",
+                              "assets/image/icon svg/suitcase.svg",
                               height: 50,
 
                               colorFilter: const ColorFilter.mode(

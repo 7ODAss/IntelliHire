@@ -53,6 +53,8 @@ dependencies:
   font_awesome_flutter: ^10.12.0
   image_picker: ^1.2.1
   lottie: ^3.3.2
+  dropdown_button2: ^3.0.0
+  device_info_plus: ^12.3.0
 
 dev_dependencies:
   flutter_test:
@@ -84,7 +86,7 @@ flutter:
     - assets/images/login/
     - assets/image/
     - assets/animations/
-    - assets/image/bottom nav icon svg/
+    - assets/image/icon svg/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

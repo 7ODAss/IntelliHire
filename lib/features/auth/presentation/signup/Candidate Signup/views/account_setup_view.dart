@@ -7,8 +7,10 @@ import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signu
 class AccountSetupView extends StatefulWidget {
   const AccountSetupView({super.key});
 
+
   @override
   State<AccountSetupView> createState() => _AccountSetupViewState();
+  
 }
 
 class _AccountSetupViewState extends State<AccountSetupView> {

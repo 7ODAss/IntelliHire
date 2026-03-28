@@ -42,7 +42,7 @@ class CustomPopupMenu extends StatelessWidget {
           value: 'edit',
           child: Row(
             children: [
-              SvgPicture.asset("assets/image/bottom nav icon svg/edit.svg"),
+              SvgPicture.asset("assets/image/icon svg/edit.svg"),
               const SizedBox(width: 12),
               Text(
                 'Edit Job',
@@ -60,7 +60,7 @@ class CustomPopupMenu extends StatelessWidget {
           textStyle: AppTextStyle.textstyle12,
           child: Row(
             children: [
-              SvgPicture.asset("assets/image/bottom nav icon svg/delete.svg"),
+              SvgPicture.asset("assets/image/icon svg/delete.svg"),
               const SizedBox(width: 15),
               Text(
                 'Delete ',

@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intelli_hire/features/auth/controller/login_cubit.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/signup_action.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/candidate_signup_provider.dart';
 import '../../../../../core/utils/app_color.dart';
 import '../../../../../core/utils/app_text_style.dart';
-import '../../signup/Candidate Signup/views/candidate_signup_view.dart';
 import '../../signup/widget/navigator_to_account.dart';
 import 'field_item.dart';
 
@@ -166,7 +166,7 @@ class CandidatePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CandidateSignUp(),
+                        builder: (context) => CandidateSignupProvider(),
                       ),
                     );
                   },

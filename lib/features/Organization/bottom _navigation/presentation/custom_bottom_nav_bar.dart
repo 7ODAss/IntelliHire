@@ -101,16 +101,14 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
                       Row(
                         children: [
                           NavItem(
-                            iconPath:
-                                "assets/image/bottom nav icon svg/home.svg",
+                            iconPath: "assets/image/icon svg/home.svg",
                             height: 26,
                             onPressed: () => _onNavItemTapped(0, state.index),
                             isActive: state.index == 0,
                           ),
                           const SizedBox(width: 32),
                           NavItem(
-                            iconPath:
-                                "assets/image/bottom nav icon svg/suitcase.svg",
+                            iconPath: "assets/image/icon svg/suitcase.svg",
                             height: 22,
                             onPressed: () => _onNavItemTapped(1, state.index),
                             isActive: state.index == 1,
@@ -120,15 +118,14 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
                       Row(
                         children: [
                           NavItem(
-                            iconPath:
-                                "assets/image/bottom nav icon svg/bell.svg",
+                            iconPath: "assets/image/icon svg/bell.svg",
                             onPressed: () => _onNavItemTapped(2, state.index),
                             isActive: state.index == 2,
                           ),
                           const SizedBox(width: 32),
                           NavItem(
                             iconPath:
-                                "assets/image/bottom nav icon svg/profile.svg",
+                                "assets/image/icon svg/profile.svg",
                             isActive: state.index == 3,
                             onPressed: () => _onNavItemTapped(3, state.index),
                           ),

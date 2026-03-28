@@ -21,16 +21,17 @@ class PostJobCubit extends Cubit<PostJobState> {
   String? selectedExperience;
   String? selectedLocation;
 
-  void showDiscardDialog(BuildContext context) {
-    showDialog(
+  void showDiscardDialog(BuildContext context) async {
+    final shouldCloseScreen = await showDialog<bool>(
       context: context,
-      builder: (BuildContext context) {
-        return BlocProvider.value(
-          value: this,
-          child: const CancelDialog(),
-        );
+      builder: (BuildContext dialogContext) {
+        return BlocProvider.value(value: this, child: const CancelDialog());
       },
     );
+
+    if (shouldCloseScreen == true && context.mounted) {
+      Navigator.pop(context);
+    }
   }
 
   void updateJobType(int index) {

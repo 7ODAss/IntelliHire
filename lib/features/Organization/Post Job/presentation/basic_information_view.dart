@@ -4,7 +4,6 @@ import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/controller/post_job_cubit.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/controller/post_job_state.dart';
-import 'package:intelli_hire/features/Organization/Post%20Job/presentation/widget/cancel_dialog.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/widget/custom_dropdown_menu.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/widget/post_job_button.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/widget/post_job_choice_chip.dart';
@@ -139,10 +138,7 @@ class BasicInformationView extends StatelessWidget {
                       PostJobButton(
                         flex: 1,
                         onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => const CancelDialog(),
-                          );
+                          cubit.showDiscardDialog(context);
                         },
                         text: 'Cancel',
                         textColor: AppColor.darkBlue,

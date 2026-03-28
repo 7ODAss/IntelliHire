@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; 
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
@@ -11,8 +11,6 @@ import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/
 import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/widget/point_text.dart';
 import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/widget/report_button.dart';
 import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/widget/status_card.dart';
-
-
 
 class CandidateReportView extends StatelessWidget {
   const CandidateReportView({super.key, required this.applicant});
@@ -63,8 +61,8 @@ class CandidateReportView extends StatelessWidget {
                           color: applicant.aiScore > 80
                               ? const Color(0xFF15803D)
                               : (applicant.aiScore > 50
-                                  ? const Color(0xFFCA8A04)
-                                  : const Color(0xFFDC2626)),
+                                    ? const Color(0xFFCA8A04)
+                                    : const Color(0xFFDC2626)),
                           width: 2,
                         ),
                       ),
@@ -74,8 +72,8 @@ class CandidateReportView extends StatelessWidget {
                           color: applicant.aiScore > 80
                               ? const Color(0xFF15803D)
                               : (applicant.aiScore > 50
-                                  ? const Color(0xFFCA8A04)
-                                  : const Color(0xFFDC2626)),
+                                    ? const Color(0xFFCA8A04)
+                                    : const Color(0xFFDC2626)),
                         ),
                       ),
                     ),
@@ -106,17 +104,17 @@ class CandidateReportView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   ReportButton(
-                    icon: "assets/image/bottom nav icon svg/message.svg",
+                    icon: "assets/image/icon svg/message.svg",
                     label: "Email",
                   ),
                   SizedBox(width: 12),
                   ReportButton(
-                    icon: "assets/image/bottom nav icon svg/phone.svg",
+                    icon: "assets/image/icon svg/phone.svg",
                     label: "Call",
                   ),
                   SizedBox(width: 12),
                   ReportButton(
-                    icon: "assets/image/bottom nav icon svg/cv.svg",
+                    icon: "assets/image/icon svg/cv.svg",
                     label: "Download CV",
                   ),
                 ],
@@ -161,7 +159,7 @@ class CandidateReportView extends StatelessWidget {
                             ),
                           ),
                           icon: SvgPicture.asset(
-                            "assets/image/bottom nav icon svg/download.svg",
+                            "assets/image/icon svg/download.svg",
                           ),
                           label: Text(
                             "PDF Report",
@@ -176,9 +174,16 @@ class CandidateReportView extends StatelessWidget {
 
                     Row(
                       children: const [
-                        Expanded(child: StatusCard(title: 'Avg. Response', value: '1.5s')),
+                        Expanded(
+                          child: StatusCard(
+                            title: 'Avg. Response',
+                            value: '1.5s',
+                          ),
+                        ),
                         SizedBox(width: 12),
-                        Expanded(child: StatusCard(title: "Accuracy", value: "94%")),
+                        Expanded(
+                          child: StatusCard(title: "Accuracy", value: "94%"),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -193,10 +198,12 @@ class CandidateReportView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    ...applicant.strengths.map((strength) => Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: PointText(text: strength),
-                        )),
+                    ...applicant.strengths.map(
+                      (strength) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: PointText(text: strength),
+                      ),
+                    ),
 
                     const SizedBox(height: 12),
 
@@ -209,10 +216,12 @@ class CandidateReportView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    ...applicant.weaknesses.map((weakness) => Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: PointText(text: weakness),
-                        )),
+                    ...applicant.weaknesses.map(
+                      (weakness) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: PointText(text: weakness),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -223,8 +232,11 @@ class CandidateReportView extends StatelessWidget {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () {
-                        context.read<ApplicantsCubit>().updateApplicantStatus(applicant.id, "Rejected");
-                        Navigator.pop(context); 
+                        context.read<ApplicantsCubit>().updateApplicantStatus(
+                          applicant.id,
+                          "Rejected",
+                        );
+                        Navigator.pop(context);
                       },
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -235,7 +247,11 @@ class CandidateReportView extends StatelessWidget {
                       ),
                       child: const Text(
                         "Reject",
-                        style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -243,8 +259,11 @@ class CandidateReportView extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        context.read<ApplicantsCubit>().updateApplicantStatus(applicant.id, "Accepted");
-                        Navigator.pop(context); 
+                        context.read<ApplicantsCubit>().updateApplicantStatus(
+                          applicant.id,
+                          "Accepted",
+                        );
+                        Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -256,7 +275,11 @@ class CandidateReportView extends StatelessWidget {
                       ),
                       child: const Text(
                         "Accept",
-                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

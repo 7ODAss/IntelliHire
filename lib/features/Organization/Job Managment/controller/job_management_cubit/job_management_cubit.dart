@@ -19,26 +19,17 @@ class JobManagementCubit extends Cubit<JobManagementState> {
     _jobs.insert(0, newJob);
     emit(JobManagementLoaded(jobsList: List.from(_jobs)));
   }
-  void deleteJob(String jobId) {
-  if (state is JobManagementLoaded) {
-    final currentState = state as JobManagementLoaded;
-    
-    final updatedList = currentState.jobsList.where((job) => job.id != jobId).toList();
-    
-    emit(JobManagementLoaded(jobsList: updatedList));
-  }
-}
 
-void editJob(JobModel updatedJob) {
-  if (state is JobManagementLoaded) {
-    final currentState = state as JobManagementLoaded;
-    
-    // بندور على الوظيفة القديمة بالـ ID ونبدلها بالجديدة
-    final updatedList = currentState.jobsList.map((job) {
-      return job.id == updatedJob.id ? updatedJob : job;
-    }).toList();
-    
-    emit(JobManagementLoaded(jobsList: updatedList));
+  void deleteJob(String jobId) {
+    _jobs.removeWhere((job) => job.id == jobId);
+    emit(JobManagementLoaded(jobsList: List.from(_jobs)));
   }
-}
+
+  void editJob(JobModel updatedJob) {
+    final index = _jobs.indexWhere((job) => job.id == updatedJob.id);
+    if (index != -1) {
+      _jobs[index] = updatedJob;
+    }
+    emit(JobManagementLoaded(jobsList: List.from(_jobs)));
+  }
 }

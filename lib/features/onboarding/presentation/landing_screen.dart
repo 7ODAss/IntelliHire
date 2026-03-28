@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/candidate_signup_view.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/candidate_signup_provider.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_company.dart';
 import '../../../core/utils/app_color.dart';
 import '../../../core/utils/app_icon.dart';
@@ -34,7 +34,7 @@ class LandingScreen extends StatelessWidget {
               opTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CandidateSignUp()),
+                  MaterialPageRoute(builder: (context) => CandidateSignupProvider()),
                 );
               },
             ),
