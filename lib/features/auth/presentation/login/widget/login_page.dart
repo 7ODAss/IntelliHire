@@ -10,6 +10,7 @@ import 'package:intelli_hire/user_screen.dart';
 
 import '../../../../../core/enums/snack_bar_type.dart';
 import '../../../../Organization/bottom _navigation/presentation/custom_bottom_nav_bar_wrapper.dart';
+import '../../../../onboarding/presentation/landing_screen.dart';
 import '../../signup/Candidate Signup/views/candidate_signup_view.dart';
 import '../../signup/widget/navigator_to_account.dart';
 import 'external_log_in.dart';
@@ -164,26 +165,16 @@ class LogInPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(
                   top: 32.0,
-                  left: 40,
                   bottom: 32.0,
                 ),
                 child: NavigatorToAccount(
                   text: 'Don\'t have account?',
-                  actionText: ' Candidate',
-                  actionText2: 'Organization',
+                  actionText: ' Sign Up',
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const CandidateSignUp(),
-                      ),
-                    );
-                  },
-                  onTap2: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SignUpCompany(),
+                        builder: (context) => const LandingScreen(),
                       ),
                     );
                   },

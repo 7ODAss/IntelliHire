@@ -18,33 +18,35 @@ class NavigatorToAccount extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
-          child: RichText(
-            text: TextSpan(
-              text: text,
-              style: AppTextStyle.signUpConditionStyle,
-              children: [
-                TextSpan(
-                  text: actionText,
-                  style: AppTextStyle.signUpConditionStyle
-                      .copyWith(
-                    color: AppColor.signUpConditionColor2,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = onTap,
-                ),
-                if (actionText2 != null)
-                  const TextSpan(text: ' or '),
+          child: Center(
+            child: RichText(
+              text: TextSpan(
+                text: text,
+                style: AppTextStyle.signUpConditionStyle,
+                children: [
                   TextSpan(
-                    text: actionText2,
+                    text: actionText,
                     style: AppTextStyle.signUpConditionStyle
                         .copyWith(
                       color: AppColor.signUpConditionColor2,
                     ),
                     recognizer: TapGestureRecognizer()
-                      ..onTap = onTap2,
-                  )
+                      ..onTap = onTap,
+                  ),
+                  if (actionText2 != null)
+                    const TextSpan(text: ' or '),
+                    TextSpan(
+                      text: actionText2,
+                      style: AppTextStyle.signUpConditionStyle
+                          .copyWith(
+                        color: AppColor.signUpConditionColor2,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = onTap2,
+                    )
 
-              ],
+                ],
+              ),
             ),
           ),
         ),
