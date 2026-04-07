@@ -5,13 +5,10 @@ import 'package:intelli_hire/core/utils/shared/context_extension.dart';
 import 'package:intelli_hire/features/auth/controller/login_cubit.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/button_action.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/remember_me.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_company.dart';
-import 'package:intelli_hire/user_screen.dart';
-
 import '../../../../../core/enums/snack_bar_type.dart';
 import '../../../../Organization/bottom _navigation/presentation/custom_bottom_nav_bar_wrapper.dart';
+import '../../../../candidate/bottom _navigation/presentation/custom_bottom_nav_bar_wrapper_candidate.dart';
 import '../../../../onboarding/presentation/landing_screen.dart';
-import '../../signup/Candidate Signup/views/candidate_signup_view.dart';
 import '../../signup/widget/navigator_to_account.dart';
 import 'external_log_in.dart';
 import 'field_item.dart';
@@ -96,7 +93,7 @@ class LogInPage extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (
-                              context) => const UserScreen(),
+                              context) => const CustomBottomNavBarWrapperCandidate(),
                         ),
                       );
                     }

@@ -7,7 +7,7 @@ class NavItem extends StatelessWidget {
     super.key,
     required this.iconPath,
     this.height,
-  required   this.onPressed,
+    required this.onPressed,
     required this.isActive,
   });
 

@@ -5,6 +5,7 @@ import 'package:intelli_hire/features/Organization/bottom%20_navigation/presenta
 import 'package:intelli_hire/features/auth/presentation/login/login_screen.dart';
 
 import 'core/service/service_locator.dart';
+import 'features/candidate/bottom _navigation/presentation/custom_bottom_nav_bar_wrapper_candidate.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,9 +20,9 @@ void main() async {
   
   Widget widget;
   if (token != null) {
-    widget = const CustomBottomNavBarWrapper();
+    widget = const CustomBottomNavBarWrapperCandidate();
   } else {
-    widget = LoginScreen();
+    widget = CustomBottomNavBarWrapperCandidate();
   }
   
   runApp(MyApp(startWidget: widget));

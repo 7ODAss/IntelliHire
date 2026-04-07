@@ -1,4 +1,3 @@
-// lib/core/widgets/auth_layout.dart
 import 'package:flutter/material.dart';
 
 class AuthLayout extends StatelessWidget {
