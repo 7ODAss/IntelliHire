@@ -258,7 +258,7 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
         );
       },
       (r) {
-        getIt<HomeCubit>().loadHomeData();
+        getIt<HomeCubitCandidate>().loadHomeData();
         getIt<AssessManageCubit>().loadAssessmentHistory();
         if (isClosed) return;
         emit(state.copyWith(sendAssessment: RequestState.success));

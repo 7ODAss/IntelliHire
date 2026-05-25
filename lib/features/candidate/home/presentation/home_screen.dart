@@ -33,9 +33,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<HomeCubit>()..loadHomeData(),
+      create: (context) => getIt<HomeCubitCandidate>()..loadHomeData(),
       child: Scaffold(
-        body: BlocBuilder<HomeCubit, HomeState>(
+        body: BlocBuilder<HomeCubitCandidate, HomeState>(
           buildWhen: (previous, current) {
             // 🌟 السطر ده هو السحر:
             // هيمنع الشاشة الرئيسية إنها تتبني لما الكيوبت يبعت Loading للتقويم
@@ -52,7 +52,7 @@ class HomeScreen extends StatelessWidget {
                       child: Center(
                         child: ErrorBanner(
                           message: state.homeSummaryMessage,
-                          onRetry: () => context.read<HomeCubit>().loadHomeData(),
+                          onRetry: () => context.read<HomeCubitCandidate>().loadHomeData(),
                         ),
                       ),
                     ),
@@ -82,7 +82,7 @@ class HomeScreen extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
                           child: (performance.totalExams != 0) ?
-                          TrainingPerformanceCard(performance: performance, cubit: context.read<HomeCubit>(), // 🌟 شغال هنا بأمان تام
+                          TrainingPerformanceCard(performance: performance, cubit: context.read<HomeCubitCandidate>(), // 🌟 شغال هنا بأمان تام
                           ) : const EmptyScreen(),
                         ),
                       ),

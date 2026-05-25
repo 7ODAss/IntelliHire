@@ -37,7 +37,7 @@ class ReviewSessionCubit extends Cubit<ReviewSessionState> {
       emit(ReviewDecisionSuccess());
 
       // 🟢 الخطوة السحرية: نطلب من الـ HomeCubit يرفرش الأرقام فوراً
-      getIt<HomeCubit>().fetchDashboard();
+      getIt<HomeOrganizationCubit>().fetchDashboard();
     });
   }
 }

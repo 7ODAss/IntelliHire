@@ -5,7 +5,7 @@ abstract class BaseNotificationDataSource {
 }
 
 /// Stub with dummy notifications — swap for real API when backend is ready.
-class NotificationRemoteDataSource implements BaseNotificationDataSource {
+class NotificationRemoteDataSourceCandidate implements BaseNotificationDataSource {
   @override
   Future<List<NotificationItemModel>> fetchNotifications() async {
     await Future.delayed(const Duration(seconds: 1));

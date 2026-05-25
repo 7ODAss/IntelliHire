@@ -14,7 +14,7 @@ import 'nav_btn.dart';
 
 class TrainingPerformanceCard extends StatelessWidget {
   final TrainingPerformance performance;
-  final HomeCubit cubit;
+  final HomeCubitCandidate cubit;
 
   const TrainingPerformanceCard({
     super.key,
@@ -94,7 +94,7 @@ class TrainingPerformanceCard extends StatelessWidget {
             ),
 
             const SizedBox(height: 10),
-            BlocSelector<HomeCubit, HomeState,WeeklyActivitySummary?>(
+            BlocSelector<HomeCubitCandidate, HomeState,WeeklyActivitySummary?>(
               selector: (state) => state.weekActivity,
               builder: (context, state) {
                 print('🔄 إعادة بناء جزء التقويم فقط');
@@ -146,7 +146,7 @@ class TrainingPerformanceCard extends StatelessWidget {
             ),
             const SizedBox(height: 14),
 
-            BlocSelector<HomeCubit, HomeState, WeeklyActivitySummary?>(
+            BlocSelector<HomeCubitCandidate, HomeState, WeeklyActivitySummary?>(
               selector: (state) => state.weekActivity,
               builder: (context, state) {
                 print('📊 إعادة بناء العواميد فقط');

@@ -6,6 +6,7 @@ import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/
 import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/controller/job_management_cubit/job_management_cubit.dart';
 import 'package:intelli_hire/features/Organization/Notification/presentation/controller/NotificationCubit/notification_cubit.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/controller/post_job_cubit.dart';
+import 'package:intelli_hire/features/Organization/Profile/presentation/controller/profile_cubit.dart';
 import 'package:intelli_hire/features/Organization/bottom%20_navigation/controller/bottom_nav_cubit.dart';
 import 'package:intelli_hire/features/Organization/bottom%20_navigation/presentation/custom_bottom_nav_bar.dart';
 
@@ -48,6 +49,7 @@ class CustomBottomNavBarWrapper extends StatelessWidget {
             BlocProvider(
               create: (context) => getIt<NotificationCubit>()..initRealTimeNotifications(token),
             ),
+            BlocProvider(create: (context) => getIt<ProfileCubit>()),
           ],
           child: const CustomBottomNavBar(),
         );

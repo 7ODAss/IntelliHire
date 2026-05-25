@@ -47,8 +47,7 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
   ]);
-
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  runApp(MyApp(startWidget: widget));
 }
 
 class MyApp extends StatefulWidget {

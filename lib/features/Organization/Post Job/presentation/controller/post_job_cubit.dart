@@ -220,7 +220,7 @@ class PostJobCubit extends Cubit<PostJobState> {
 
     result.fold((error) => emit(PostJobError(error)), (_) {
       emit(PostJobSuccess());
-      getIt<HomeCubit>().fetchDashboard();
+      getIt<HomeOrganizationCubit>().fetchDashboard();
 
       reset();
     });

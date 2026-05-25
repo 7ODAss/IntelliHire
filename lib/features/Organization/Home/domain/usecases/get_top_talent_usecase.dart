@@ -3,7 +3,7 @@ import 'package:intelli_hire/core/models/applicant_model.dart';
 import 'package:intelli_hire/features/Organization/Home/domain/repos/home_repo.dart';
 
 class GetTopTalentUseCase {
-  final HomeRepo repository;
+  final HomeRepoOrganization repository;
 
   GetTopTalentUseCase(this.repository);
 

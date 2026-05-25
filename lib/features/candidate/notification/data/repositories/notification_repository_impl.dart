@@ -4,9 +4,9 @@ import '../../domain/entities/notification_item.dart';
 import '../../domain/repositories/base_notification_repository.dart';
 import '../datasources/notification_remote_datasource.dart';
 
-class NotificationRepositoryImpl implements BaseNotificationRepository {
+class NotificationRepositoryImplCandidate implements BaseNotificationRepository {
   final BaseNotificationDataSource dataSource;
-  NotificationRepositoryImpl(this.dataSource);
+  NotificationRepositoryImplCandidate(this.dataSource);
 
   @override
   Future<Either<Failure, List<NotificationItem>>> fetchNotifications() async {

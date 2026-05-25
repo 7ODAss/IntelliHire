@@ -3,7 +3,7 @@ import 'package:intelli_hire/features/Organization/Notification/domain/Entities/
 import '../DataSources/notification_remote_data_source.dart';
 
 class NotificationRepositoryImpl implements NotificationRepository {
-  final NotificationRemoteDataSource remoteDataSource;
+  final NotificationRemoteDataSourceOrganization remoteDataSource;
   NotificationRepositoryImpl(this.remoteDataSource);
 
   @override

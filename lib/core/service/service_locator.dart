@@ -1,16 +1,64 @@
 import 'package:get_it/get_it.dart';
+import 'package:intelli_hire/features/candidate/home/data/datasources/home_remote_datasource.dart';
+import 'package:intelli_hire/features/candidate/home/domain/repositories/base_home_repository.dart';
+import 'package:intelli_hire/features/candidate/home/domain/usecases/get_home_summary_usecase.dart';
+
+// ── Organization / existing ──────────────────────────────────────────────────
+import '../../features/Organization/Home/data/data_source/home_remote_data_source.dart';
+import '../../features/Organization/Home/data/repos_impl/home_repository_impl.dart';
+import '../../features/Organization/Home/domain/repos/home_repo.dart';
+import '../../features/Organization/Home/domain/usecases/get_home_data_usecase.dart';
+import '../../features/Organization/Home/domain/usecases/get_top_talent_usecase.dart';
+import '../../features/Organization/Home/domain/usecases/submit_decision_usecase.dart';
+import '../../features/Organization/Home/presentation/controller/home cubit/home_cubit_cubit.dart';
+import '../../features/Organization/Home/presentation/controller/review session cubit/cubit/review_session_cubit.dart';
+import '../../features/Organization/Profile/data/datasource/user_profile_datasource.dart';
+import '../../features/Organization/Profile/data/repo/user_profile_repo.dart';
+import '../../features/Organization/Profile/domain/repo/base_user_profile_repo.dart';
+import '../../features/Organization/Profile/domain/usecase/user_profile_log_out_usecase.dart';
+import '../../features/Organization/Profile/presentation/controller/profile_cubit.dart';
+
+// ── Candidate: Assess Manage ─────────────────────────────────────────────────
+import '../../features/candidate/assess manage/data/datasources/assess_manage_remote_datasource.dart';
+import '../../features/candidate/assess manage/data/repositories/assess_manage_repository_impl.dart';
+import '../../features/candidate/assess manage/domain/repositories/base_assess_manage_repository.dart';
+import '../../features/candidate/assess manage/domain/usecases/fetch_assessment_history_usecase.dart';
+import '../../features/candidate/assess manage/domain/usecases/fetch_performance_report_usecase.dart';
+import '../../features/candidate/assess manage/presentation/controller/assess_manage_cubit.dart';
+
+// ── Candidate: New Assessment ────────────────────────────────────────────────
+import '../../features/candidate/home/data/repositories/home_repository_impl.dart';
+import '../../features/candidate/home/domain/usecases/get_next_week_usecase.dart';
+import '../../features/candidate/home/domain/usecases/get_prev_week_usecase.dart';
+import '../../features/candidate/home/domain/usecases/reset_week_usecase.dart';
+import '../../features/candidate/home/presentation/controller/home_cubit.dart';
+import '../../features/candidate/new assess/data/datasources/new_assess_remote_datasource.dart';
+import '../../features/candidate/new assess/data/repositories/new_assess_repository_impl.dart';
+import '../../features/candidate/new assess/domain/repositories/base_new_assess_repository.dart';
+import '../../features/candidate/new assess/domain/usecases/fetch_assessment_questions_usecase.dart';
+import '../../features/candidate/new assess/domain/usecases/send_assessment_usecase.dart';
+import '../../features/candidate/new assess/domain/usecases/submit_interview_usecase.dart';
+import '../../features/candidate/new assess/presentation/controller/assessment_session_cubit.dart';
+// ── Candidate: Notifications ─────────────────────────────────────────────────
+
+// ── Candidate: Profile ───────────────────────────────────────────────────────
+import '../../features/candidate/notification/data/datasources/notification_remote_datasource.dart';
+import '../../features/candidate/notification/data/repositories/notification_repository_impl.dart';
+import '../../features/candidate/profile/data/datasources/candidate_profile_remote_datasource.dart';
+import '../../features/candidate/profile/data/repositories/candidate_profile_repository_impl.dart';
+import '../../features/candidate/profile/domain/repositories/base_candidate_profile_repository.dart';
+import '../../features/candidate/profile/domain/usecases/change_career_details_usecase.dart';
+import '../../features/candidate/profile/domain/usecases/change_password_candidate_usecase.dart';
+import '../../features/candidate/profile/domain/usecases/delete_account_candidate_usecase.dart';
+import '../../features/candidate/profile/domain/usecases/profile_usecases.dart';
+import '../../features/candidate/profile/domain/usecases/log_out_user_candidate_profile_usecase.dart';
+import '../../features/candidate/profile/presentation/controller/candidate_profile_cubit.dart';
+
+///////////////////////////OMAR//////////////////////////////////////////////////
+
 import 'package:intelli_hire/core/service/api_service.dart';
 import 'package:intelli_hire/core/service/notification_hub_service.dart';
 
-// ================= Home Imports =================
-import 'package:intelli_hire/features/Organization/Home/data/data_source/home_remote_data_source.dart' hide HomeRemoteDataSource;
-import 'package:intelli_hire/features/Organization/Home/data/repos_impl/home_repository_impl.dart' hide HomeRepositoryImpl;
-import 'package:intelli_hire/features/Organization/Home/domain/repos/home_repo.dart';
-import 'package:intelli_hire/features/Organization/Home/domain/usecases/get_home_data_usecase.dart';
-import 'package:intelli_hire/features/Organization/Home/domain/usecases/submit_decision_usecase.dart';
-import 'package:intelli_hire/features/Organization/Home/domain/usecases/get_top_talent_usecase.dart';
-import 'package:intelli_hire/features/Organization/Home/presentation/controller/home%20cubit/home_cubit_cubit.dart' hide HomeCubit;
-import 'package:intelli_hire/features/Organization/Home/presentation/controller/review%20session%20cubit/cubit/review_session_cubit.dart';
 
 // ================= Job Management & Applicants Imports =================
 import 'package:intelli_hire/features/Organization/Job%20Managment/data/data%20source/applicants_remote_data_source.dart';
@@ -28,6 +76,14 @@ import 'package:intelli_hire/features/Organization/Job%20Managment/domain/usecas
 import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/controller/appliocants_cubit/applicants_cubit.dart';
 import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/controller/job_management_cubit/job_management_cubit.dart';
 
+// ================= Notification Imports =================
+import 'package:intelli_hire/features/Organization/Notification/data/DataSources/notification_remote_data_source.dart';
+import 'package:intelli_hire/features/Organization/Notification/data/repos_impl/notification_repository_impl.dart';
+import 'package:intelli_hire/features/Organization/Notification/domain/Repos/notfication_repo.dart';
+import 'package:intelli_hire/features/Organization/Notification/domain/Usecases/get_notifications_usecase.dart';
+import 'package:intelli_hire/features/Organization/Notification/domain/Usecases/mark_notification_as_read_usecase.dart';
+import 'package:intelli_hire/features/Organization/Notification/presentation/controller/NotificationCubit/notification_cubit.dart';
+
 // ================= Post Job Imports =================
 import 'package:intelli_hire/features/Organization/Post%20Job/data/data%20source/post_job_remote_data_source.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/data/repos%20impls/post_job_repository_impl.dart';
@@ -37,62 +93,11 @@ import 'package:intelli_hire/features/Organization/Post%20Job/domain/usecases/ge
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/controller/post_job_cubit.dart';
 import 'package:intelli_hire/features/auth/controller/external%20login/external_login_cubit.dart';
 
-// ── Organization / existing ──────────────────────────────────────────────────
-import '../../features/Organization/Notification/data/DataSources/notification_remote_data_source.dart';
-import '../../features/Organization/Notification/data/repos_impl/notification_repository_impl.dart';
-import '../../features/Organization/Notification/domain/Repos/notfication_repo.dart';
-import '../../features/Organization/Notification/domain/Usecases/get_notifications_usecase.dart';
-import '../../features/Organization/Notification/domain/Usecases/mark_notification_as_read_usecase.dart';
-import '../../features/Organization/Notification/presentation/controller/NotificationCubit/notification_cubit.dart';
-import '../../features/Organization/Profile/data/datasource/user_profile_datasource.dart';
-import '../../features/Organization/Profile/data/repo/user_profile_repo.dart';
-import '../../features/Organization/Profile/domain/repo/base_user_profile_repo.dart';
-import '../../features/Organization/Profile/domain/usecase/user_profile_log_out_usecase.dart';
-import '../../features/Organization/Profile/presentation/controller/profile_cubit.dart';
-
-// ── Candidate: Assess Manage ─────────────────────────────────────────────────
-import '../../features/candidate/assess manage/data/datasources/assess_manage_remote_datasource.dart';
-import '../../features/candidate/assess manage/data/repositories/assess_manage_repository_impl.dart';
-import '../../features/candidate/assess manage/domain/repositories/base_assess_manage_repository.dart';
-import '../../features/candidate/assess manage/domain/usecases/fetch_assessment_history_usecase.dart';
-import '../../features/candidate/assess manage/domain/usecases/fetch_performance_report_usecase.dart';
-import '../../features/candidate/assess manage/presentation/controller/assess_manage_cubit.dart';
-
-// ── Candidate: New Assessment ────────────────────────────────────────────────
-import '../../features/candidate/home/domain/usecases/get_next_week_usecase.dart';
-import '../../features/candidate/home/domain/usecases/get_prev_week_usecase.dart';
-import '../../features/candidate/home/domain/usecases/reset_week_usecase.dart';
-import '../../features/candidate/new assess/data/datasources/new_assess_remote_datasource.dart';
-import '../../features/candidate/new assess/data/repositories/new_assess_repository_impl.dart';
-import '../../features/candidate/new assess/domain/repositories/base_new_assess_repository.dart';
-import '../../features/candidate/new assess/domain/usecases/fetch_assessment_questions_usecase.dart';
-import '../../features/candidate/new assess/domain/usecases/send_assessment_usecase.dart';
-import '../../features/candidate/new assess/domain/usecases/submit_interview_usecase.dart';
-import '../../features/candidate/new assess/presentation/controller/assessment_session_cubit.dart';
-
-// ── Candidate: Home ──────────────────────────────────────────────────────────
-import '../../features/candidate/home/data/datasources/home_remote_datasource.dart';
-import '../../features/candidate/home/data/repositories/home_repository_impl.dart';
-import '../../features/candidate/home/domain/repositories/base_home_repository.dart';
-import '../../features/candidate/home/domain/usecases/get_home_summary_usecase.dart';
-import '../../features/candidate/home/presentation/controller/home_cubit.dart';
-
-
-// ── Candidate: Profile ───────────────────────────────────────────────────────
-import '../../features/candidate/profile/data/datasources/candidate_profile_remote_datasource.dart';
-import '../../features/candidate/profile/data/repositories/candidate_profile_repository_impl.dart';
-import '../../features/candidate/profile/domain/repositories/base_candidate_profile_repository.dart';
-import '../../features/candidate/profile/domain/usecases/change_career_details_usecase.dart';
-import '../../features/candidate/profile/domain/usecases/change_password_candidate_usecase.dart';
-import '../../features/candidate/profile/domain/usecases/delete_account_candidate_usecase.dart';
-import '../../features/candidate/profile/domain/usecases/profile_usecases.dart';
-import '../../features/candidate/profile/domain/usecases/log_out_user_candidate_profile_usecase.dart';
-import '../../features/candidate/profile/presentation/controller/candidate_profile_cubit.dart';
 
 final getIt = GetIt.instance;
 
 class ServiceLocator {
-  void init() {
+  void init() async{
     // ────────────────────────────────────────────────────────────────────────
     // Organization (existing)
     // ────────────────────────────────────────────────────────────────────────
@@ -145,6 +150,10 @@ class ServiceLocator {
     );
 
     // ────────────────────────────────────────────────────────────────────────
+    // Candidate: Notifications
+    // ────────────────────────────────────────────────────────────────────────
+
+    // ────────────────────────────────────────────────────────────────────────
     // Candidate: Home
     // ────────────────────────────────────────────────────────────────────────
     getIt.registerLazySingleton<BaseHomeDataSource>(
@@ -157,7 +166,8 @@ class ServiceLocator {
     getIt.registerLazySingleton(() => GetNextWeekUseCase(getIt()));
     getIt.registerLazySingleton(() => GetPrevWeekUseCase(getIt()));
     getIt.registerLazySingleton(() => ResetWeekUseCase(getIt()));
-    getIt.registerLazySingleton(() => HomeCubit(getIt(),getIt(),getIt(),getIt()));
+    getIt.registerLazySingleton<HomeCubitCandidate>(() => HomeCubitCandidate(getIt(),getIt(),getIt(),getIt()));
+
 
     // ────────────────────────────────────────────────────────────────────────
     // Candidate: Profile
@@ -176,7 +186,7 @@ class ServiceLocator {
     getIt.registerFactory(() => CandidateProfileCubit(getIt(), getIt(), getIt(), getIt(), getIt()),
     );
 
-    ///////////////////////////////
+    ////////////////////       OMAR     //////////////////////////////////////////////////
     // 0. Core Services
     if (!getIt.isRegistered<ApiService>()) {
       getIt.registerLazySingleton<ApiService>(() => ApiService());
@@ -189,6 +199,18 @@ class ServiceLocator {
     }
 
     getIt.registerFactory<ExternalLoginCubit>(() => ExternalLoginCubit());
+
+    // ================= 1. Home Dashboard =================
+    getIt.registerLazySingleton<HomeRemoteDataSourceOrganization>( //edit this HomeRemoteDataSourceOrganization
+          () => HomeRemoteDataSourceImpl(getIt()),
+    );
+    getIt.registerLazySingleton<HomeRepoOrganization>(() => HomeRepositoryImplOrganization(getIt())); //edit this HomeRepositoryImplOrganization
+    getIt.registerLazySingleton<GetDashboardUseCase>(
+          () => GetDashboardUseCase(getIt()),
+    );
+
+    // 🟢 تم التغيير من registerFactory إلى registerLazySingleton لضمان تحديث الواجهة من أي مكان
+    getIt.registerLazySingleton<HomeOrganizationCubit>(() => HomeOrganizationCubit(getIt()));//edit this
 
     // ================= 2. Review Session & Decisions =================
     getIt.registerLazySingleton(() => SubmitDecisionUseCase(getIt()));
@@ -250,12 +272,12 @@ class ServiceLocator {
     ));
 
     // ================= 5. Notifications =================
-    getIt.registerLazySingleton<NotificationRemoteDataSource>(
-          () => NotificationRemoteDataSourceImpl(getIt()),
+    getIt.registerLazySingleton<NotificationRemoteDataSourceOrganization>(
+          () => NotificationRemoteDataSourceImplOrganization(getIt()),
     );
 
     getIt.registerLazySingleton<NotificationRepository>(
-          () => NotificationRepositoryImpl(getIt<NotificationRemoteDataSource>()),
+          () => NotificationRepositoryImpl(getIt<NotificationRemoteDataSourceOrganization>()),
     );
 
     getIt.registerLazySingleton(

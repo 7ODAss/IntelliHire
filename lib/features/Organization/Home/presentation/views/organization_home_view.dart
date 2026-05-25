@@ -20,17 +20,17 @@ class OrganizationHomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => getIt<HomeCubit>()..fetchDashboard()),
+        BlocProvider(create: (context) => getIt<HomeOrganizationCubit>()..fetchDashboard()),
         BlocProvider(create: (context) => getIt<JobManagementCubit>()),
       ],
       child: Scaffold(
         body: BlocListener<JobManagementCubit, JobManagementState>(
           listener: (context, state) {
             if (state is JobDeletedSuccess) {
-              context.read<HomeCubit>().fetchDashboard();
+              context.read<HomeOrganizationCubit>().fetchDashboard();
             }
           },
-          child: BlocBuilder<HomeCubit, HomeState>(
+          child: BlocBuilder<HomeOrganizationCubit, HomeState>(
             builder: (context, state) {
               if (state is HomeError) {
                 return Center(
@@ -41,7 +41,7 @@ class OrganizationHomeView extends StatelessWidget {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () =>
-                            context.read<HomeCubit>().fetchDashboard(),
+                            context.read<HomeOrganizationCubit>().fetchDashboard(),
                         child: const Text("Retry"),
                       ),
                     ],

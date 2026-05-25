@@ -5,6 +5,7 @@ import 'package:intelli_hire/features/candidate/profile/presentation/profile_scr
 
 import '../../../../core/helpers/cache_helper.dart';
 import '../../../../core/utils/app_color.dart';
+import '../../../../test.dart';
 import '../../../Organization/bottom _navigation/presentation/widget/nav_item.dart';
 import '../../assess manage/presentation/assess_manage_screen.dart';
 import '../../home/presentation/home_screen.dart';
@@ -34,7 +35,8 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
   final List<Widget> rootScreens = [
     const HomeScreen(),
     const AssessManageScreen(),
-    const NotificationScreen(),
+    //const NotificationScreen(),
+    const Test(),
     const ProfileScreenCandidate(),
   ];
 
@@ -109,7 +111,7 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
                         children: [
                           NavItem(
                             iconPath:
-                                "assets/image/bottom nav icon svg/home.svg",
+                                "assets/image/icon svg/home.svg",
                             height: 26,
                             onPressed: () => _onNavItemTapped(0, state.index),
                             isActive: state.index == 0,
@@ -117,7 +119,7 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
                           const SizedBox(width: 32),
                           NavItem(
                             iconPath:
-                                "assets/image/bottom nav icon svg/electric.svg",
+                                "assets/image/icon svg/electric.svg",
                             height: 22,
                             onPressed: () => _onNavItemTapped(1, state.index),
                             isActive: state.index == 1,
@@ -128,14 +130,14 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
                         children: [
                           NavItem(
                             iconPath:
-                                "assets/image/bottom nav icon svg/bell.svg",
+                                "assets/image/icon svg/bell.svg",
                             onPressed: () => _onNavItemTapped(2, state.index),
                             isActive: state.index == 2,
                           ),
                           const SizedBox(width: 32),
                           NavItem(
                             iconPath:
-                                "assets/image/bottom nav icon svg/profile.svg",
+                                "assets/image/icon svg/profile.svg",
                             isActive: state.index == 3,
                             onPressed: () => _onNavItemTapped(3, state.index),
                           ),

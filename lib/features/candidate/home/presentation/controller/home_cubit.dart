@@ -12,13 +12,13 @@ import '../../domain/usecases/reset_week_usecase.dart';
 
 part 'home_state.dart';
 
-class HomeCubit extends Cubit<HomeState> {
+class HomeCubitCandidate extends Cubit<HomeState> {
   final GetHomeSummaryUseCase getHomeSummaryUseCase;
   final GetNextWeekUseCase getNextWeekUseCase;
   final GetPrevWeekUseCase getPrevWeekUseCase;
   final ResetWeekUseCase resetWeekUseCase;
 
-  HomeCubit(
+  HomeCubitCandidate(
     this.getHomeSummaryUseCase,
     this.getNextWeekUseCase,
     this.getPrevWeekUseCase,

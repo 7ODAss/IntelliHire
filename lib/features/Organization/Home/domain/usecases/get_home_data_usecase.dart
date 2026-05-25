@@ -4,7 +4,7 @@ import 'package:intelli_hire/features/Organization/Home/domain/repos/home_repo.d
 
 
 class GetDashboardUseCase {
-  final HomeRepo repository;
+  final HomeRepoOrganization repository;
 
   GetDashboardUseCase(this.repository);
 

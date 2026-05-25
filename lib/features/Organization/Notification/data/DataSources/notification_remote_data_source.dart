@@ -1,15 +1,15 @@
 import 'package:intelli_hire/core/service/api_service.dart';
 import '../Models/notification_model.dart';
 
-abstract class NotificationRemoteDataSource {
+abstract class NotificationRemoteDataSourceOrganization {
   Future<List<NotificationModel>> getNotifications();
   Future<void> markAsRead(String notificationId); 
 }
 
-class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
+class NotificationRemoteDataSourceImplOrganization implements NotificationRemoteDataSourceOrganization {
   final ApiService apiService; 
 
-  NotificationRemoteDataSourceImpl(this.apiService);
+  NotificationRemoteDataSourceImplOrganization(this.apiService);
 
   @override
   Future<List<NotificationModel>> getNotifications() async {

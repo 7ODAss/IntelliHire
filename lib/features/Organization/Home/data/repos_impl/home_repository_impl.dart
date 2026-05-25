@@ -7,10 +7,10 @@ import 'package:intelli_hire/features/Organization/Home/domain/repos/home_repo.d
 
 import '../models/home_model.dart';
 
-class HomeRepositoryImpl implements HomeRepo {
-  final HomeRemoteDataSource remoteDataSource;
+class HomeRepositoryImplOrganization implements HomeRepoOrganization {
+  final HomeRemoteDataSourceOrganization remoteDataSource;
 
-  HomeRepositoryImpl(this.remoteDataSource);
+  HomeRepositoryImplOrganization(this.remoteDataSource);
 
   @override
   Future<Either<String, HomeEntity>> getDashboardStats() async {

@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:intelli_hire/features/Organization/Home/domain/repos/home_repo.dart';
 
 class SubmitDecisionUseCase {
-  final HomeRepo homeRepo;
+  final HomeRepoOrganization homeRepo;
 
   SubmitDecisionUseCase(this.homeRepo);
 
