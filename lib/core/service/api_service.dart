@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
+import 'storage_service.dart'; // تأكد من استيراد ملف الستوريدج
 
 class ApiService {
   late Dio dio;
+  final String baseUrl = "https://intellhire.runasp.net/";
 
-  final String baseUrl = "http://10.0.2.2:5058/";
   ApiService() {
     dio = Dio(
       BaseOptions(
@@ -13,7 +14,22 @@ class ApiService {
         receiveDataWhenStatusError: true,
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      ),
+    );
+
+    // 🟢 إضافة التوكن تلقائياً من الـ Storage قبل كل طلب
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final String? token = await StorageService.getToken();
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          return handler.next(options);
+        },
       ),
     );
 
@@ -27,19 +43,10 @@ class ApiService {
     );
   }
 
-  Future<Response> post({required String endPoint, dynamic data}) async {
-    return await dio.post(endPoint, data: data);
-  }
-
-  Future<Response> get({required String endPoint}) async {
-    return await dio.get(endPoint);
-  }
-
-  Future<Response> put({required String endPoint, dynamic data}) async {
-    return await dio.put(endPoint, data: data);
-  }
-
-  Future<Response> delete({required String endPoint}) async {
-    return await dio.delete(endPoint);
-  }
+  Future<Response> get({required String endPoint}) async => await dio.get(endPoint);
+  Future<Response> post({required String endPoint, dynamic data}) async => await dio.post(endPoint, data: data);
+  Future<Response> put({required String endPoint, dynamic data}) async => await dio.put(endPoint, data: data);
+  Future<Response> delete({required String endPoint}) async => await dio.delete(endPoint);
+  Future<Response> patch({required String endPoint, dynamic data}) async => await dio.patch(endPoint, data: data);
+  Future<Response> download({required String endPoint, required String savePath}) async => await dio.download(endPoint, savePath);
 }

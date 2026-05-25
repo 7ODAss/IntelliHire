@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intelli_hire/features/auth/controller/candidate%20register%20cubit/candidate_register_cubit.dart';
-import 'package:intelli_hire/features/auth/controller/candidate%20register%20cubit/candidate_register_state.dart';
+import 'package:intelli_hire/features/auth/controller/profile%20setup%20cubit/profile_setup_cubit.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/custom_button.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/custom_text_field.dart';
 
@@ -16,12 +15,14 @@ class PhoneNumber extends StatefulWidget {
 class _PhoneNumberState extends State<PhoneNumber> {
   final _phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
-    final cubit = context.read<CandidateRegisterCubit>();
-    if (cubit.savedPhone != null) {
-      _phoneController.text = cubit.savedPhone!;
+    // لود الرقم لو كان اليوزر دخله قبل كدة ورجع للخطوة دي تاني
+    final profileCubit = context.read<ProfileSetupCubit>();
+    if (profileCubit.phoneNumber != null) {
+      _phoneController.text = profileCubit.phoneNumber!;
     }
   }
 
@@ -33,69 +34,46 @@ class _PhoneNumberState extends State<PhoneNumber> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                CustomTextField(
-                  hint: "Phone Number",
-                  keyboardType: TextInputType.phone,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Phone Number is required";
-                    }
-                    if (value.length < 10 || value.length > 15) {
-                      return 'Invalid phone number length';
-                    }
-                    return null;
-                  },
-                  controller: _phoneController,
-                ),
-                const SizedBox(height: 48),
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              CustomTextField(
+                hint: "Phone Number",
+                keyboardType: TextInputType.phone,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Phone Number is required";
+                  }
+                  if (value.length < 10 || value.length > 15) {
+                    return 'Invalid phone number length';
+                  }
+                  return null;
+                },
+                controller: _phoneController,
+              ),
+              const SizedBox(height: 48),
 
-                BlocConsumer<CandidateRegisterCubit, CandidateRegisterState>(
-                  listener: (context, state) {
-                    if (state is CandidateRegisterSuccess) {
-                      widget.onPressed();
-                    } else if (state is CandidateRegisterFailure) {
-                      if (state.isStep1Error) {
-                        if (Navigator.canPop(context)) {
-                          Navigator.pop(context);
-                        }
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(state.errorMsg),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
-                    }
-                  },
-                  builder: (context, state) {
-                    return CustomButton(
-                      onPressed: state is CandidateRegisterLoading
-                          ? null
-                          : () {
-                              if (_formKey.currentState!.validate()) {
-                                context
-                                    .read<CandidateRegisterCubit>()
-                                    .registerCandidate(_phoneController.text);
-                              }
-                            },
-                      title: state is CandidateRegisterLoading
-                          ? "Registering..."
-                          : "Next",
+              // زرار الانتقال للخطوة التالية
+              CustomButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    // 1. حفظ الرقم في الـ Cubit المسؤول عن تجهيز البروفايل
+                    context.read<ProfileSetupCubit>().setPhoneNumber(
+                      _phoneController.text,
                     );
-                  },
-                ),
-              ],
-            ),
+
+                    // 2. استدعاء الدالة اللي هتحرك الـ IndexedStack أو الـ Switch للخطوة الجاية (رفع الـ CV)
+                    widget.onPressed();
+                  }
+                },
+                title: "Next",
+              ),
+            ],
           ),
         ),
       ),

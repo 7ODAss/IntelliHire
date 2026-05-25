@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intelli_hire/features/auth/controller/external%20login/external_login_cubit.dart';
 
 import '../../../../../../../../core/utils/app_text_style.dart';
 
 class SocialButtons extends StatelessWidget {
-  const SocialButtons({super.key});
+  const SocialButtons({super.key, required this.type});
+  final int type;
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +14,12 @@ class SocialButtons extends StatelessWidget {
       children: [
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              context.read<ExternalLoginCubit>().loginWithProvider(
+                provider: "google",
+                type: type.toString(),
+              );
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
@@ -32,7 +40,12 @@ class SocialButtons extends StatelessWidget {
 
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              context.read<ExternalLoginCubit>().loginWithProvider(
+                provider: "microsoft",
+                type: type.toString(),
+              );
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
@@ -40,13 +53,15 @@ class SocialButtons extends StatelessWidget {
               ),
             ),
             icon: Image.asset(
-              "assets/image/linkedin_icon.png",
+              "assets/image/logos_microsoft-icon.png",
               width: 20,
               height: 20,
             ),
             label: Text(
-              "LinkedIn",
-              style: AppTextStyle.textstyle14.copyWith(color: Color(0xff0F172A)),
+              "Microsoft",
+              style: AppTextStyle.textstyle14.copyWith(
+                color: Color(0xff0F172A),
+              ),
             ),
           ),
         ),

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
-import 'package:intelli_hire/features/Organization/Job%20Managment/controller/job_management_cubit/job_management_cubit.dart';
-import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/job_management_view.dart';
+import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/controller/job_management_cubit/job_management_cubit.dart';
+import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/views/job_management_view.dart';
 import 'package:intelli_hire/features/Organization/Notification/presentation/notifications_view.dart';
-import 'package:intelli_hire/features/Organization/Home/presentation/organization_home_view.dart';
+import 'package:intelli_hire/features/Organization/Home/presentation/views/organization_home_view.dart';
 import 'package:intelli_hire/features/Organization/Profile/presentation/profile_view.dart';
-import 'package:intelli_hire/features/Organization/Post%20Job/controller/post_job_cubit.dart';
+import 'package:intelli_hire/features/Organization/Post%20Job/presentation/controller/post_job_cubit.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/post_job_view.dart';
 import 'package:intelli_hire/features/Organization/bottom%20_navigation/controller/bottom_nav_cubit.dart';
 import 'package:intelli_hire/features/Organization/bottom%20_navigation/presentation/widget/nav_item.dart';
@@ -76,6 +76,10 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
                               BlocProvider.value(
                                 value: context.read<JobManagementCubit>(),
                               ),
+                              // 🔴 ضفنا ده هنا عشان الـ PostJobView تعرف تنادي دالة الـ changeIndex(0)
+                              BlocProvider.value(
+                                value: context.read<BottomNavCubit>(),
+                              ),
                             ],
                             child: const PostJobView(),
                           ),
@@ -124,8 +128,7 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
                           ),
                           const SizedBox(width: 32),
                           NavItem(
-                            iconPath:
-                                "assets/image/icon svg/profile.svg",
+                            iconPath: "assets/image/icon svg/profile.svg",
                             isActive: state.index == 3,
                             onPressed: () => _onNavItemTapped(3, state.index),
                           ),

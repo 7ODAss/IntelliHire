@@ -11,95 +11,101 @@ class NotificationCard extends StatelessWidget {
     required this.title,
     required this.time,
     required this.description,
+    this.onTap, // 🔴 1. ضفنا دي
   });
 
   final bool isUnread;
   final String title;
   final String time;
   final String description;
+  final VoidCallback? onTap; // 🔴 2. وعرفناها هنا
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isUnread
-            ? Color.alphaBlend(
-                const Color(0xFFB9C2FD).withValues(alpha: 0.3),
-                Colors.white,
-              )
-            : Colors.white,
+    return GestureDetector(
+      onTap: onTap, // 🔴 3. شغلنا الضغطة هنا
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isUnread
+              ? Color.alphaBlend(
+                  const Color(0xFFB9C2FD).withValues(alpha: 0.3),
+                  Colors.white,
+                )
+              : Colors.white,
 
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Color(0XFFAFAFAF), width: 0.5),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0XFFAFAFAF), width: 0.5),
 
-        boxShadow: [
-          BoxShadow(
-            color: Color(0Xff3d3d3d).withValues(alpha: 0.25),
-            blurRadius: 5,
-            spreadRadius: 0,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isUnread
-                  ? Color.alphaBlend(
-                      const Color(0XFF8499FB).withValues(alpha: 0.3),
-                      Colors.white,
-                    )
-                  : const Color(0xFFF3F4F6),
-              shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0Xff3d3d3d).withValues(alpha: 0.25),
+              blurRadius: 5,
+              spreadRadius: 0,
+              offset: const Offset(0, 1),
             ),
-            child: SvgPicture.asset(
-              "assets/image/icon svg/bell.svg",
-              colorFilter: ColorFilter.mode(
-                isUnread ? AppColor.primary : const Color(0xFF9CA3AF),
-                BlendMode.srcIn,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      title,
-                      style: AppTextStyle.textstyle14.copyWith(
-                        fontFamily: AppFont.interBold,
-                        fontWeight: FontWeight.w700,
-                        color: AppColor.darkBlue,
-                      ),
-                    ),
-                    Text(
-                      time,
-                      style: AppTextStyle.textstyle12.copyWith(
-                        color: Color(0XFF898989),
-                        fontSize: 10,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: AppTextStyle.textstyle12.copyWith(
-                    color: Color(0XFF475569),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
+        child: Row(
+           // ... باقي الكود بتاعك زي ما هو بدون أي تغيير ...
+           crossAxisAlignment: CrossAxisAlignment.center,
+           children: [
+             Container(
+               padding: const EdgeInsets.all(16),
+               decoration: BoxDecoration(
+                 color: isUnread
+                     ? Color.alphaBlend(
+                         const Color(0XFF8499FB).withValues(alpha: 0.3),
+                         Colors.white,
+                       )
+                     : const Color(0xFFF3F4F6),
+                 shape: BoxShape.circle,
+               ),
+               child: SvgPicture.asset(
+                 "assets/image/icon svg/bell.svg",
+                 colorFilter: ColorFilter.mode(
+                   isUnread ? AppColor.primary : const Color(0xFF9CA3AF),
+                   BlendMode.srcIn,
+                 ),
+               ),
+             ),
+             const SizedBox(width: 12),
+             Expanded(
+               child: Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 children: [
+                   Row(
+                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     children: [
+                       Text(
+                         title,
+                         style: AppTextStyle.textstyle14.copyWith(
+                           fontFamily: AppFont.interBold,
+                           fontWeight: FontWeight.w700,
+                           color: AppColor.darkBlue,
+                         ),
+                       ),
+                       Text(
+                         time,
+                         style: AppTextStyle.textstyle12.copyWith(
+                           color: const Color(0XFF898989),
+                           fontSize: 10,
+                         ),
+                       ),
+                     ],
+                   ),
+                   const SizedBox(height: 4),
+                   Text(
+                     description,
+                     style: AppTextStyle.textstyle12.copyWith(
+                       color: const Color(0XFF475569),
+                     ),
+                   ),
+                 ],
+               ),
+             ),
+           ],
+        ),
       ),
     );
   }

@@ -8,32 +8,38 @@ import 'package:intelli_hire/features/auth/controller/profile%20setup%20cubit/pr
 
 class ProfileSetupCubit extends Cubit<ProfileSetupState> {
   final ApiService apiService;
+  final String userToken;
 
-  ProfileSetupCubit(this.apiService) : super(ProfileInitial());
+  ProfileSetupCubit(this.apiService, {required this.userToken})
+    : super(ProfileInitial());
 
   File? selectedCv;
   File? selectedImage;
+  String? phoneNumber;
   final ImagePicker _imagePicker = ImagePicker();
   bool _isPickerActive = false;
   bool _isCvPickerActive = false;
 
+  void setPhoneNumber(String phone) {
+    phoneNumber = phone;
+  }
+
   Future<void> pickCv() async {
     if (_isCvPickerActive) return;
     _isCvPickerActive = true;
-
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf', 'doc', 'docx'],
       );
 
-      if (result != null) {
+      if (result != null && result.files.single.path != null) {
         File file = File(result.files.single.path!);
         if (file.lengthSync() <= 5 * 1024 * 1024) {
           selectedCv = file;
           emit(ProfileFilePicked());
         } else {
-          emit(ProfileError("حجم الـ CV يجب أن يكون أقل من 5 ميجا"));
+          emit(ProfileError("CV size must be less than 5 MB"));
         }
       }
     } finally {
@@ -43,13 +49,11 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
 
   Future<void> pickImage() async {
     if (_isPickerActive) return;
-
     _isPickerActive = true;
-
     try {
       final XFile? image = await _imagePicker.pickImage(
         source: ImageSource.gallery,
-        imageQuality: 80,
+        imageQuality: 50, //
       );
 
       if (image != null) {
@@ -61,9 +65,9 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
     }
   }
 
-  Future<void> uploadProfileData(String userToken) async {
-    if (selectedCv == null || selectedImage == null) {
-      emit(ProfileError("برجاء اختيار الـ CV والصورة الشخصية"));
+  Future<void> uploadProfileData() async {
+    if (selectedCv == null || selectedImage == null || phoneNumber == null) {
+      emit(ProfileError("Please ensure Phone, CV and Photo are provided"));
       return;
     }
 
@@ -71,6 +75,7 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
 
     try {
       FormData formData = FormData.fromMap({
+        "PhoneNumber": phoneNumber,
         "CV": await MultipartFile.fromFile(
           selectedCv!.path,
           filename: selectedCv!.path.split('/').last,
@@ -82,20 +87,49 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
       });
 
       await apiService.dio.post(
-        '${apiService.baseUrl}api/Profile/complete',
+        'api/Profile/UserComplete',
         data: formData,
-        options: Options(headers: {'Authorization': 'Bearer $userToken'}),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $userToken',
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
         onSendProgress: (int sent, int total) {
-          emit(ProfileUploading(sent / total));
+          if (total != -1) {
+            double progress = sent / total;
+
+            if (state is! ProfileUploading ||
+                (progress - (state as ProfileUploading).progress).abs() >
+                    0.05) {
+              emit(ProfileUploading(progress));
+            }
+          }
         },
       );
 
       emit(ProfileSuccess());
     } on DioException catch (e) {
-      String errorMsg = e.response?.data['message'] ?? 'فشل رفع الملفات';
+ 
+      String errorMsg = 'Failed to complete profile';
+
+      if (e.response?.data != null &&
+          e.response!.data.toString().trim().isNotEmpty) {
+        if (e.response?.data is Map) {
+          errorMsg =
+              e.response?.data['message'] ??
+              e.response?.data['title'] ??
+              'Server Error';
+        } else {
+          errorMsg = e.response!.data.toString();
+        }
+      } else {
+        // لو الرد فاضي، يظهر رقم الكود (مثلاً 400 أو 401)
+        errorMsg =
+            "Server Error (${e.response?.statusCode ?? 'Connection Error'})";
+      }
+
       emit(ProfileError(errorMsg));
-    } catch (e) {
-      emit(ProfileError(e.toString()));
     }
   }
 

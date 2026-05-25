@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
-import 'package:intelli_hire/features/auth/controller/candidate%20register%20cubit/candidate_register_cubit.dart';
-// 👇 تأكد من مسارات الكيوبيت عندك
+import 'package:intelli_hire/features/Organization/bottom%20_navigation/presentation/custom_bottom_nav_bar_wrapper.dart';
 import 'package:intelli_hire/features/auth/controller/profile%20setup%20cubit/profile_setup_cubit.dart';
 import 'package:intelli_hire/features/auth/controller/profile%20setup%20cubit/profile_setup_state.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/custom_button.dart';
@@ -31,7 +30,16 @@ class ProfilePhoto extends StatelessWidget {
             ),
           );
 
-          onPressed();
+          Future.delayed(const Duration(seconds: 1), () {
+            Navigator.pushAndRemoveUntil(
+              // ignore: use_build_context_synchronously
+              context,
+              MaterialPageRoute(
+                builder: (context) => const CustomBottomNavBarWrapper(),
+              ),
+              (route) => false,
+            );
+          });
         }
       },
       builder: (context, state) {
@@ -67,24 +75,7 @@ class ProfilePhoto extends StatelessWidget {
               ] else ...[
                 CustomButton(
                   onPressed: () {
-                    final registerCubit =
-                        BlocProvider.of<CandidateRegisterCubit>(
-                          context,
-                          listen: false,
-                        );
-                    final token = registerCubit.userToken;
-
-                    if (token != null) {
-                      context.read<ProfileSetupCubit>().uploadProfileData(
-                        token,
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Authentication Token is missing!"),
-                        ),
-                      );
-                    }
+                    context.read<ProfileSetupCubit>().uploadProfileData();
                   },
                   title: "Complete Registration",
                 ),
