@@ -4,7 +4,7 @@ class SignUpCompanyModel {
   final String token;
   final String refreshToken;
   final String expiresOn;
-  final bool isAuthenticated;
+  final bool isSuccess;
   final String message;
 
   SignUpCompanyModel({
@@ -13,7 +13,7 @@ class SignUpCompanyModel {
     required this.token,
     required this.refreshToken,
     required this.expiresOn,
-    required this.isAuthenticated,
+    required this.isSuccess,
     required this.message,
   });
 
@@ -24,7 +24,7 @@ class SignUpCompanyModel {
       'token': token,
       'refreshToken': refreshToken,
       'expiresOn': expiresOn,
-      'isAuthenticated': isAuthenticated,
+      'isSuccess': isSuccess,
       'message': message,
     };
   }
@@ -36,7 +36,7 @@ class SignUpCompanyModel {
       token: json['token'] ?? '',
       refreshToken: json['refreshToken'] ?? '',
       expiresOn: json['expiresOn'] ?? '',
-      isAuthenticated: json['isAuthenticated'] ?? false,
+      isSuccess: json['isSuccess'] ?? false,
       message: json['message'] ?? '',
     );
   }

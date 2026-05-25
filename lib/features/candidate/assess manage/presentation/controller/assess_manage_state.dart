@@ -6,6 +6,7 @@ class AssessManageState extends Equatable {
   final List<Assessment> assessments;
   final PerformanceReport? report;
   final String errorMessage;
+  final Set<int> expandedQuestions;
 
   const AssessManageState({
     this.historyStatus = RequestState.initial,
@@ -13,6 +14,7 @@ class AssessManageState extends Equatable {
     this.assessments = const [],
     this.report,
     this.errorMessage = '',
+    this.expandedQuestions = const {},
   });
 
   AssessManageState copyWith({
@@ -21,6 +23,7 @@ class AssessManageState extends Equatable {
     List<Assessment>? assessments,
     PerformanceReport? report,
     String? errorMessage,
+    Set<int>? expandedQuestions,
   }) =>
       AssessManageState(
         historyStatus: historyStatus ?? this.historyStatus,
@@ -28,9 +31,10 @@ class AssessManageState extends Equatable {
         assessments: assessments ?? this.assessments,
         report: report ?? this.report,
         errorMessage: errorMessage ?? this.errorMessage,
+        expandedQuestions: expandedQuestions ?? this.expandedQuestions,
       );
 
   @override
   List<Object?> get props =>
-      [historyStatus, reportStatus, assessments, report, errorMessage];
+      [historyStatus, reportStatus, assessments, report, errorMessage, expandedQuestions];
 }

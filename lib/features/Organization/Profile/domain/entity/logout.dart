@@ -4,7 +4,7 @@ class Logout {
   final String? refreshToken;
   final String? email;
   final String? userType;
-  final bool? isAuthenticated;
+  final bool? isSuccess;
   final String? message;
 
   Logout({
@@ -13,7 +13,7 @@ class Logout {
     this.refreshToken,
     this.email,
     this.userType,
-    this.isAuthenticated,
+    this.isSuccess,
     this.message,
   });
 

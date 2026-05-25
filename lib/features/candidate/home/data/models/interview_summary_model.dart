@@ -2,27 +2,24 @@ import 'package:intelli_hire/features/candidate/home/domain/entities/interview_s
 
 class InterviewSummaryModel extends InterviewSummary {
   const InterviewSummaryModel({
-    required super.accepted,
-    required super.inProgress,
-    required super.pending,
-    required super.rejected,
+    required super.acceptedInterviews,
+    required super.pendingInterviews,
+    required super.rejectedInterviews,
   });
 
   factory InterviewSummaryModel.fromJson(Map<String, dynamic> json) {
     return InterviewSummaryModel(
-      accepted: json['accepted'],
-      inProgress: json['in_progress'],
-      pending: json['pending'],
-      rejected: json['rejected'],
+      acceptedInterviews: json['acceptedInterviews'],
+      pendingInterviews: json['pendingInterviews'],
+      rejectedInterviews: json['rejectedInterviews'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'accepted': accepted,
-      'in_progress': inProgress,
-      'pending': pending,
-      'rejected': rejected,
+      'acceptedInterviews': acceptedInterviews,
+      'pendingInterviews': pendingInterviews,
+      'rejectedInterviews': rejectedInterviews,
     };
   }
 }

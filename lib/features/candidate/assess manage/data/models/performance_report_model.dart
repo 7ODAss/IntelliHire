@@ -5,25 +5,23 @@ class PerformanceReportModel extends PerformanceReport {
   const PerformanceReportModel({
     required super.title,
     required super.track,
-    required super.assessmentId,
-    required super.aiScore,
-    required super.totalQuestions,
+    required super.overallAiScore,
+    required super.questionsCount,
     required super.accuracy,
     required super.totalTime,
     required super.avgReply,
-    required super.results,
+    required super.questions,
   });
 
   factory PerformanceReportModel.fromJson(Map<String, dynamic> json) => PerformanceReportModel(
         title: json['title'] as String? ?? '',
         track: json['track'] as String? ?? '',
-        assessmentId: json['assessment_id'] as String? ?? '',
-        aiScore: (json['ai_score'] as num?)?.toDouble() ?? 0,
-        totalQuestions: (json['total_questions'] as int?) ?? 0,
+        overallAiScore: (json['overallAiScore'] as num?)?.toDouble() ?? 0,
+        questionsCount: (json['questionsCount'] as int?) ?? 0,
         accuracy: (json['accuracy'] as num?)?.toDouble() ?? 0,
-        totalTime: json['total_time'] as String? ?? '',
-        avgReply: json['avg_reply'] as String? ?? '',
-        results: (json['results'] as List<dynamic>?)
+        totalTime: json['totalTime'] ?? 0,
+        avgReply: json['avgReply']?? 0,
+        questions: (json['questions'] as List<dynamic>?)
                 ?.map((e) => QuestionResultModel.fromJson(e as Map<String, dynamic>))
                 .toList() ??
             [],
@@ -32,16 +30,15 @@ class PerformanceReportModel extends PerformanceReport {
   Map<String, dynamic> toJson() => {
         'title': title,
         'track': track,
-        'assessment_id': assessmentId,
-        'ai_score': aiScore,
-        'total_questions': totalQuestions,
+        'overallAiScore': overallAiScore,
+        'questionsCount': questionsCount,
         'accuracy': accuracy,
-        'total_time': totalTime,
-        'avg_reply': avgReply,
-        'results': results
+        'totalTime': totalTime,
+        'avgReply': avgReply,
+        'questions': questions
             .map((r) => QuestionResultModel(
                   questionText: r.questionText,
-                  transcribedAnswer: r.transcribedAnswer,
+                  userAnswer: r.userAnswer,
                   idealAnswer: r.idealAnswer,
                 ).toJson())
             .toList(),

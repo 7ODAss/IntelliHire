@@ -4,14 +4,45 @@ import 'package:intelli_hire/core/enums/request.dart';
 import 'package:intelli_hire/core/utils/app_text_style.dart';
 import 'package:intelli_hire/core/utils/shared/auth_step_layout.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/field_item.dart';
+import '../../../../../../core/enums/snack_bar_type.dart';
+import '../../../../../../core/utils/shared/context_extension.dart';
+import '../../../../../Organization/bottom _navigation/presentation/custom_bottom_nav_bar.dart';
 import '../../../../../Organization/bottom _navigation/presentation/custom_bottom_nav_bar_wrapper.dart';
-import '../../../../controller/sign_up_cubit.dart';
+import '../../../../controller/sign_up_cubit/sign_up_cubit.dart';
 import '../../../login/widget/button_action.dart';
+import '../widget/company_photo_picker.dart';
 
-class SignUpLinkCompany extends StatelessWidget {
-  final VoidCallback onNext;
+class SignUpLinkCompany extends StatefulWidget {
+  const SignUpLinkCompany({super.key});
 
-  const SignUpLinkCompany({super.key, required this.onNext});
+  @override
+  State<SignUpLinkCompany> createState() => _SignUpLinkCompanyState();
+}
+
+class _SignUpLinkCompanyState extends State<SignUpLinkCompany> {
+  //company location
+  late TextEditingController photoCompanyController;
+  late TextEditingController linkCompanyController;
+  late TextEditingController aboutCompanyController;
+  late GlobalKey<FormState> linkCompanyFormKey;
+
+  @override
+  void initState() {
+    super.initState();
+    photoCompanyController = TextEditingController();
+    linkCompanyController = TextEditingController();
+    aboutCompanyController = TextEditingController();
+    linkCompanyFormKey = GlobalKey<FormState>();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    photoCompanyController.dispose();
+    linkCompanyController.dispose();
+    aboutCompanyController.dispose();
+    linkCompanyFormKey.currentState?.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,28 +50,51 @@ class SignUpLinkCompany extends StatelessWidget {
     return AuthStepLayout(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
       child: Form(
-        key: cubit.linkCompanyFormKey,
+        key: linkCompanyFormKey,
         child: SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Center(
+                child: CompanyPhotoPicker(
+                  onImageSelected: (image) {
+                    photoCompanyController.text = image.path;
+                  },
+                ),
+              ),
+              const SizedBox(height: 32),
               FieldItem(
-                controller: cubit.linkCompanyController,
+                controller: linkCompanyController,
                 title: 'Website or LinkedIn URL',
                 message: 'Enter your Website Company',
                 type: TextInputType.url,
                 hintText: 'https://www.company.com',
+                // validator: (value) {
+                //   if (value == null || value.trim().isEmpty) {
+                //     return 'Please enter a Company Website or LinkedIn URL';
+                //   }
+                //   final urlRegExp = RegExp(
+                //     r'^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$',
+                //     caseSensitive: false,
+                //   );
+                //   if (!urlRegExp.hasMatch(value.trim())) {
+                //     return 'Please enter a valid URL (e.g., https://company.com)';
+                //   }
+                //   return null;
+                // },
+              ),
+              const SizedBox(height: 32),
+              FieldItem(
+                controller: aboutCompanyController,
+                title: 'About Company',
+                hintText:
+                    'Tech Crops. is a leading provider of cloud-based software for enterprises.',
+                type: TextInputType.multiline,
+                maxLines: 3,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter a Company Website or LinkedIn URL';
-                  }
-                  final urlRegExp = RegExp(
-                    r'^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$',
-                    caseSensitive: false,
-                  );
-                  if (!urlRegExp.hasMatch(value.trim())) {
-                    return 'Please enter a valid URL (e.g., https://company.com)';
+                    return 'Please enter a description of your company';
                   }
                   return null;
                 },
@@ -48,12 +102,21 @@ class SignUpLinkCompany extends StatelessWidget {
               const SizedBox(height: 48),
               BlocConsumer<SignUpCubit, SignUpState>(
                 listener: (context, state) {
-                  if (state.signUpState == RequestState.success) {
+                  if (state.completeSignUpState == RequestState.success) {
+                    context.showSnackBar(
+                      state.completeSignUpMessage,
+                      type: SnackBarType.success,
+                    );
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const CustomBottomNavBarWrapper(),
                       ),
+                    );
+                  } else if (state.completeSignUpState == RequestState.error) {
+                    context.showSnackBar(
+                      state.completeSignUpMessage,
+                      type: SnackBarType.error,
                     );
                   }
                 },
@@ -61,32 +124,27 @@ class SignUpLinkCompany extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      if (state.signUpState == RequestState.error)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: Text(
-                            state.signUpMessage,
-                            style: const TextStyle(color: Colors.red),
-                          ),
-                        ),
                       ButtonAction(
                         title: 'Complete Registration',
-                        isLoading: state.signUpState == RequestState.loading,
-                        onPressed: onNext,
+                        isLoading:
+                            state.completeSignUpState == RequestState.loading,
+                        onPressed: () {
+                          if (linkCompanyFormKey.currentState!.validate()) {
+                            cubit.completeSignUp(
+                              companyLogo: cubit.state.photoCompany,
+                              linkCompany: cubit.state.linkCompany,
+                              aboutCompany: cubit.state.aboutCompany,
+                            );
+                          }
+                        },
                       ),
                       const SizedBox(height: 16),
                       TextButton(
                         onPressed: () {
-                          cubit.signUpCompany(
-                            email: cubit.workEmailController.text,
-                            password: cubit.workPasswordController.text,
-                            phoneNumber: cubit.workPhoneController.text,
-                            companyName: cubit.companyNameController.text,
-                            industry: cubit.state.selectedIndustry,
-                            country: cubit.state.selectedCountry,
-                            gov: cubit.state.selectedGovernorate,
-                            address: cubit.addressController.text,
-                            linkCompany: 'skipped',
+                          cubit.completeSignUp(
+                            companyLogo: cubit.state.photoCompany.isEmpty ? 'skipped' : cubit.state.photoCompany,
+                            linkCompany: cubit.state.linkCompany.isEmpty ? 'skipped' : cubit.state.linkCompany,
+                            aboutCompany: cubit.state.aboutCompany.isEmpty ? 'skipped' : cubit.state.aboutCompany,
                           );
                         },
                         child: Text(

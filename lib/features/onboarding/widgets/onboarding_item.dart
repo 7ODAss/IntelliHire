@@ -11,9 +11,9 @@ class OnboardingItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Column(
+    return Column(
       children: [
-        SvgPicture.asset(onboardingList[pageIndex].image),
+        Expanded(child: SvgPicture.asset(onboardingList[pageIndex].image)),
         Padding(
           padding: const EdgeInsets.only(top: 56, bottom: 16),
           child: Text(
@@ -22,7 +22,7 @@ class OnboardingItem extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
           child: Text(
             onboardingList[pageIndex].subTitle,
             style: AppTextStyle.subTitleStyle,

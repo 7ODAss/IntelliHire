@@ -5,7 +5,7 @@ import 'package:intelli_hire/features/auth/presentation/login/widget/login_page.
 
 import '../../../../core/utils/app_text_style.dart';
 import '../../../../core/utils/shared/auth_layout.dart';
-import '../../controller/login_cubit.dart';
+import '../../controller/login_cubit/login_cubit.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});

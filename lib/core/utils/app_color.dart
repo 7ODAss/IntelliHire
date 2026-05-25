@@ -45,6 +45,7 @@ class AppColor {
   //postScreen
   static const Color titlePostScreenColor = Color(0xFF475569);
   static const Color iconProfileBorderColor = Color(0xFF134CC7);
+  static const Color iconProfile2BorderColor = Colors.red;
   static const Color iconProfileColor = Color(0xFFF1F0F1);
   static const Color accountNameProfileColor = Color(0xFF0F172A);
   static const Color accountSubNameProfileColor = Color(0xFF475569);

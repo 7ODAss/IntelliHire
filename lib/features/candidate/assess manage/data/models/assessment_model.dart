@@ -2,29 +2,29 @@ import '../../domain/entities/assessment.dart';
 
 class AssessmentModel extends Assessment {
   const AssessmentModel({
-    required super.id,
+    required super.sessionId,
     required super.title,
     required super.track,
     required super.aiScore,
-    required super.performanceBadge,
+    required super.label,
     required super.date,
   });
 
   factory AssessmentModel.fromJson(Map<String, dynamic> json) => AssessmentModel(
-        id: json['id'] as String? ?? '',
-        title: json['title'] as String? ?? '',
-        track: json['track'] as String? ?? '',
-        aiScore: (json['ai_score'] as num?)?.toDouble() ?? 0,
-        performanceBadge: json['performance_badge'] as String? ?? '',
-        date: json['date'] as String? ?? '',
+        sessionId: json['sessionId'],
+        title: json['title'] ,
+        track: json['track'],
+        aiScore: json['aiScore'] ,
+        label: json['label'],
+        date: json['date'],
       );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
+        'sessionId': sessionId,
         'title': title,
         'track': track,
-        'ai_score': aiScore,
-        'performance_badge': performanceBadge,
+        'aiScore': aiScore,
+        'label': label,
         'date': date,
       };
 }

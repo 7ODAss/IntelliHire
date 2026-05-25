@@ -6,35 +6,23 @@ import 'package:intelli_hire/core/utils/app_font.dart';
 import 'package:intelli_hire/features/candidate/assess%20manage/domain/entities/assessment.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
+import '../../../../../core/service/service_locator.dart';
 import '../controller/assess_manage_cubit.dart';
 import '../widgets/assessment_card.dart';
 import '../widgets/candidate_error_widget.dart';
 import '../widgets/empty_assessment_widget.dart';
 import 'performance_report_screen.dart';
 
-class AssessmentHistoryScreen extends StatefulWidget {
+class AssessmentHistoryScreen extends StatelessWidget {
   const AssessmentHistoryScreen({super.key});
 
-  @override
-  State<AssessmentHistoryScreen> createState() =>
-      _AssessmentHistoryScreenState();
-}
-
-class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<AssessManageCubit>().loadAssessmentHistory();
-  }
-
-  static final _dummyList = List.generate(
-    3,
-    (i) => const Assessment(
-      id: '',
+  static final _dummyList = List.generate(3, (i) =>
+    const Assessment(
+      sessionId: '',
       title: 'Front-End Assessment',
       track: 'Frontend Engineering Track',
       aiScore: 90,
-      performanceBadge: 'Excellent Performance',
+      label: 'Excellent Performance',
       date: 'Oct 25, 2023',
     ),
   );
@@ -85,18 +73,18 @@ class _AssessmentHistoryScreenState extends State<AssessmentHistoryScreen> {
                   onTap: () {
                     if (!isLoading) {
                       context.read<AssessManageCubit>().loadPerformanceReport(
-                        assessments[index].id,
+                        assessments[index].sessionId,
                       );
-                      Navigator.push(
-                        context,
+                      Navigator.of(context, rootNavigator: true).push(
                         MaterialPageRoute(
-                          builder: (_) => BlocProvider.value(
-                            value: context.read<AssessManageCubit>(),
-                            child: PerformanceReportFromCubitScreen(
-                              title: assessments[index].title,
-                              track: assessments[index].track,
-                            ),
-                          ),
+                          builder: (_) =>
+                              BlocProvider.value(
+                                value: context.read<AssessManageCubit>(),
+                                child: PerformanceReportFromCubitScreen(
+                                  // title: assessments[index].title,
+                                  // track: assessments[index].track,
+                                ),
+                              ),
                         ),
                       );
                     }

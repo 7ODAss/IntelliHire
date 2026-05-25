@@ -14,6 +14,7 @@ class MyFormField extends StatelessWidget {
   final String? Function(String?)? validator;
   final String? hintText;
   final List<TextInputFormatter>? inputFormatters;
+  final int? maxLines;
 
 
   const MyFormField({
@@ -29,23 +30,27 @@ class MyFormField extends StatelessWidget {
     this.prefixIcon,
     this.prefixIconColor,
     this.inputFormatters,
+    this.maxLines = 1,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      maxLines: maxLines,
       keyboardType: type,
       obscureText: obscureText,
       validator: validator,
       inputFormatters: inputFormatters,
       decoration: InputDecoration(
         fillColor: const Color(0xFFFFFFFF),
+        focusColor: const Color(0xFFFFFFFF),
+        filled: true,
         hintText: hintText,
         hintStyle: AppTextStyle.hintTextStyle,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
-          borderSide: BorderSide(color: Color(0xFF898989)),
+          borderSide: BorderSide(color: Color(0xFFD6D6D6)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),

@@ -26,50 +26,32 @@ class InterviewsSummarySection extends StatelessWidget {
 
         // Row of 3: Accepted | In Progress | Rejected
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 2,
               child: CornerInterviewCard(
-                count: interviews.accepted,
+                count: interviews.acceptedInterviews,
                 label: 'Accepted',
                 icon: Icons.check_circle_outline_rounded,
                 iconColor: const Color(0xFF16A34A),
-                height: 165,
               ),
             ),
-            const SizedBox(width: 15),
+            const SizedBox(width: 40),
             Expanded(
-              flex: 5,
-              child: Column(
-                children: [
-                  CenterInterviewCard(
-                    count: interviews.inProgress,
-                    label: 'In Progress',
-                    icon: Icons.sync_rounded,
-                    iconColor: const Color(0xFF2563EB),
-                    width: 350,
-                  ),
-                  const SizedBox(height: 10),
-                  CenterInterviewCard(
-                    count: interviews.pending,
-                    label: 'Pending',
-                    icon: Icons.access_time_rounded,
-                    iconColor: const Color(0xFFF2C94C),
-                    width: 350,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              flex: 2,
               child: CornerInterviewCard(
-                count: interviews.rejected,
+                count: interviews.pendingInterviews,
+                label: 'Pending',
+                icon: Icons.access_time_rounded,
+                iconColor: const Color(0xFFF2C94C),
+              ),
+            ),
+            const SizedBox(width: 40),
+            Expanded(
+              child: CornerInterviewCard(
+                count: interviews.rejectedInterviews,
                 label: 'Rejected',
                 icon: Icons.cancel_outlined,
                 iconColor: const Color(0xFFDC2626),
-                height: 165,
+
               ),
             ),
           ],

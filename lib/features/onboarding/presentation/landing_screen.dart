@@ -6,7 +6,7 @@ import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_c
 import '../../../core/utils/app_color.dart';
 import '../../../core/utils/app_icon.dart';
 import '../../auth/presentation/login/login_screen.dart';
-import '../../auth/presentation/signup/widget/navigator_to_account.dart';
+import '../../auth/presentation/signup/company/widget/navigator_to_account.dart';
 import '../widgets/signup_card.dart';
 
 class LandingScreen extends StatelessWidget {
@@ -18,12 +18,10 @@ class LandingScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 130),
+            Flexible(
               child: SvgPicture.asset(AppIcon.landingImage1),
             ),
             const SizedBox(height: 50),

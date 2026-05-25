@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/signup_back_button.dart';
-
 import '../../../../../../../../core/utils/app_text_style.dart';
-import '../../../../widget/pop_action.dart';
+import '../../../../company/widget/pop_action.dart';
 
 class SignupHeader extends StatelessWidget {
   const SignupHeader({super.key});

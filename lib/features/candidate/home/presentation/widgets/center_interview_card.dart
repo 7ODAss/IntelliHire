@@ -7,8 +7,7 @@ class CenterInterviewCard extends StatelessWidget {
   final String label;
   final IconData icon;
   final Color iconColor;
-  final double width;
-  final double height;
+
 
   const CenterInterviewCard({
     super.key,
@@ -16,8 +15,7 @@ class CenterInterviewCard extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.iconColor,
-    this.width = 150,
-    this.height = 75,
+
   });
 
   @override
@@ -26,8 +24,7 @@ class CenterInterviewCard extends StatelessWidget {
       elevation: 5,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        width: width,
-        height: height,
+
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           boxShadow: [

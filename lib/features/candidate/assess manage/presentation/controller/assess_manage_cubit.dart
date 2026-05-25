@@ -31,7 +31,8 @@ class AssessManageCubit extends Cubit<AssessManageState> {
     );
   }
 
-  Future<void> loadPerformanceReport(String assessmentId) async {
+  Future<void> loadPerformanceReport(String assessmentId)
+  async {
     emit(state.copyWith(reportStatus: RequestState.loading));
     final result = await fetchReportUseCase(FetchPerformanceReportParams(assessmentId));
     result.fold(
@@ -44,5 +45,15 @@ class AssessManageCubit extends Cubit<AssessManageState> {
         report: report,
       )),
     );
+  }
+
+  void toggleExpansion(int questionIndex) {
+    final newExpandedQuestions = Set<int>.from(state.expandedQuestions);
+    if (newExpandedQuestions.contains(questionIndex)) {
+      newExpandedQuestions.remove(questionIndex);
+    } else {
+      newExpandedQuestions.add(questionIndex);
+    }
+    emit(state.copyWith(expandedQuestions: newExpandedQuestions));
   }
 }

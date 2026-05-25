@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:intelli_hire/core/utils/apis/api_constant.dart';
+
+import 'interceptor.dart';
 
 class DioConfig {
   DioConfig._();
@@ -18,28 +17,51 @@ class DioConfig {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
         },
       ),
     );
-    _dio.httpClientAdapter = IOHttpClientAdapter(
-      createHttpClient: () {
-        final client = HttpClient();
-        // This tells Flutter to trust the local self-signed certificate
-        client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-        return client;
-      },
-    );
+
+    //update refresh token
+    _dio.interceptors.add(TokenInterceptor(_dio));
   }
 
-  static Future<Response<dynamic>> getData({required String path}) async {
-    return _dio.get(path);
+  static Future<Response<dynamic>> getData({
+    required String path,
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    return _dio.get(path, queryParameters: queryParameters);
   }
 
   static Future<Response<dynamic>> postData({
     required String path,
-    required Map<String, dynamic> data,
+    Map<String, dynamic>? data,
+    FormData? formData,
   }) async {
-    return _dio.post(path, data: data);
+    return _dio.post(
+      path,
+      data: formData ?? data,
+    );
+  }
+
+  static Future<Response<dynamic>> putData({
+    required String path,
+    Map<String, dynamic>? data,
+  }) async {
+    return _dio.put(path, data: data);
+  }
+
+  static Future<Response<dynamic>> patchData({
+    required String path,
+    FormData? formData,
+    Map<String, dynamic>? data,
+  }) async {
+    return _dio.patch(path, data: formData ?? data);
+  }
+
+  static Future<Response<dynamic>> deleteData({
+    required String path,
+    Map<String, dynamic>? data,
+  }) async {
+    return _dio.delete(path, data: data);
   }
 }

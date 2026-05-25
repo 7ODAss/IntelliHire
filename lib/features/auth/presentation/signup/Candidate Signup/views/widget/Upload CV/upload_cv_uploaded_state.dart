@@ -71,7 +71,7 @@ class UploadCvUploadedState extends StatelessWidget {
           ),
           const SizedBox(height: 48),
 
-          CustomButton(onPressed: onPressed, title: "Upload CV"),
+          CustomButton(onPressed: onPressed, title:"Upload CV"),
         ],
       ),
     );

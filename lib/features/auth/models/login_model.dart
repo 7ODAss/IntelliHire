@@ -1,10 +1,10 @@
 class LoginModel {
   final String email;
   final String userType;
-  final bool isAuthenticated;
+  final bool isSuccess;
   final String token;
   final String refreshToken;
-  final String expiresOn;
+  final DateTime expiresOn;
   final String message;
 
   LoginModel({
@@ -13,18 +13,20 @@ class LoginModel {
    required this.refreshToken,
    required this.email,
    required this.userType,
-   required this.isAuthenticated,
+   required this.isSuccess,
    required this.message,
   });
 
   factory LoginModel.fromJson(Map<String, dynamic> json) {
     return LoginModel(
       token: json['token'],
-      expiresOn: json['expiresOn'],
+      expiresOn: json['expiresOn'] != null
+          ? DateTime.parse(json['expiresOn'].toString()).toLocal()
+          : DateTime.now(),
       refreshToken: json['refreshToken'],
       email: json['email'],
       userType: json['userType'],
-      isAuthenticated: json['isAuthenticated'],
+      isSuccess: json['isSuccess'],
       message: json['message'],
     );
   }

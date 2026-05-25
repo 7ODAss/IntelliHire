@@ -1,17 +1,15 @@
 import 'package:equatable/equatable.dart';
 
 class InterviewSummary extends Equatable{
-  final int accepted;
-  final int inProgress;
-  final int pending;
-  final int rejected;
+  final int acceptedInterviews;
+  final int pendingInterviews;
+  final int rejectedInterviews;
   const InterviewSummary({
-    required this.accepted,
-    required this.inProgress,
-    required this.pending,
-    required this.rejected,});
+    required this.acceptedInterviews,
+    required this.pendingInterviews,
+    required this.rejectedInterviews,});
 
   @override
-  List<Object?> get props => [accepted, inProgress, pending, rejected];
+  List<Object?> get props => [acceptedInterviews, pendingInterviews, rejectedInterviews];
 
 }

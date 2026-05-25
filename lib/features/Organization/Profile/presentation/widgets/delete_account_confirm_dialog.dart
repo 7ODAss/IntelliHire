@@ -4,6 +4,11 @@ import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/controller/post_job_cubit.dart';
 
+import '../../../../../core/enums/request.dart';
+import '../../../../../core/enums/snack_bar_type.dart';
+import '../../../../../core/utils/shared/context_extension.dart';
+import '../../../../candidate/profile/presentation/controller/candidate_profile_cubit.dart';
+
 class DeleteAccountConfirmDialog extends StatelessWidget {
   const DeleteAccountConfirmDialog({
     super.key,
@@ -12,7 +17,8 @@ class DeleteAccountConfirmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0)),
       backgroundColor: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -86,7 +92,10 @@ class DeleteAccountConfirmDialog extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pop(context);
+                      context.read<CandidateProfileCubit>().deleteAccount();
+                    },
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
                       backgroundColor: Colors.red,
@@ -95,8 +104,8 @@ class DeleteAccountConfirmDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child:  Text(
-                     "Delete",
+                    child: Text(
+                      "Delete",
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,

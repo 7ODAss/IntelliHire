@@ -17,6 +17,7 @@ class FieldItem extends StatelessWidget {
   final String? Function(String?)? validator;
   final String? hintText;
   final List<TextInputFormatter>? inputFormatters;
+  final int? maxLines;
 
   const FieldItem({
     super.key,
@@ -33,6 +34,7 @@ class FieldItem extends StatelessWidget {
     this.prefixIcon,
     this.prefixIconColor,
     this.inputFormatters,
+    this.maxLines = 1,
   });
 
   @override
@@ -57,7 +59,7 @@ class FieldItem extends StatelessWidget {
           prefixIcon: prefixIcon,
           prefixIconColor: prefixIconColor,
           inputFormatters: inputFormatters,
-
+          maxLines:maxLines
         ),
       ],
     );

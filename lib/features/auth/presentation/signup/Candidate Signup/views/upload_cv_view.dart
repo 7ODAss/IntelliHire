@@ -7,8 +7,8 @@ import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signu
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/Upload%20CV/upload_cv_uploading_state.dart';
 
 class UploadCv extends StatelessWidget {
-  const UploadCv({super.key, required this.onPressed});
-  final VoidCallback onPressed;
+  const UploadCv({super.key, this.onPressed});
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class UploadCv extends StatelessWidget {
             return UploadCvUploadedState(
               fileName: state.file.path.split('/').last,
               onClear: cubit.clearCv,
-              onPressed: onPressed,
+              onPressed: onPressed!,
             );
           }
 

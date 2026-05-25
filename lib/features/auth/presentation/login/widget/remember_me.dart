@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intelli_hire/features/auth/controller/login_cubit.dart';
+import 'package:intelli_hire/features/auth/controller/login_cubit/login_cubit.dart';
+import 'package:intelli_hire/features/auth/presentation/forgetpassword/forget_process.dart';
 
 import '../../../../../core/utils/app_color.dart';
 import '../../../../../core/utils/app_text_style.dart';
@@ -19,10 +20,7 @@ class RememberMe extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Checkbox(
-              value: context
-                  .read<LoginCubit>()
-                  .state
-                  .rememberMeCheck,
+              value: context.read<LoginCubit>().state.rememberMeCheck,
               onChanged: (value) {
                 context.read<LoginCubit>().changeRememberMeCheck();
               },
@@ -32,17 +30,17 @@ class RememberMe extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(2),
               ),
-              side: const BorderSide(
-                color: Color(0xFFD1D5DB),
-                width: 1.5,
+              side: const BorderSide(color: Color(0xFFD1D5DB), width: 1.5),
+            ),
+            Text(
+              'Remember Me',
+              style: AppTextStyle.signUpConditionStyle.copyWith(
+                color: AppColor.signUpConditionColor1,
               ),
             ),
-            Text('Remember Me', style: AppTextStyle.signUpConditionStyle.copyWith(
-              color: AppColor.signUpConditionColor1,
-            ),),
             Spacer(),
             TextButton(
-              onPressed: (){},
+              onPressed: () {},
               style: TextButton.styleFrom(
                 // 1. Set padding to zero
                 padding: EdgeInsets.zero,
@@ -51,9 +49,15 @@ class RememberMe extends StatelessWidget {
                 // 3. Shrink the touch target area to the button's visual bounds
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: Text('Forgot Password?', style: AppTextStyle.signUpConditionStyle.copyWith(
-                color: AppColor.signUpConditionColor2,
-              ),),
+              child: TextButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ForgetProcess()));
+                },
+               child: Text('Forgot Password?',
+                 style: AppTextStyle.signUpConditionStyle.copyWith(
+                   color: AppColor.signUpConditionColor2,
+                 ),),
+              ),
             ),
           ],
         );

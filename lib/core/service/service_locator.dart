@@ -16,10 +16,14 @@ import '../../features/candidate/assess manage/domain/usecases/fetch_performance
 import '../../features/candidate/assess manage/presentation/controller/assess_manage_cubit.dart';
 
 // ── Candidate: New Assessment ────────────────────────────────────────────────
+import '../../features/candidate/home/domain/usecases/get_next_week_usecase.dart';
+import '../../features/candidate/home/domain/usecases/get_prev_week_usecase.dart';
+import '../../features/candidate/home/domain/usecases/reset_week_usecase.dart';
 import '../../features/candidate/new assess/data/datasources/new_assess_remote_datasource.dart';
 import '../../features/candidate/new assess/data/repositories/new_assess_repository_impl.dart';
 import '../../features/candidate/new assess/domain/repositories/base_new_assess_repository.dart';
 import '../../features/candidate/new assess/domain/usecases/fetch_assessment_questions_usecase.dart';
+import '../../features/candidate/new assess/domain/usecases/send_assessment_usecase.dart';
 import '../../features/candidate/new assess/domain/usecases/submit_interview_usecase.dart';
 import '../../features/candidate/new assess/presentation/controller/assessment_session_cubit.dart';
 
@@ -41,7 +45,11 @@ import '../../features/candidate/notification/presentation/controller/notificati
 import '../../features/candidate/profile/data/datasources/candidate_profile_remote_datasource.dart';
 import '../../features/candidate/profile/data/repositories/candidate_profile_repository_impl.dart';
 import '../../features/candidate/profile/domain/repositories/base_candidate_profile_repository.dart';
+import '../../features/candidate/profile/domain/usecases/change_career_details_usecase.dart';
+import '../../features/candidate/profile/domain/usecases/change_password_candidate_usecase.dart';
+import '../../features/candidate/profile/domain/usecases/delete_account_candidate_usecase.dart';
 import '../../features/candidate/profile/domain/usecases/profile_usecases.dart';
+import '../../features/candidate/profile/domain/usecases/log_out_user_candidate_profile_usecase.dart';
 import '../../features/candidate/profile/presentation/controller/candidate_profile_cubit.dart';
 
 final getIt = GetIt.instance;
@@ -75,7 +83,7 @@ class ServiceLocator {
     getIt.registerLazySingleton(() => FetchAssessmentHistoryUseCase(getIt()));
     getIt.registerLazySingleton(() => FetchPerformanceReportUseCase(getIt()));
     // Cubit
-    getIt.registerFactory(() => AssessManageCubit(getIt(), getIt()));
+    getIt.registerLazySingleton(() => AssessManageCubit(getIt(), getIt()));
 
     // ────────────────────────────────────────────────────────────────────────
     // Candidate: New Assessment
@@ -93,9 +101,10 @@ class ServiceLocator {
       () => FetchAssessmentQuestionsUseCase(getIt()),
     );
     getIt.registerLazySingleton(() => SubmitInterviewUseCase(getIt()));
+    getIt.registerLazySingleton(() => SendAssessmentUseCase(getIt()));
     // Cubit (factory — new instance per assessment session)
     getIt.registerFactory(
-      () => AssessmentSessionCubit(getIt(), getIt()),
+      () => AssessmentSessionCubit(getIt(), getIt(), getIt()),
     );
 
     // ────────────────────────────────────────────────────────────────────────
@@ -108,7 +117,10 @@ class ServiceLocator {
       () => HomeRepositoryImpl(getIt()),
     );
     getIt.registerLazySingleton(() => GetHomeSummaryUseCase(getIt()));
-    getIt.registerFactory(() => HomeCubit(getIt()));
+    getIt.registerLazySingleton(() => GetNextWeekUseCase(getIt()));
+    getIt.registerLazySingleton(() => GetPrevWeekUseCase(getIt()));
+    getIt.registerLazySingleton(() => ResetWeekUseCase(getIt()));
+    getIt.registerLazySingleton(() => HomeCubit(getIt(),getIt(),getIt(),getIt()));
 
     // ────────────────────────────────────────────────────────────────────────
     // Candidate: Notifications
@@ -132,9 +144,11 @@ class ServiceLocator {
       () => CandidateProfileRepositoryImpl(getIt()),
     );
     getIt.registerLazySingleton(() => FetchCandidateProfileUseCase(getIt()));
-    getIt.registerLazySingleton(() => ChangePasswordUseCase(getIt()));
-    getIt.registerFactory(
-      () => CandidateProfileCubit(getIt(), getIt()),
+    getIt.registerLazySingleton(() => ChangePasswordCandidateUseCase(getIt()));
+    getIt.registerLazySingleton(() => DeleteAccountCandidateUseCase(getIt()));
+    getIt.registerLazySingleton(() => ChangeCareerDetailsUseCase(getIt()));
+    getIt.registerLazySingleton(() => LogOutUserCandidateProfileUseCase(getIt()));
+    getIt.registerFactory(() => CandidateProfileCubit(getIt(), getIt(), getIt(), getIt(), getIt()),
     );
   }
 }

@@ -1,14 +1,45 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/utils/app_text_style.dart';
 import '../../../../auth/presentation/login/widget/field_item.dart';
-import '../../../../auth/presentation/signup/widget/custom_search.dart';
+import '../../../../auth/presentation/signup/company/widget/custom_search.dart';
 import '../controller/profile_cubit.dart';
 
 
-class LocationItems extends StatelessWidget {
+class LocationItems extends StatefulWidget {
   final ProfileCubit cubit;
-  const LocationItems({super.key, required this.cubit});
+  final TextEditingController addressController;
+  const LocationItems({super.key, required this.cubit, required this.addressController});
 
+  @override
+  State<LocationItems> createState() => _LocationItemsState();
+}
+
+class _LocationItemsState extends State<LocationItems> {
+  late TextEditingController countryController ;
+  late TextEditingController govController ;
+  // late GlobalKey<FormState> locationFormKey;
+  // late SearchController searchCountryController;
+  // late SearchController searchGovController;
+
+  @override
+  void initState() {
+    super.initState();
+    countryController = TextEditingController();
+    govController = TextEditingController();
+    // locationFormKey = GlobalKey<FormState>();
+    // searchCountryController = SearchController();
+    // searchGovController = SearchController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    countryController.dispose();
+    govController.dispose();
+    // locationFormKey.currentState?.dispose();
+    // searchCountryController.dispose();
+    // searchGovController.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -23,13 +54,13 @@ class LocationItems extends StatelessWidget {
               child: SharedBottomSheetSelector(
                 title: 'Select Country',
                 hintText: 'Search...',
-                items: cubit.countries,
-                selectedItem: cubit.state.selectedCountry,
+                items: widget.cubit.countries,
+                selectedItem: widget.cubit.state.selectedCountry,
                 onSelected: (value) {
-                  cubit.countryController.text = value;
-                  cubit.changeSelectedCountry(value);
-                  cubit.changeSelectedGovernorate('');
-                  cubit.govController.clear();
+                  countryController.text = value;
+                  widget.cubit.changeSelectedCountry(value);
+                  widget.cubit.changeSelectedGovernorate('');
+                  govController.clear();
                 },
               ),
             ),
@@ -38,19 +69,19 @@ class LocationItems extends StatelessWidget {
               child: SharedBottomSheetSelector(
                 title: 'Select Governorate',
                 hintText: 'Search...',
-                items: cubit.state.selectedCountry != null
-                    ? (cubit.countryGovernorates[cubit
+                items: widget.cubit.state.selectedCountry != null
+                    ? (widget.cubit.countryGovernorates[widget.cubit
                     .state
                     .selectedCountry!] ??
                     [])
                     : [],
-                selectedItem: cubit.state.selectedGovernorate,
+                selectedItem: widget.cubit.state.selectedGovernorate,
                 // Use state value directly
-                isEnabled: cubit.state.selectedCountry != null,
+                isEnabled: widget.cubit.state.selectedCountry != null,
                 disabledMessage: 'Please select a country first',
                 onSelected: (value) {
-                  cubit.govController.text = value;
-                  cubit.changeSelectedGovernorate(value);
+                  govController.text = value;
+                  widget.cubit.changeSelectedGovernorate(value);
                 },
               ),
             ),
@@ -58,7 +89,7 @@ class LocationItems extends StatelessWidget {
         ),
         const SizedBox(height: 14),
         FieldItem(
-          controller: cubit.addressController,
+          controller: widget.addressController,
           title: 'Detailed Address',
           type: TextInputType.text,
           hintText: 'Building 4 , Street 9 , Maadi',

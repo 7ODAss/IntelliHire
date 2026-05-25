@@ -12,6 +12,11 @@ class AssessmentSessionState extends Equatable {
   final Map<String, String> mcqAnswers; // questionId → selected option
   final PerformanceReport? submittedReport;
   final String errorMessage;
+  final bool isCheck;
+  final RequestState sendAssessment;
+  final String sendAssessmentMessage;
+  final int remainingTimeInSeconds;
+
 
   const AssessmentSessionState({
     this.status = RequestState.initial,
@@ -25,6 +30,10 @@ class AssessmentSessionState extends Equatable {
     this.mcqAnswers = const {},
     this.submittedReport,
     this.errorMessage = '',
+    this.isCheck = false,
+    this.sendAssessment = RequestState.initial,
+    this.sendAssessmentMessage = '',
+    this.remainingTimeInSeconds = 1800,
   });
 
   Question? get currentQuestion =>
@@ -45,6 +54,10 @@ class AssessmentSessionState extends Equatable {
     Map<String, String>? mcqAnswers,
     PerformanceReport? submittedReport,
     String? errorMessage,
+    bool? isCheck,
+    RequestState? sendAssessment,
+    String? sendAssessmentMessage,
+    int? remainingTimeInSeconds,
   }) =>
       AssessmentSessionState(
         status: status ?? this.status,
@@ -58,6 +71,10 @@ class AssessmentSessionState extends Equatable {
         mcqAnswers: mcqAnswers ?? this.mcqAnswers,
         submittedReport: submittedReport ?? this.submittedReport,
         errorMessage: errorMessage ?? this.errorMessage,
+        isCheck: isCheck ?? this.isCheck,
+        sendAssessment: sendAssessment ?? this.sendAssessment,
+        sendAssessmentMessage: sendAssessmentMessage ?? this.sendAssessmentMessage,
+        remainingTimeInSeconds: remainingTimeInSeconds ?? this.remainingTimeInSeconds,
       );
 
   @override
@@ -73,5 +90,9 @@ class AssessmentSessionState extends Equatable {
         mcqAnswers,
         submittedReport,
         errorMessage,
+        isCheck,
+        sendAssessment,
+        sendAssessmentMessage,
+        remainingTimeInSeconds,
       ];
 }

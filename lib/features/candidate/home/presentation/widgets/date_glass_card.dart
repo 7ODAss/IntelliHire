@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:intelli_hire/features/candidate/home/domain/entities/weekly_activity_summary.dart';
 import 'package:liquid_glass_easy/liquid_glass_easy.dart';
 
 import '../../../../../core/utils/app_font.dart';
+import '../../domain/entities/training_performance.dart';
 
 class DateGlassCard extends StatelessWidget {
   final double dynamicWidth;
-  final String month, year, week;
+  final String weekLabel;
 
   const DateGlassCard({
     super.key,
     required this.dynamicWidth,
-    required this.month,
-    required this.year,
-    required this.week,
+    required this.weekLabel,
   });
 
   @override
@@ -54,7 +54,7 @@ class DateGlassCard extends StatelessWidget {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: '$month $year , ',
+                      text: weekLabel.split(',')[0],
                       style: const TextStyle(
                         fontFamily: AppFont.interSemiBold,
                         fontSize: 16,
@@ -62,7 +62,7 @@ class DateGlassCard extends StatelessWidget {
                       ),
                     ),
                     TextSpan(
-                      text: 'Week $week',
+                      text: weekLabel.split(',')[1],
                       style: const TextStyle(
                         fontFamily: AppFont.interSemiBold,
                         fontSize: 12,

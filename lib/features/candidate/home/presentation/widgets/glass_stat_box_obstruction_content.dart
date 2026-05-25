@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/utils/app_font.dart';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// محتوى البوكسات اللي هيتعرض فوق العدسة عشان يحجب الانعكاسات تماماً
-// ─────────────────────────────────────────────────────────────────────────────
-
-
 class GlassStatBoxObstructionContent extends StatelessWidget {
   final String label;
   final String value;
@@ -35,43 +30,46 @@ class GlassStatBoxObstructionContent extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min, // عشان مياخدش مساحة عمودية زيادة
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontFamily: AppFont.poppinsBold,
-              fontSize: 14,
-              color: Colors.white,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontFamily: AppFont.poppinsBold,
+                fontSize: 14,
+                color: Colors.white,
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: value,
-                  style: const TextStyle(
-                    fontFamily: AppFont.poppinsBold,
-                    fontSize: 24,
-                    color: Colors.white,
-                  ),
-                ),
-                if (suffix.isNotEmpty)
+            const SizedBox(height: 4),
+            RichText(
+              text: TextSpan(
+                children: [
                   TextSpan(
-                    text: suffix,
+                    text: value,
                     style: const TextStyle(
-                      fontFamily: AppFont.interMedium,
-                      fontSize: 18,
+                      fontFamily: AppFont.poppinsBold,
+                      fontSize: 24,
                       color: Colors.white,
                     ),
                   ),
-              ],
+                  if (suffix.isNotEmpty)
+                    TextSpan(
+                      text: suffix,
+                      style: const TextStyle(
+                        fontFamily: AppFont.interMedium,
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

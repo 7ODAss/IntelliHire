@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/utils/app_text_style.dart';
-import '../screen/login_security_screen.dart';
-import '../screen/personal_information_screen.dart';
+import '../screen/about_company.dart';
+import '../screen/company_login_security_screen.dart';
+import '../screen/account_details_screen.dart';
 import 'optionfield.dart';
 
 class AccountOption extends StatelessWidget {
@@ -15,6 +16,7 @@ class AccountOption extends StatelessWidget {
         Text('Account', style: AppTextStyle.accountNamePostScreen),
         Card(
           color: Colors.white,
+          elevation: 2,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             child: Column(
@@ -22,13 +24,13 @@ class AccountOption extends StatelessWidget {
               children: [
                 OptionField(
                   icon: Icons.person,
-                  categoryName: 'Personal Information',
-                  options: ['Email , Phone , Photo'],
+                  categoryName: 'Account Details',
+                  options: ['Name , Industry, Email , Phone , Photo'],
                   fun: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PersonalInformationScreen(),
+                        builder: (context) => AccountDetailsScreen(),
                       ),
                     );
                   },
@@ -38,16 +40,12 @@ class AccountOption extends StatelessWidget {
                   child: const Divider(color: Color(0xFFD6D6D6)),
                 ),
                 OptionField(
-                  icon: Icons.lock_outlined,
-                  categoryName: 'Login & Security',
-                  options: ['Password , Delete account'],
-                  fun: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginSecurityScreen(),
-                      ),
-                    );
+                  icon: Icons.business_outlined,
+                  categoryName: 'About Company',
+                  options: ['About company , Location , Web'],
+                  fun: () {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => AboutCompany(),));
                   },
                 ),
               ],

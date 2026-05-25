@@ -10,7 +10,7 @@ class AssessManageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<AssessManageCubit>(),
+      create: (_) => getIt<AssessManageCubit>()..loadAssessmentHistory(),
       child: const AssessmentHistoryScreen(),
     );
   }

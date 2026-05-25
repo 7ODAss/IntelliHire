@@ -7,7 +7,8 @@ class ButtonAction extends StatelessWidget {
   final String title;
   final void Function()? onPressed;
   final bool isLoading;
-  const ButtonAction({super.key, required this.title, this.onPressed, this.isLoading = false});
+  final TextStyle? style;
+  const ButtonAction({super.key, required this.title, this.onPressed, this.isLoading = false, this.style});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class ButtonAction extends StatelessWidget {
             )
           : Text(
               title,
-              style: AppTextStyle.loginButtonStyle,
+              style:  style ??  AppTextStyle.loginButtonStyle ,
             ),
     );
   }

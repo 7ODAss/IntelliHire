@@ -5,17 +5,17 @@ import 'package:intelli_hire/core/utils/app_text_style.dart';
 class CustomDropdownMenu extends StatefulWidget {
   const CustomDropdownMenu({
     super.key,
-    required this.title,
+    this.title,
     required this.items,
-    required this.hint,
+    this.hint,
     this.value,
     this.onChanged,
   });
 
-  final String title;
+  final String? title;
   final List<String> items;
 
-  final String hint;
+  final String? hint;
   final String? value;
   final void Function(String?)? onChanged;
 
@@ -29,10 +29,10 @@ class _CustomDropdownMenuState extends State<CustomDropdownMenu> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.title,
+        ?widget.title != null ? Text(
+          widget.title!,
           style: AppTextStyle.textstyle14.copyWith(color: AppColor.darkBlue),
-        ),
+        ) : null,
         const SizedBox(height: 8),
         LayoutBuilder(
           builder: (context, constraints) {
@@ -78,7 +78,7 @@ class _CustomDropdownMenuState extends State<CustomDropdownMenu> {
                       children: [
                         Expanded(
                           child: Text(
-                            widget.value ?? widget.hint,
+                            widget.value ?? widget.hint ?? '',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                             style: AppTextStyle.textstyle14.copyWith(

@@ -1,31 +1,50 @@
 part of 'home_cubit.dart';
 
 class HomeState extends Equatable {
-  final RequestState status;
+  final RequestState homeSummaryStatus;
   final HomeSummary? homeSummary;
-  final String errorMessage;
+  final String homeSummaryMessage;
   final int weekOffset;
+  final WeeklyActivitySummary? weekActivity;
+  final RequestState? weekActivityState;
+  final String? weekActivityMessage;
 
   const HomeState({
-    this.status = RequestState.initial,
+    this.homeSummaryStatus = RequestState.initial,
     this.homeSummary,
-    this.errorMessage = '',
+    this.homeSummaryMessage = '',
     this.weekOffset = 0,
+    this.weekActivity,
+    this.weekActivityState,
+    this.weekActivityMessage,
   });
 
   HomeState copyWith({
-    RequestState? status,
+    RequestState? homeSummaryStatus,
     HomeSummary? homeSummary,
-    String? errorMessage,
+    String? homeSummaryMessage,
     int? weekOffset,
-  }) =>
-      HomeState(
-        status: status ?? this.status,
-        homeSummary: homeSummary ?? this.homeSummary,
-        errorMessage: errorMessage ?? this.errorMessage,
-        weekOffset: weekOffset ?? this.weekOffset,
-      );
+    WeeklyActivitySummary? weekActivity,
+    RequestState? weekActivityState,
+    String? weekActivityMessage,
+  }) => HomeState(
+    homeSummaryStatus: homeSummaryStatus ?? this.homeSummaryStatus,
+    homeSummary: homeSummary ?? this.homeSummary,
+    homeSummaryMessage: homeSummaryMessage ?? this.homeSummaryMessage,
+    weekOffset: weekOffset ?? this.weekOffset,
+    weekActivity: weekActivity ?? this.weekActivity,
+    weekActivityState: weekActivityState ?? this.weekActivityState,
+    weekActivityMessage: weekActivityMessage ?? this.weekActivityMessage,
+  );
 
   @override
-  List<Object?> get props => [status, homeSummary, errorMessage, weekOffset];
+  List<Object?> get props => [
+    homeSummaryStatus,
+    homeSummary,
+    homeSummaryMessage,
+    weekOffset,
+    weekActivity,
+    weekActivityState,
+    weekActivityMessage,
+  ];
 }

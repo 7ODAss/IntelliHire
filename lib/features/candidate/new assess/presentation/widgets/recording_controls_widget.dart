@@ -1,11 +1,17 @@
+import 'dart:async';
 import 'dart:io';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intelli_hire/features/candidate/new%20assess/presentation/widgets/small_circle_button.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
-import 'package:audioplayers/audioplayers.dart';
+
+import '../../../../../core/utils/app_font.dart';
 import '../controller/assessment_session_cubit.dart';
 import 'audio_waveform_widget.dart';
+import 'big_circle_button.dart';
 
 /// Owns AudioRecorder + AudioPlayer hardware resources.
 /// StatefulWidget is required because these objects have lifecycle (dispose).
@@ -13,18 +19,44 @@ class RecordingControlsWidget extends StatefulWidget {
   const RecordingControlsWidget({super.key});
 
   @override
-  State<RecordingControlsWidget> createState() => _RecordingControlsWidgetState();
+  State<RecordingControlsWidget> createState() =>
+      _RecordingControlsWidgetState();
 }
 
 class _RecordingControlsWidgetState extends State<RecordingControlsWidget> {
   final AudioRecorder _recorder = AudioRecorder();
   final AudioPlayer _player = AudioPlayer();
+  Timer? _timer;
+  int _recordDuration = 0;
 
   @override
   void dispose() {
-    _recorder.dispose();
+    _recorder.dispose;
+    _timer?.cancel(); // 🌟 تأمين التايمر();
     _player.dispose();
     super.dispose();
+  }
+
+  String _formatNumber(int number) {
+    String numberStr = number.toString();
+    if (number < 10) {
+      numberStr = '0$numberStr';
+    }
+    return numberStr;
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    setState(() => _recordDuration = 0); // تصفير العداد قبل ما يبدأ
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+      setState(() => _recordDuration++);
+    });
+  }
+
+  // 🌟 دالة إيقاف التايمر
+  void _stopTimer() {
+    _timer?.cancel();
   }
 
   Future<void> _startRecording(BuildContext context) async {
@@ -37,15 +69,25 @@ class _RecordingControlsWidgetState extends State<RecordingControlsWidget> {
     final path = '${dir.path}/recording_$questionId.m4a';
 
     await _recorder.start(
-      RecordConfig(encoder: AudioEncoder.aacLc, bitRate: 128000, sampleRate: 44100),
+      RecordConfig(
+        encoder: AudioEncoder.aacEld,
+        bitRate: 128000,
+        sampleRate: 44100,
+        // تفعيل دول بيحسن جودة الصوت جداً وبيشيل الوش
+        echoCancel: true,
+        noiseSuppress: true,
+        autoGain: true,
+      ),
       path: path,
     );
+    _startTimer(); // 🌟 تشغيل التايمر
     cubit.onRecordingStarted();
   }
 
   Future<void> _stopRecording(BuildContext context) async {
     final cubit = context.read<AssessmentSessionCubit>();
     final path = await _recorder.stop();
+    _stopTimer(); // 🌟 إيقاف التايمر
     if (path != null) cubit.onRecordingStopped(path);
   }
 
@@ -56,13 +98,16 @@ class _RecordingControlsWidgetState extends State<RecordingControlsWidget> {
 
     cubit.onPlaybackStarted();
     await _player.play(DeviceFileSource(path));
+    _startTimer(); // 🌟 تشغيل التايمر
     _player.onPlayerComplete.listen((_) {
+      _stopTimer(); // 🌟 إيقاف التايمر
       if (mounted) cubit.onPlaybackStopped();
     });
   }
 
   Future<void> _stopPlayback(BuildContext context) async {
     await _player.stop();
+    _stopTimer(); // 🌟 إيقاف التايمر
     if (mounted) context.read<AssessmentSessionCubit>().onPlaybackStopped();
   }
 
@@ -73,6 +118,8 @@ class _RecordingControlsWidgetState extends State<RecordingControlsWidget> {
       final file = File(path);
       if (await file.exists()) await file.delete();
     }
+    _stopTimer(); // 🌟 تأكيد الإيقاف
+    setState(() => _recordDuration = 0); // 🌟 تصفير العداد
     cubit.onRecordingDeleted();
   }
 
@@ -82,18 +129,37 @@ class _RecordingControlsWidgetState extends State<RecordingControlsWidget> {
       buildWhen: (prev, curr) => prev.recordingState != curr.recordingState,
       builder: (context, state) {
         final rs = state.recordingState;
+        // 🌟 حساب الدقائق والثواني
+        final minutes = _formatNumber(_recordDuration ~/ 60);
+        final seconds = _formatNumber(_recordDuration % 60);
 
         return Column(
           children: [
             // Waveform (shown while recording or recorded)
-            if (rs == RecordingState.recording || rs == RecordingState.recorded || rs == RecordingState.playing)
+            if (rs == RecordingState.recording ||
+                rs == RecordingState.recorded ||
+                rs == RecordingState.playing)
               Padding(
                 padding: const EdgeInsets.only(bottom: 16),
-                child: AudioWaveformWidget(
-                  isAnimating: rs == RecordingState.recording,
-                  color: rs == RecordingState.recording
-                      ? const Color(0xFFEF4444)
-                      : const Color(0xFF3B82F6),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '$minutes:$seconds',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontFamily: AppFont.interBold,
+                        color: Color(0xFF134CC7),
+                        fontFeatures: [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    AudioWaveformWidget(
+                      isAnimating: rs == RecordingState.recording,
+                      color: const Color(0xFF134CC7),
+                    ),
+
+                  ],
                 ),
               ),
 
@@ -103,53 +169,59 @@ class _RecordingControlsWidgetState extends State<RecordingControlsWidget> {
               children: [
                 if (rs == RecordingState.idle) ...[
                   // Big record button
-                  _BigCircleButton(
-                    color: const Color(0xFFEF4444),
+                  BigCircleButton(
+                    color: const Color(0xFF134CC7),
                     icon: Icons.mic_rounded,
                     label: 'Tap to Record',
                     onTap: () => _startRecording(context),
                   ),
-                ] else if (rs == RecordingState.recording) ...[
+                ]
+                else if (rs == RecordingState.recording) ...[
                   // Delete (enabled when recording: cancel)
-                  _SmallCircleButton(
+                  SmallCircleButton(
                     icon: Icons.delete_outline_rounded,
                     color: const Color(0xFFEF4444),
-                    onTap: () => _deleteRecording(context),
+                    onTap: () {
+                      _recorder.stop(); // وقف التسجيل الأول
+                      _deleteRecording(context);
+                    },
                   ),
                   const SizedBox(width: 24),
                   // Stop button
-                  _BigCircleButton(
+                  BigCircleButton(
                     color: const Color(0xFFEF4444),
                     icon: Icons.stop_rounded,
                     label: 'Stop',
                     onTap: () => _stopRecording(context),
                   ),
-                ] else if (rs == RecordingState.recorded) ...[
+                ]
+                else if (rs == RecordingState.recorded) ...[
                   // Delete
-                  _SmallCircleButton(
+                  SmallCircleButton(
                     icon: Icons.delete_outline_rounded,
                     color: const Color(0xFFEF4444),
                     onTap: () => _deleteRecording(context),
                   ),
                   const SizedBox(width: 24),
                   // Play
-                  _BigCircleButton(
-                    color: const Color(0xFF3B82F6),
+                  BigCircleButton(
+                    color: const Color(0xFF134CC7),
                     icon: Icons.play_arrow_rounded,
                     label: 'Play Answer',
                     onTap: () => _playRecording(context),
                   ),
                   const SizedBox(width: 24),
                   // Re-record
-                  _SmallCircleButton(
+                  SmallCircleButton(
                     icon: Icons.mic_rounded,
                     color: const Color(0xFF64748B),
                     onTap: () => _startRecording(context),
                   ),
-                ] else if (rs == RecordingState.playing) ...[
+                ]
+                else if (rs == RecordingState.playing) ...[
                   // Stop playback
-                  _BigCircleButton(
-                    color: const Color(0xFF3B82F6),
+                  BigCircleButton(
+                    color: const Color(0xFF134CC7),
                     icon: Icons.pause_rounded,
                     label: 'Pause',
                     onTap: () => _stopPlayback(context),
@@ -164,78 +236,4 @@ class _RecordingControlsWidgetState extends State<RecordingControlsWidget> {
   }
 }
 
-class _BigCircleButton extends StatelessWidget {
-  final Color color;
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
 
-  const _BigCircleButton({
-    required this.color,
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: onTap,
-          child: Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: color.withOpacity(0.35),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Icon(icon, color: Colors.white, size: 36),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(label,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF64748B),
-              fontFamily: 'Inter_Regular',
-            )),
-      ],
-    );
-  }
-}
-
-class _SmallCircleButton extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _SmallCircleButton({
-    required this.icon,
-    required this.color,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.12),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(icon, color: color, size: 24),
-      ),
-    );
-  }
-}

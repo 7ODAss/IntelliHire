@@ -10,14 +10,14 @@ class HomeSummaryModel extends HomeSummary {
   });
   factory HomeSummaryModel.fromJson(Map<String, dynamic> json) {
     return HomeSummaryModel(
-      trainingPerformance: TrainingPerformanceModel.fromJson(json['training_performance']),
-      interviewSummary: InterviewSummaryModel.fromJson(json['interview_summary']),
+      trainingPerformance: TrainingPerformanceModel.fromJson(json),
+      interviewSummary: InterviewSummaryModel.fromJson(json),
     );
   }
   Map<String, dynamic> toJson(){
     return {
-      'training_performance': trainingPerformance,
-      'interview_summary': interviewSummary,
+      'trainingPerformance': trainingPerformance,
+      'interviewSummary': interviewSummary,
     };
   }
 }

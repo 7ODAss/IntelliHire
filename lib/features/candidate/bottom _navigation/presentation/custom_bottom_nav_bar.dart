@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/features/candidate/new%20assess/presentation/screens/new_assess_screen.dart';
+import 'package:intelli_hire/features/candidate/profile/presentation/profile_screen_candidate.dart';
+
+import '../../../../core/helpers/cache_helper.dart';
 import '../../../../core/utils/app_color.dart';
 import '../../../Organization/bottom _navigation/presentation/widget/nav_item.dart';
 import '../../assess manage/presentation/assess_manage_screen.dart';
 import '../../home/presentation/home_screen.dart';
+import '../../new assess/presentation/screens/interview_question_screen.dart';
 import '../../notification/presentation/notification_screen.dart';
-import '../../profile/presentation/profile_screen.dart';
 import '../controller/bottom_nav_candidate_cubit.dart';
 
 class CustomBottomNavBar extends StatefulWidget {
@@ -32,15 +35,19 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
     const HomeScreen(),
     const AssessManageScreen(),
     const NotificationScreen(),
-    const ProfileScreen(),
+    const ProfileScreenCandidate(),
   ];
+
+  Future<bool> showAgain() async {
+    String? showVal = await CacheHelper.getData(key: 'do_not_show');
+    return showVal == 'true';
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<BottomNavCandidateCubit, BottomNavCandidateState>(
       builder: (context, state) {
         return Scaffold(
-          extendBody: true,
           resizeToAvoidBottomInset: false,
 
           body: IndexedStack(
@@ -62,11 +69,23 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
                   width: 60,
                   height: 60,
                   child: FloatingActionButton(
-                    onPressed: () {
+                    onPressed: () async{
+                      bool skipInstructions = await showAgain();
+                      if (!context.mounted) return;
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (newContext) => const NewAssessScreen(),
+                          builder: (newContext)  => skipInstructions
+                              ? InterviewQuestionScreen(
+                                  assessmentId: 'assess_123',
+                                  title: 'Software Engineer',
+                                  track: 'Flutter Development',
+                                )
+                              : const NewAssessScreen(
+                                  assessmentId: 'assess_123',
+                                  title: 'Software Engineer',
+                                  track: 'Flutter Development',
+                                ),
                         ),
                       );
                     },

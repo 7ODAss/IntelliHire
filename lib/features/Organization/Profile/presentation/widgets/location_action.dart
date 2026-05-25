@@ -5,13 +5,15 @@ import '../controller/profile_cubit.dart';
 
 class LocationAction extends StatelessWidget {
   final ProfileCubit cubit;
-  const LocationAction({super.key, required this.cubit});
+  final TextEditingController addressController;
+  const LocationAction({super.key, required this.cubit, required this.addressController});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        cubit.addCompanyLocation();
+        cubit.addCompanyLocation(detailedAddress: addressController.text);
+        addressController.clear();
       },
       style: ElevatedButton.styleFrom(
         backgroundColor:

@@ -12,7 +12,7 @@ abstract class BaseUserProfileDataSource {
 class UserProfileDataSource extends BaseUserProfileDataSource {
   @override
   Future<LogoutModel> logOutUserProfile() async {
-    final refreshToken = CacheHelper.getData(key: 'refreshToken');
+    final refreshToken = await CacheHelper.getData(key: 'refreshToken');
 
     final response = await DioConfig.postData(
       path: ApiConstant.logout,
@@ -23,9 +23,9 @@ class UserProfileDataSource extends BaseUserProfileDataSource {
     );
 
     if (response.statusCode == 200) {
-      CacheHelper.removeData(key: 'token');
-      CacheHelper.removeData(key: 'refreshToken');
-      CacheHelper.removeData(key: 'userType');
+      await CacheHelper.removeData(key: 'token');
+      await CacheHelper.removeData(key: 'refreshToken');
+      await CacheHelper.removeData(key: 'userType');
       return LogoutModel.fromJson(response.data);
     } else {
       throw ServerException(

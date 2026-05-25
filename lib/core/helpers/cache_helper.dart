@@ -1,35 +1,32 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class CacheHelper {
-  static late SharedPreferences _sharedPreferences;
+  static late FlutterSecureStorage _secureStorage;
 
-  static init() async {
-    _sharedPreferences = await SharedPreferences.getInstance();
+  static void init() {
+    _secureStorage = const FlutterSecureStorage();
   }
 
-  static Future<bool> saveData({
+  static Future<void> saveData({
     required String key,
     required dynamic value,
   }) async {
-    if (value is String) return await _sharedPreferences.setString(key, value);
-    if (value is int) return await _sharedPreferences.setInt(key, value);
-    if (value is bool) return await _sharedPreferences.setBool(key, value);
-    return await _sharedPreferences.setDouble(key, value);
+    await _secureStorage.write(key: key, value: value.toString());
   }
 
-  static dynamic getData({
-    required String key,
-  }) {
-    return _sharedPreferences.get(key);
-  }
-
-  static Future<bool> removeData({
+  static Future<String?> getData({
     required String key,
   }) async {
-    return await _sharedPreferences.remove(key);
+    return await _secureStorage.read(key: key);
   }
 
-  static Future<bool> clearData() async {
-    return await _sharedPreferences.clear();
+  static Future<void> removeData({
+    required String key,
+  }) async {
+     await _secureStorage.delete(key: key);
+  }
+
+  static Future<void> clearData() async {
+    await _secureStorage.deleteAll();
   }
 }

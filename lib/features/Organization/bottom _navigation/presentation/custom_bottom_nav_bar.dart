@@ -10,7 +10,7 @@ import 'package:intelli_hire/features/Organization/Post%20Job/presentation/post_
 import 'package:intelli_hire/features/Organization/bottom%20_navigation/controller/bottom_nav_cubit.dart';
 import 'package:intelli_hire/features/Organization/bottom%20_navigation/presentation/widget/nav_item.dart';
 
-import '../../Profile/presentation/screen/profile_view.dart';
+import '../../Profile/presentation/profile_view.dart';
 
 class CustomBottomNavBar extends StatefulWidget {
   const CustomBottomNavBar({super.key});

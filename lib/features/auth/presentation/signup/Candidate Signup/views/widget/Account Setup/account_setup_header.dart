@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/signup_back_button.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/widget/custom_stepper.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/company/widget/custom_stepper.dart';
 import '../../../../../../../../core/utils/app_font.dart';
 
 class AccountSetupHeader extends StatelessWidget {

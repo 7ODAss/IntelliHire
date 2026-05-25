@@ -7,7 +7,7 @@ class LogoutModel extends Logout {
     super.refreshToken,
     super.email,
     super.userType,
-    super.isAuthenticated,
+    super.isSuccess,
     super.message,
   });
 
@@ -18,7 +18,7 @@ class LogoutModel extends Logout {
       refreshToken: json['refreshToken'] ?? '',
       email: json['email'] ?? '',
       userType: json['userType'] ?? '',
-      isAuthenticated: json['isAuthenticated'] ?? false,
+      isSuccess: json['isSuccess'] ?? false,
       message: json['message'] ?? '',
     );
   }

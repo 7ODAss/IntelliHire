@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
+import 'package:intelli_hire/core/utils/shared/liquid_glass_custom_pop_button.dart';
+import 'package:intelli_hire/features/candidate/new%20assess/presentation/widgets/pulse_timer_badge.dart';
+
+import '../../../../../core/utils/app_color.dart';
+import '../controller/assessment_session_cubit.dart';
 
 class QuestionProgressHeader extends StatelessWidget {
   final int currentQuestion;
@@ -20,35 +26,23 @@ class QuestionProgressHeader extends StatelessWidget {
         : 0.0;
 
     return Container(
-      color: const Color(0xFF0F172A),
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F172A),
+        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(40), bottomRight: Radius.circular(40)),
+      ),
       child: Column(
         children: [
           Row(
             children: [
-              GestureDetector(
-                onTap: onClose,
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: const Icon(
-                    Icons.close_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-              ),
+              LiquidGlassCustomPopButton(onTap: onClose,),
               Expanded(
                 child: Text(
                   'Question $currentQuestion of $totalQuestions',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontFamily: AppFont.interBold,
-                    fontSize: 16,
+                    fontFamily: AppFont.poppinsMedium,
+                    fontSize: 18,
                     color: Colors.white,
                   ),
                 ),
@@ -57,16 +51,26 @@ class QuestionProgressHeader extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 6,
-              backgroundColor: Colors.white.withOpacity(0.15),
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                Color(0xFF3B82F6),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 6,
+                backgroundColor: Color(0xFFE2E8F0),
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  Color(0xFF134CC7),
+                ),
               ),
             ),
+          ),
+          const SizedBox(height: 14),
+          BlocSelector<AssessmentSessionCubit, AssessmentSessionState, int>(
+            selector: (state) => state.remainingTimeInSeconds ?? 1800,
+            builder: (context, remainingTime) {
+             return PulseTimerBadge(remainingTime: remainingTime);
+            },
           ),
         ],
       ),

@@ -12,41 +12,13 @@ part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   final LogOutUserProfileUseCase logOutUserProfileUseCase;
-
   ProfileCubit(this.logOutUserProfileUseCase) : super(ProfileState());
-
-  // Personal Info
-  final TextEditingController emailController = TextEditingController(
-    text: 'mahmoud.m@gmail.com',
-  );
-  final TextEditingController phoneController = TextEditingController(
-    text: '0 100 123 4567',
-  );
-  final GlobalKey<FormState> personalInfoKey = GlobalKey<FormState>();
 
   // Security
   final TextEditingController currentPassController = TextEditingController();
   final TextEditingController newPassController = TextEditingController();
   final GlobalKey<FormState> securityInfoKey = GlobalKey<FormState>();
 
-  // Company Details
-  final GlobalKey<FormState> companyDetailsKey = GlobalKey<FormState>();
-  final TextEditingController companyNameController = TextEditingController(
-    text: 'IntelliHire',
-  );
-  final TextEditingController industryController = TextEditingController(
-    text: 'Information Technology',
-  );
-  final TextEditingController websiteController = TextEditingController(
-    text: 'www.intellihire.com',
-  );
-
-  final TextEditingController countryController = TextEditingController();
-  final TextEditingController govController = TextEditingController();
-  final TextEditingController addressController = TextEditingController();
-  final GlobalKey<FormState> locationFormKey = GlobalKey<FormState>();
-  final SearchController searchCountryController = SearchController();
-  final SearchController searchGovController = SearchController();
 
   final List<String> countries = [
     'Egypt',
@@ -139,23 +111,19 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   final TextEditingController linkCompanyController = TextEditingController();
 
-  void addCompanyLocation() {
-    if (countryController.text.isNotEmpty &&
-        govController.text.isNotEmpty &&
-        addressController.text.isNotEmpty) {
+  void addCompanyLocation({required String detailedAddress}) {
+    if (state.selectedCountry != null &&
+        state.selectedGovernorate != null &&
+        detailedAddress.isNotEmpty) {
       final newLocation = CompanyLocation(
-        country: countryController.text,
-        governorate: govController.text,
-        address: addressController.text,
+        country: state.selectedCountry!,
+        governorate: state.selectedGovernorate!,
+        address:detailedAddress,
       );
 
       final currentLocations = state.locations ?? [];
 
       final updatedLocation = [...currentLocations, newLocation];
-
-      countryController.clear();
-      govController.clear();
-      addressController.clear();
 
       emit(
         state.copyWith(

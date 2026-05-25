@@ -2,21 +2,18 @@ import 'package:equatable/equatable.dart';
 
 class QuestionResult extends Equatable {
   final String questionText;
-  final String transcribedAnswer;
   final String idealAnswer;
+  final String userAnswer;
 
   const QuestionResult({
     required this.questionText,
-    required this.transcribedAnswer,
     required this.idealAnswer,
+    required this.userAnswer,
   });
 
-  factory QuestionResult.empty() => const QuestionResult(
-        questionText: '',
-        transcribedAnswer: '',
-        idealAnswer: '',
-      );
+  factory QuestionResult.empty() =>
+      const QuestionResult(questionText: '', idealAnswer: '', userAnswer: '');
 
   @override
-  List<Object?> get props => [questionText, transcribedAnswer, idealAnswer];
+  List<Object?> get props => [questionText, idealAnswer, userAnswer];
 }

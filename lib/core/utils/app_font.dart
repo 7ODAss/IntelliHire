@@ -2,6 +2,7 @@ class AppFont {
   static const String poppinsBold = 'Poppins_Bold';
   static const String poppinsSemiBold = 'Poppins_Semi_Bold';
   static const String poppinsRegular = 'Poppins_Regular';
+  static const String poppinsMedium = 'Poppins_Medium';
   static const String interRegular = 'Inter_Regular';
   static const String interMedium = 'Inter_Medium';
   static const String interSemiBold = 'Inter_Semi_Bold';

@@ -6,11 +6,13 @@ import '../entities/question.dart';
 import '../repositories/base_new_assess_repository.dart';
 
 class FetchAssessmentQuestionsParams extends Equatable {
-  final String assessmentId;
-  const FetchAssessmentQuestionsParams(this.assessmentId);
+  final String title;
+  final String track;
+
+  const FetchAssessmentQuestionsParams(this.title,this.track);
 
   @override
-  List<Object?> get props => [assessmentId];
+  List<Object?> get props => [title,track];
 }
 
 class FetchAssessmentQuestionsUseCase
@@ -20,5 +22,5 @@ class FetchAssessmentQuestionsUseCase
 
   @override
   Future<Either<Failure, List<Question>>> call(FetchAssessmentQuestionsParams parameters) =>
-      repo.fetchAssessmentQuestions(parameters.assessmentId);
+      repo.fetchAssessmentQuestions(parameters.title,parameters.track);
 }

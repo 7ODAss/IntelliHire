@@ -10,11 +10,9 @@ class CustomPopButton extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: onTap ?? () => Navigator.pop(context),
-
           child: Container(
             width: 40,
             height: 40,
-
             decoration: BoxDecoration(
               color: const Color(0xffF8FAFC),
               shape: BoxShape.circle,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'app_color.dart';
 import 'app_font.dart';
 
@@ -121,6 +122,7 @@ class AppTextStyle {
     fontFamily: AppFont.interRegular,
     color: AppColor.darkBlue,
   );
+
   //////////////
 
   static const TextStyle titlePostScreen = TextStyle(
@@ -154,5 +156,11 @@ class AppTextStyle {
     color: AppColor.accountTitleFieldColor,
   );
 
+  //candidateHomePageCalender
 
+  static const TextStyle candidateHomePageCalenderTitle = TextStyle(
+    fontFamily: AppFont.interSemiBold,
+    fontSize: 14,
+    color: Colors.white,
+  );
 }

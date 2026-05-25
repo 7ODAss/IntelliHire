@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
+import 'package:intelli_hire/core/utils/shared/date_formatter.dart';
 import 'package:intelli_hire/features/candidate/assess%20manage/domain/entities/assessment.dart';
 
 class AssessmentCard extends StatelessWidget {
@@ -107,7 +108,7 @@ class AssessmentCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: _getBadgeColor(
-                      assessment.performanceBadge,
+                      assessment.label,
                     ).withOpacity(0.12),
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -117,33 +118,35 @@ class AssessmentCard extends StatelessWidget {
                       Icon(
                         Icons.auto_awesome_outlined,
                         size: 14,
-                        color: _getBadgeColor(assessment.performanceBadge),
+                        color: _getBadgeColor(assessment.label),
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        assessment.performanceBadge,
+                        assessment.label,
                         style: TextStyle(
                           fontFamily: AppFont.interRegular,
                           fontSize: 12,
-                          color: _getBadgeColor(assessment.performanceBadge),
+                          color: _getBadgeColor(assessment.label),
                         ),
                       ),
                     ],
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 8),
                 Icon(
                   Icons.access_time_rounded,
-                  size: 14,
-                  color: Colors.grey[400],
+                  size: 18,
+                  color: Color(0xFFE2E8F0),
                 ),
                 const SizedBox(width: 4),
-                Text(
-                  assessment.date,
-                  style: TextStyle(
-                    fontFamily: AppFont.interRegular,
-                    fontSize: 12,
-                    color: Colors.grey[500],
+                Flexible(
+                  child: Text(
+                    assessment.date.toFormattedData(),
+                    style: TextStyle(
+                      fontFamily: AppFont.interRegular,
+                      fontSize: 14,
+                      color: Color(0xFF475569),
+                    ),
                   ),
                 ),
               ],

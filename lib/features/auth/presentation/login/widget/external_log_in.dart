@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../../core/utils/app_color.dart';
 import '../../../../../core/utils/app_text_style.dart';
-import '../../../controller/login_cubit.dart';
+import '../../../controller/login_cubit/login_cubit.dart';
 
 class ExternalLogIn extends StatelessWidget {
   final String userType;

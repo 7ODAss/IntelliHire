@@ -18,7 +18,7 @@ class LiquidGlassCard extends StatelessWidget {
           final boxWidth = (availableWidth - 30) / 2;
 
           return SizedBox(
-            height: 100,
+            height: 90,
             child: LiquidGlassView(
               backgroundWidget: Container(
                 color: const Color(0xFF0F172A),
@@ -27,8 +27,8 @@ class LiquidGlassCard extends StatelessWidget {
               ),
               children: [
                 LiquidGlass(
-                  width: boxWidth - 10,
-                  height: 100,
+                  width: boxWidth,
+                  height: 90,
                   distortion: 0.0,
                   chromaticAberration: 0.0,
                   magnification: 1.0,
@@ -43,7 +43,7 @@ class LiquidGlassCard extends StatelessWidget {
                 ),
                 LiquidGlass(
                   width: boxWidth,
-                  height: 100,
+                  height: 90,
                   distortion: 0.0,
                   chromaticAberration: 0.0,
                   magnification: 1.0,
@@ -53,7 +53,7 @@ class LiquidGlassCard extends StatelessWidget {
                   color: Colors.white.withOpacity(0.09),
                   child: GlassStatBoxObstructionContent(
                     label: 'Average Score',
-                    value: performance.averageScore.toStringAsFixed(0),
+                    value: performance.averageScore.toString(),
                     suffix: '%',
                   ),
                 ),

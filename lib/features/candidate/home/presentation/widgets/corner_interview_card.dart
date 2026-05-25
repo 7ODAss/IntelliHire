@@ -7,8 +7,7 @@ class CornerInterviewCard extends StatelessWidget {
   final String label;
   final IconData icon;
   final Color iconColor;
-  final double width;
-  final double height;
+
 
   const CornerInterviewCard({
     super.key,
@@ -16,8 +15,7 @@ class CornerInterviewCard extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.iconColor,
-    this.width = 100,
-    this.height = 100,
+
   });
 
   @override
@@ -26,8 +24,7 @@ class CornerInterviewCard extends StatelessWidget {
       elevation: 5,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        width: width,
-        height: height,
+
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           boxShadow: [

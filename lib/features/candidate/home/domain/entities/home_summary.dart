@@ -13,5 +13,4 @@ class HomeSummary extends Equatable{
   @override
   List<Object?> get props => [trainingPerformance, interviewSummary];
 
-
 }

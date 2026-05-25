@@ -2,30 +2,35 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:intelli_hire/features/candidate/home/domain/entities/home_summary.dart';
 import 'package:intelli_hire/features/candidate/home/domain/usecases/get_home_summary_usecase.dart';
+import 'package:intelli_hire/features/candidate/home/domain/usecases/get_next_week_usecase.dart';
+
 import '../../../../../core/enums/request.dart';
 import '../../../../../core/usecase/base_usecase.dart';
+import '../../domain/entities/weekly_activity_summary.dart';
+import '../../domain/usecases/get_prev_week_usecase.dart';
+import '../../domain/usecases/reset_week_usecase.dart';
+
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   final GetHomeSummaryUseCase getHomeSummaryUseCase;
-  HomeCubit(this.getHomeSummaryUseCase) : super(const HomeState());
+  final GetNextWeekUseCase getNextWeekUseCase;
+  final GetPrevWeekUseCase getPrevWeekUseCase;
+  final ResetWeekUseCase resetWeekUseCase;
+
+  HomeCubit(
+    this.getHomeSummaryUseCase,
+    this.getNextWeekUseCase,
+    this.getPrevWeekUseCase,
+    this.resetWeekUseCase,
+  ) : super(const HomeState());
 
 
-  //api
-    Map<int, List<int>> weekActivityData = {
-    0: [5, 9, 2, 0, 4, 20, 6],
-    -1: [3, 7, 5, 8, 2, 10, 4],
-    -2: [1, 4, 9, 3, 6, 8, 7],
-  };
-
-   List<String> weekDays = ['S', 'S', 'M', 'T', 'W', 'T', 'F'];
-
-  List<int> get currentActivity =>
-      weekActivityData[state.weekOffset] ?? List.filled(7, 0);
+  List<String> weekDays = ['S', 'S', 'M', 'T', 'W', 'T', 'F'];
 
   ({String month, int year, int weekNum}) weekLabel() {
     final now = DateTime.now();
-    final startOfCurrentWeek = now.subtract(Duration(days: now.weekday % 7));
+    final startOfCurrentWeek = now.subtract(Duration(days: (now.weekday) % 7));
     final startOfDisplayedWeek = startOfCurrentWeek.add(
       Duration(days: state.weekOffset * 7),
     );
@@ -61,23 +66,83 @@ class HomeCubit extends Cubit<HomeState> {
     return map[wd] ?? -1;
   }
 
-
   Future<void> loadHomeData() async {
-    emit(state.copyWith(status: RequestState.loading));
+    emit(state.copyWith(homeSummaryStatus: RequestState.loading));
     final result = await getHomeSummaryUseCase(const NoParameters());
+    if (isClosed) return;
+
     result.fold(
-      (failure) => emit(state.copyWith(
-        status: RequestState.error,
-        errorMessage: failure.message,
-      )),
-      (summary) => emit(state.copyWith(
-        status: RequestState.success,
-        homeSummary: summary,
-      )),
+      (failure) => emit(
+        state.copyWith(
+          homeSummaryStatus: RequestState.error,
+          homeSummaryMessage: failure.message,
+        ),
+      ),
+      (summary) => emit(
+        state.copyWith(homeSummaryStatus: RequestState.success, homeSummary: summary),
+      ),
     );
+    print('home model: ${state.homeSummary}');
   }
 
-  void changeWeekOffset(int offset) {
-    emit(state.copyWith(weekOffset: state.weekOffset + offset));
+  // void changeWeekOffset(int offset) {
+  //   emit(state.copyWith(weekOffset: state.weekOffset + offset));
+  // }
+
+  Future<void> getNextWeek() async {
+    emit(state.copyWith(weekActivityState: RequestState.loading));
+    final result = await getNextWeekUseCase(const NoParameters());
+    if (isClosed) return;
+
+    result.fold(
+          (failure) => emit(
+        state.copyWith(
+          weekActivityState: RequestState.error,
+          weekActivityMessage: failure.message,
+        ),
+      ),
+          (summary) => emit(
+        state.copyWith(weekActivityState: RequestState.success, weekActivity: summary, weekOffset: state.weekOffset + 1),
+      ),
+    );
+    print('home model: ${state.homeSummary}');
+  }
+
+  Future<void> getPrevWeek() async {
+    emit(state.copyWith(weekActivityState: RequestState.loading));
+    final result = await getPrevWeekUseCase(const NoParameters());
+    if (isClosed) return;
+
+    result.fold(
+          (failure) => emit(
+        state.copyWith(
+          weekActivityState: RequestState.error,
+          weekActivityMessage: failure.message,
+        ),
+      ),
+          (summary) => emit(
+        state.copyWith(weekActivityState: RequestState.success, weekActivity: summary, weekOffset: state.weekOffset - 1),
+      ),
+    );
+    print('home model: ${state.homeSummary}');
+  }
+
+  void resetWeek() async{
+    emit(state.copyWith(weekActivityState: RequestState.loading));
+    final result = await resetWeekUseCase(const NoParameters());
+    if (isClosed) return;
+
+    result.fold(
+          (failure) => emit(
+        state.copyWith(
+          weekActivityState: RequestState.error,
+          weekActivityMessage: failure.message,
+        ),
+      ),
+          (summary) => emit(
+        state.copyWith(weekActivityState: RequestState.success, weekActivity: summary, weekOffset: 0),
+      ),
+    );
+    print('home model: ${state.homeSummary}');
   }
 }

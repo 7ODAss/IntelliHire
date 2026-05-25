@@ -10,11 +10,15 @@
             <data android:scheme="http" />
         </intent>
     </queries>
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_DOCUMENT"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="intelli_hire"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -38,11 +42,11 @@
             </intent-filter>
 
             <!--Deep linking-->
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="intellihire" />
+                <data android:scheme="intellihire" android:host="confirm-email" />
             </intent-filter>
 
         </activity>
@@ -51,6 +55,9 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <meta-data
+            android:name="flutter_deeplinking_enabled"
+            android:value="true" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
