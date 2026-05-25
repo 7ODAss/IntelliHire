@@ -97,6 +97,7 @@ class _SignUpInformationCompanyState extends State<SignUpInformationCompany> {
                     builder: (context, state) {
                       return CustomDropdownMenu(
                         hint: 'Industry',
+                        title: "Industry",
                         items: cubit.industries,
                         value: state.isEmpty ? null : state,
                         onChanged: (val) => cubit.changeSelectedIndustry(val!),

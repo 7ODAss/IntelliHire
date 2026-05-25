@@ -7,8 +7,10 @@ import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signu
 class AccountSetupView extends StatefulWidget {
   const AccountSetupView({super.key});
 
+
   @override
   State<AccountSetupView> createState() => _AccountSetupViewState();
+  
 }
 
 class _AccountSetupViewState extends State<AccountSetupView> {
@@ -46,17 +48,19 @@ class _AccountSetupViewState extends State<AccountSetupView> {
             onPressed: previousStep,
           ),
           Expanded(
-            child: IndexedStack(
-              index: activeStep,
-              children: [
-                PhoneNumber(onPressed: nextStep),
-                UploadCv(onPressed: nextStep),
-                ProfilePhoto(onPressed: nextStep),
-              ],
-            ),
+            child: _buildCurrentStep(), // ✅ بيبني الصفحة الحالية بس
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildCurrentStep() {
+    switch (activeStep) {
+      case 0: return PhoneNumber(onPressed: nextStep);
+      case 1: return UploadCv(onPressed: nextStep);
+      case 2: return ProfilePhoto(onPressed: nextStep);
+      default: return const SizedBox.shrink();
+    }
   }
 }

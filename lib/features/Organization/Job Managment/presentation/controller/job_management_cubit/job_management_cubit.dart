@@ -1,0 +1,63 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intelli_hire/features/Organization/Job%20Managment/domain/entities/job_entity.dart';
+import 'package:intelli_hire/features/Organization/Job%20Managment/domain/usecases/get_jobs_usecase.dart';
+import 'package:intelli_hire/features/Organization/Job%20Managment/domain/usecases/delete_job_usecase.dart';
+import 'job_management_state.dart';
+
+class JobManagementCubit extends Cubit<JobManagementState> {
+  final GetJobsUseCase getJobsUseCase; 
+  final DeleteJobUseCase deleteJobUseCase;
+
+  JobManagementEntity? originalData;
+
+  JobManagementCubit(
+    this.getJobsUseCase,
+    this.deleteJobUseCase,
+  ) : super(JobManagementInitial());
+
+  Future<void> fetchJobs() async {
+    emit(JobManagementLoading());
+    final result = await getJobsUseCase.execute();
+    
+    result.fold(
+      (error) => emit(JobManagementError(error)),
+      (data) {
+        originalData = data;
+        emit(JobManagementLoaded(data));
+      }
+    );
+  }
+
+  void searchJobs(String query) {
+    if (originalData == null) return;
+
+    if (query.isEmpty) {
+      emit(JobManagementLoaded(originalData!));
+      return;
+    }
+    
+    final filteredJobs = originalData!.jobs.where((job) {
+      return job.title.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+
+    emit(JobManagementLoaded(
+      JobManagementEntity(
+        activeJobs: filteredJobs.length,
+        totalApplicants: originalData!.totalApplicants,
+        jobs: filteredJobs,
+      ),
+    ));
+  }
+
+  Future<void> deleteJob(String jobId) async {
+    final result = await deleteJobUseCase.execute(jobId);
+    
+    result.fold(
+      (error) => emit(JobManagementError(error)), 
+      (_) {
+        emit(JobDeletedSuccess()); 
+        fetchJobs(); 
+      }
+    );
+  }
+}

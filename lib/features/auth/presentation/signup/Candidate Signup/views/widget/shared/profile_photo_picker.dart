@@ -1,44 +1,33 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
+import 'package:intelli_hire/features/auth/controller/profile%20setup%20cubit/profile_setup_cubit.dart';
 
-class ProfilePhotoPicker extends StatefulWidget {
+class ProfilePhotoPicker extends StatelessWidget {
   const ProfilePhotoPicker({super.key, this.radius = 60});
 
   final double radius;
 
   @override
-  State<ProfilePhotoPicker> createState() => _ProfilePhotoPickerState();
-}
-
-class _ProfilePhotoPickerState extends State<ProfilePhotoPicker> {
-  File? _image;
-
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final selectedImage = context.watch<ProfileSetupCubit>().selectedImage;
+
     return GestureDetector(
-      onTap: _pickImage,
+      onTap: () {
+        context.read<ProfileSetupCubit>().pickImage();
+      },
       child: SizedBox(
         width: 150,
         height: 150,
         child: Stack(
           children: [
             DottedBorder(
-              options: CircularDottedBorderOptions(
+              options: const CircularDottedBorderOptions(
                 dashPattern: [5, 2],
                 color: Color(0xff426FF9),
                 strokeWidth: 1,
@@ -46,9 +35,9 @@ class _ProfilePhotoPickerState extends State<ProfilePhotoPicker> {
               child: CircleAvatar(
                 radius: 75,
                 backgroundColor: Colors.transparent,
-                backgroundImage: _image != null ? FileImage(_image!) : null,
-                child: _image == null
-                    ? Icon(Icons.person, size: 85, color: AppColor.grey)
+                backgroundImage: selectedImage != null ? FileImage(selectedImage) : null,
+                child: selectedImage == null
+                    ? const Icon(Icons.person, size: 85, color: AppColor.grey)
                     : null,
               ),
             ),

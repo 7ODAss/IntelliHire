@@ -17,10 +17,14 @@ class PostJobChoiceChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChoiceChip(
-      label: Text(
-        label,
-        style: AppTextStyle.textstyle12.copyWith(
-          color: isSelected ? Colors.white : AppColor.darkBlue,
+      // 🌟 غلفنا النص بـ FittedBox عشان يصغر أوتوماتيك لو الشاشة ضيقة
+      label: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          label,
+          style: AppTextStyle.textstyle12.copyWith(
+            color: isSelected ? Colors.white : AppColor.darkBlue,
+          ),
         ),
       ),
       selected: isSelected,
@@ -28,7 +32,8 @@ class PostJobChoiceChip extends StatelessWidget {
       selectedColor: AppColor.primary,
       backgroundColor: Colors.white,
       showCheckmark: false,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      // 🌟 قللنا الـ padding الأفقي من 16 لـ 8 عشان نوفر مساحة
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(

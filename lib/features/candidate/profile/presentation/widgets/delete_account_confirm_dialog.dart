@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
-import 'package:intelli_hire/features/Organization/Post%20Job/controller/post_job_cubit.dart';
 
 class DeleteAccountConfirmDialog extends StatelessWidget {
   const DeleteAccountConfirmDialog({

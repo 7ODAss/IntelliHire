@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
-import 'package:intelli_hire/features/Organization/Post%20Job/controller/post_job_cubit.dart';
-import 'package:intelli_hire/features/Organization/Post%20Job/controller/post_job_state.dart';
+import 'package:intelli_hire/features/Organization/Post%20Job/presentation/controller/post_job_cubit.dart';
+import 'package:intelli_hire/features/Organization/Post%20Job/presentation/controller/post_job_state.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/widget/post_job_button.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/widget/post_job_text_field.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/widget/skill_chip.dart';
@@ -33,7 +33,7 @@ class SkillsView extends StatelessWidget {
                     border: Border.all(
                       color: const Color(0xffF1F1F1),
                       width: 1.5,
-                    ), 
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,7 +67,7 @@ class SkillsView extends StatelessWidget {
                                   if (cubit.addedSkills.contains(typedSkill)) {
                                     return 'This skill is already added!';
                                   }
-                                  return 'Please press (+) to add this skill';
+                                  return 'Please press (+) to add skill';
                                 }
                                 return null;
                               },

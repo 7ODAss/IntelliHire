@@ -6,10 +6,7 @@ import 'package:intelli_hire/core/utils/app_font.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/button_action.dart';
 import 'package:intelli_hire/features/candidate/assess%20manage/domain/entities/performance_report.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-
-import '../../../../../core/service/service_locator.dart';
-import '../../../../Organization/Job Managment/presentation/widget/custom_pop_button.dart';
-import '../../../new assess/presentation/controller/assessment_session_cubit.dart';
+import '../../../../Organization/Job Managment/presentation/views/widget/custom_pop_button.dart';
 import '../controller/assess_manage_cubit.dart';
 import '../widgets/performance_card.dart';
 import 'interview_report_screen.dart';

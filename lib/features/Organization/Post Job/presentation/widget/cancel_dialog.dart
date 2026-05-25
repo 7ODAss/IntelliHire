@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
-import 'package:intelli_hire/features/Organization/Post%20Job/controller/post_job_cubit.dart';
+import 'package:intelli_hire/features/Organization/Post%20Job/presentation/controller/post_job_cubit.dart';
 
 class CancelDialog extends StatelessWidget {
   const CancelDialog({super.key});
@@ -70,10 +70,10 @@ class CancelDialog extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () {
+                   onPressed: () {
                       context.read<PostJobCubit>().reset();
-                      Navigator.pop(context);
-                      Navigator.pop(context);
+                      
+                      Navigator.pop(context, true); 
                     },
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.only(top: 14, bottom: 16),

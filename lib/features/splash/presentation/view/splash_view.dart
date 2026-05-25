@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intelli_hire/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:lottie/lottie.dart';
-
-import '../../../onboarding/presentation/onboarding_screen.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -22,7 +21,7 @@ class _SplashViewState extends State<SplashView> {
           repeat: false,
           onLoaded: (composition) {
             Future.delayed(
-              composition.duration + const Duration(seconds: 3),
+              composition.duration + const Duration(seconds: 1),
               () {
                 if (!mounted) return;
                 Navigator.pushReplacement(

@@ -5,17 +5,16 @@ import 'package:intelli_hire/core/utils/app_text_style.dart';
 class CustomDropdownMenu extends StatefulWidget {
   const CustomDropdownMenu({
     super.key,
-    this.title,
+    required this.title,
     required this.items,
-    this.hint,
+    required this.hint,
     this.value,
     this.onChanged,
   });
 
-  final String? title;
+  final String title;
   final List<String> items;
-
-  final String? hint;
+  final String hint;
   final String? value;
   final void Function(String?)? onChanged;
 
@@ -29,16 +28,15 @@ class _CustomDropdownMenuState extends State<CustomDropdownMenu> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ?widget.title != null ? Text(
-          widget.title!,
+        Text(
+          widget.title,
           style: AppTextStyle.textstyle14.copyWith(color: AppColor.darkBlue),
-        ) : null,
+        ),
         const SizedBox(height: 8),
         LayoutBuilder(
           builder: (context, constraints) {
             return MenuAnchor(
               alignmentOffset: const Offset(0, 4),
-
               style: MenuStyle(
                 backgroundColor: WidgetStateProperty.all(Colors.white),
                 elevation: WidgetStateProperty.all(0),
@@ -50,7 +48,6 @@ class _CustomDropdownMenuState extends State<CustomDropdownMenu> {
                   ),
                 ),
               ),
-
               builder: (context, controller, child) {
                 return GestureDetector(
                   onTap: () {
@@ -61,7 +58,7 @@ class _CustomDropdownMenuState extends State<CustomDropdownMenu> {
                     }
                   },
                   child: Container(
-                    height: 52,
+                    height: 52, // رجعنا الارتفاع الثابت عشان الشكل يفضل متناسق
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -77,14 +74,16 @@ class _CustomDropdownMenuState extends State<CustomDropdownMenu> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
-                          child: Text(
-                            widget.value ?? widget.hint ?? '',
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: AppTextStyle.textstyle14.copyWith(
-                              color: widget.value == null
-                                  ? const Color(0xffD6D6D6)
-                                  : AppColor.darkBlue,
+                          // 🌟 السحر هنا: خلينا النص يقبل السكرول بالعرض
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Text(
+                              widget.value ?? widget.hint,
+                              style: AppTextStyle.textstyle14.copyWith(
+                                color: widget.value == null
+                                    ? const Color(0xffD6D6D6)
+                                    : AppColor.darkBlue,
+                              ),
                             ),
                           ),
                         ),
@@ -100,7 +99,6 @@ class _CustomDropdownMenuState extends State<CustomDropdownMenu> {
                   ),
                 );
               },
-
               menuChildren: widget.items.map((String label) {
                 final bool isSelected = widget.value == label;
 
@@ -129,12 +127,14 @@ class _CustomDropdownMenuState extends State<CustomDropdownMenu> {
                     constraints: BoxConstraints(
                       maxWidth: constraints.maxWidth - 32,
                     ),
-                    child: Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyle.textstyle14.copyWith(
-                        color: AppColor.darkBlue,
+                    // 🌟 عملنا سكرول بالعرض جوه القايمة كمان لو الاختيار طويل
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Text(
+                        label,
+                        style: AppTextStyle.textstyle14.copyWith(
+                          color: AppColor.darkBlue,
+                        ),
                       ),
                     ),
                   ),

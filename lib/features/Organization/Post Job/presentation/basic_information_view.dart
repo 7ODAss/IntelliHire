@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
-import 'package:intelli_hire/features/Organization/Post%20Job/controller/post_job_cubit.dart';
-import 'package:intelli_hire/features/Organization/Post%20Job/controller/post_job_state.dart';
-import 'package:intelli_hire/features/Organization/Post%20Job/presentation/widget/cancel_dialog.dart';
+import 'package:intelli_hire/features/Organization/Post%20Job/presentation/controller/post_job_cubit.dart';
+import 'package:intelli_hire/features/Organization/Post%20Job/presentation/controller/post_job_state.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/widget/custom_dropdown_menu.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/widget/post_job_button.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/widget/post_job_choice_chip.dart';
@@ -25,7 +24,10 @@ class BasicInformationView extends StatelessWidget {
             child: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 20,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
@@ -33,7 +35,7 @@ class BasicInformationView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Basic Information',
                         style: TextStyle(
                           fontSize: 16,
@@ -55,7 +57,6 @@ class BasicInformationView extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 12),
-
                       Row(
                         children: [
                           Expanded(
@@ -98,34 +99,27 @@ class BasicInformationView extends StatelessWidget {
                           PostJobChoiceChip(
                             label: 'Full Time',
                             isSelected: cubit.selectedJobType == 0,
-                            onTap: () {
-                              cubit.updateJobType(0);
-                            },
+                            onTap: () => cubit.updateJobType(0),
                           ),
                           PostJobChoiceChip(
                             label: 'Part Time',
                             isSelected: cubit.selectedJobType == 1,
-                            onTap: () {
-                              cubit.updateJobType(1);
-                            },
+                            onTap: () => cubit.updateJobType(1),
                           ),
                           PostJobChoiceChip(
                             label: 'Remote',
                             isSelected: cubit.selectedJobType == 2,
-                            onTap: () {
-                              cubit.updateJobType(2);
-                            },
+                            onTap: () => cubit.updateJobType(2),
                           ),
                         ],
                       ),
                       const SizedBox(height: 12),
+                      // 🔴 التعديل النهائي لمكان الوظيفة
                       CustomDropdownMenu(
                         title: "Location",
-                        hint: 'Select Location',
-                        items: const [
-                          "Building 4 , Street 9 , Maadi ,Egypt , Red Sea",
-                          "Building 4 , Street 9 , Maadi ,Egypt , Cairo",
-                        ],
+                        hint: 'No location', // الـ Default اللي طلبته
+                        items: cubit
+                            .availableLocations, // اللستة اللي جاية من السيرفر فقط
                         value: cubit.selectedLocation,
                         onChanged: (val) => cubit.updateLocation(val),
                       ),
@@ -138,18 +132,12 @@ class BasicInformationView extends StatelessWidget {
                     children: [
                       PostJobButton(
                         flex: 1,
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => const CancelDialog(),
-                          );
-                        },
+                        onPressed: () => cubit.showDiscardDialog(context),
                         text: 'Cancel',
                         textColor: AppColor.darkBlue,
                         bgColor: Colors.transparent,
-                        borderColor: Color(0xffD6D6D6),
+                        borderColor: const Color(0xffD6D6D6),
                       ),
-
                       const SizedBox(width: 16),
                       PostJobButton(
                         flex: 2,
@@ -163,9 +151,7 @@ class BasicInformationView extends StatelessWidget {
                                   'Please fill all required fields!',
                                 ),
                                 backgroundColor: Colors.red,
-
                                 behavior: SnackBarBehavior.floating,
-
                                 margin: const EdgeInsets.only(
                                   bottom: 30,
                                   left: 24,

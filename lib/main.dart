@@ -21,7 +21,9 @@ void main() async {
   String? refreshToken = await CacheHelper.getData(key: 'refreshToken');
   String? userType = await CacheHelper.getData(key: 'userType');
   String? expiresOn = await CacheHelper.getData(key: 'expiresOn');
-  DateTime? expiresOnDateTime= expiresOn != null ? DateTime.parse(expiresOn) : null;
+  DateTime? expiresOnDateTime = expiresOn != null
+      ? DateTime.parse(expiresOn)
+      : null;
   String? showVal = await CacheHelper.getData(key: 'do_not_show');
   bool doNotShow = showVal == 'true';
   print('token: $token');
@@ -32,7 +34,7 @@ void main() async {
 
   Widget widget;
   if (token != null) {
-    if(userType == 'Company'){
+    if (userType == 'Company') {
       widget = const CustomBottomNavBarWrapper();
     }
     else {
@@ -42,17 +44,11 @@ void main() async {
     widget = LoginScreen();
   }
   SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown
-    ]);
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ]);
 
-  // runApp(
-  //   DevicePreview(
-  //     enabled: !kReleaseMode,
-  //     builder: (context) => MyApp(startWidget: widget),
-  //   ),
-  // );
-  runApp(MyApp(startWidget: widget));
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
 
 class MyApp extends StatefulWidget {

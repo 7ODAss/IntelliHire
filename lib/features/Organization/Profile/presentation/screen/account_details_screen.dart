@@ -71,15 +71,15 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                   PopActionMenu(title: 'Account Details'),
                   const SizedBox(height: 16),
                   CompanyPhotoPicker2(
-                    initials: GetInitials.getInitials('Tech Corp Inc.'),
-                    onImageSelected: (image) {
-                      if (image != null) {
-                        photoCompanyController.text = image.path;
-                      } else {
-                        // لو الصورة اتمسحت فضي الكنترولر أو المتغير
-                        photoCompanyController.text = '';
+                      initials: GetInitials.getInitials('Tech Corp Inc.'),
+                      onImageSelected: (image) {
+                        if (image != null) {
+                          photoCompanyController.text = image.path;
+                        } else {
+                          // لو الصورة اتمسحت فضي الكنترولر أو المتغير
+                          photoCompanyController.text = '';
+                        }
                       }
-                    }
                   ),
                   const SizedBox(height: 32),
                   FieldItem(
@@ -95,6 +95,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                     builder: (context, state) {
                       return CustomDropdownMenu(
                         title: "Industry",
+                        hint: '',
                         items: cubit.industries,
                         value: state,
                         onChanged: (val) => cubit.changeSelectedIndustry(val!),
