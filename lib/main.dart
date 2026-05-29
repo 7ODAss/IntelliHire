@@ -36,8 +36,7 @@ void main() async {
   if (token != null) {
     if (userType == 'Company') {
       widget = const CustomBottomNavBarWrapper();
-    }
-    else {
+    } else {
       widget = const CustomBottomNavBarWrapperCandidate();
     }
   } else {
@@ -45,7 +44,7 @@ void main() async {
   }
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown
+    DeviceOrientation.portraitDown,
   ]);
   runApp(MyApp(startWidget: widget));
 }
