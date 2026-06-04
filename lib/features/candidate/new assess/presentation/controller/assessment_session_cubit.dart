@@ -272,7 +272,14 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
         );
       },
       (r) {
-        getIt<HomeCubitCandidate>().loadHomeData();
+        // Do NOT call loadHomeData() here. HomeScreen is alive in the
+        // IndexedStack under the newassess route and would rebuild immediately,
+        // combining chart/calendar/header work with audio encoding on the main
+        // thread → 500+ skipped frames → ANR → Signal 3.
+        //
+        // Instead, mark the cubit so HomeScreen fetches fresh data the moment
+        // it becomes the visible screen again (didChangeDependencies).
+        getIt<HomeCubitCandidate>().markNeedsRefresh();
         getIt<AssessManageCubit>().loadAssessmentHistory();
         if (isClosed) return;
         emit(state.copyWith(sendAssessment: RequestState.success));

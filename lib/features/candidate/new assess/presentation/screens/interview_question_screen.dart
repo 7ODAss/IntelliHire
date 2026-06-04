@@ -102,23 +102,29 @@ class _InterviewQuestionScreenState extends State<InterviewQuestionScreen>
           getIt<AssessmentSessionCubit>()..startAssessmentFlow(),
 
       child: BlocConsumer<AssessmentSessionCubit, AssessmentSessionState>(
-        listenWhen: (prev, curr) =>
-            prev.submitStatus != curr.submitStatus ||
-            prev.remainingTimeInSeconds != curr.remainingTimeInSeconds,
+        // Only react to submitStatus changes — NOT to every timer-tick
+        // (remainingTimeInSeconds changes every second and would cause
+        // the listener body to run 180 times, risking double-navigation).
+        listenWhen: (prev, curr) => prev.submitStatus != curr.submitStatus,
         listener: (context, state) async {
-          if (state.remainingTimeInSeconds == 0 &&
-              state.submitStatus == RequestState.loading) {
+          if (state.submitStatus == RequestState.loading &&
+              state.remainingTimeInSeconds == 0) {
             context.showSnackBar(
               type: SnackBarType.error,
               'Time is up! Submitting your answers automatically...',
             );
           }
+
           if (state.submitStatus == RequestState.success &&
               state.submittedReport != null) {
             final report = state.submittedReport!;
             final cubit = context.read<AssessmentSessionCubit>();
 
-            cubit.sendAssessment(
+            // Await sendAssessment so it finishes BEFORE we navigate away
+            // and tear down the BlocProvider that owns this cubit.
+            // Without await, the cubit is closed mid-flight and emitting
+            // to it throws a StateError that aborts the process.
+            await cubit.sendAssessment(
               trackName: state.cv?.jobTitle ?? 'Unknown Position',
               assessmentName: report.title,
               overallAiScore: report.overallAiScore,
@@ -129,7 +135,14 @@ class _InterviewQuestionScreenState extends State<InterviewQuestionScreen>
               questions: report.questions,
             );
 
-            Navigator.pushReplacement(
+            // Guard: widget may have been disposed while we awaited.
+            if (!context.mounted) return;
+
+            // Use pushAndRemoveUntil so the entire assessment back-stack
+            // (NewAssessScreen + InterviewQuestionScreen) is cleared.
+            // The back-button on PerformanceReportScreen and the "Done"
+            // button both call popUntil(isFirst), landing on HomeScreen.
+            Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
                 builder: (_) => BlocProvider.value(
@@ -137,10 +150,11 @@ class _InterviewQuestionScreenState extends State<InterviewQuestionScreen>
                   child: PerformanceReportScreen(
                     comeFromAssess: true,
                     jobTitle: state.cv?.jobTitle ?? 'Unknown Position',
-                    report: state.submittedReport!,
+                    report: report,
                   ),
                 ),
               ),
+              (route) => route.isFirst, // keep only HomeScreen (root)
             );
           } else if (state.submitStatus == RequestState.error) {
             context.showSnackBar(type: SnackBarType.error, state.errorMessage);

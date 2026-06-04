@@ -109,8 +109,8 @@ class TrainingPerformanceCard extends StatelessWidget {
                   maxLines: 1,
                   textDirection: TextDirection.ltr,
                 )..layout();
-
                 final dynamicWidth = textPainter.size.width + 32;
+                textPainter.dispose(); // ← release native resource immediately
                 return Center(
                   child: FittedBox(
                     fit: BoxFit.scaleDown,

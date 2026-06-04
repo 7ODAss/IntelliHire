@@ -13,9 +13,14 @@ import '../domain/entities/interview_summary.dart';
 import '../domain/entities/training_performance.dart';
 import 'controller/home_cubit.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   // 🌟 الداتا الوهمية دي ضرورية جداً عشان Skeletonizer يعرف يرسم العضم (Bones)
   static const _emptyPerformance = TrainingPerformance(
     firstName: 'Loading Name',
@@ -32,10 +37,37 @@ class HomeScreen extends StatelessWidget {
     rejectedInterviews: 0,
   );
 
+  bool _initialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final cubit = getIt<HomeCubitCandidate>();
+
+    if (!_initialized) {
+      // First mount: always load fresh data.
+      _initialized = true;
+      cubit.reset();
+      cubit.loadHomeData();
+    } else if (cubit.needsRefresh) {
+      // Re-entry after an assessment: the newassess flow set this flag instead
+      // of calling loadHomeData() directly (which caused ANR while HomeScreen
+      // was buried under the assessment route). Consume the flag and refresh now
+      // that HomeScreen is actually visible again.
+      cubit.needsRefresh = false;
+      cubit.loadHomeData();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt<HomeCubitCandidate>()..loadHomeData(),
+    // BlocProvider.value does NOT call .close() when this widget is disposed,
+    // which is correct for a lazySingleton cubit that must outlive this screen.
+    // BlocProvider(create:) always calls .close() — that was closing the
+    // singleton and causing StateError aborts when other cubits tried to
+    // emit() into it after navigation.
+    return BlocProvider.value(
+      value: getIt<HomeCubitCandidate>(),
       child: Scaffold(
         body: BlocBuilder<HomeCubitCandidate, HomeState>(
           buildWhen: (previous, current) {
@@ -75,28 +107,30 @@ class HomeScreen extends StatelessWidget {
                   child: CustomScrollView(
                     slivers: [
                       SliverToBoxAdapter(
-                        child: Header(performance: performance),
-                      ),
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
-                          child: (performance.totalExams != 0)
-                              ? TrainingPerformanceCard(
-                                  performance: performance,
-                                  cubit: context
-                                      .read<
-                                        HomeCubitCandidate
-                                      >(), // 🌟 شغال هنا بأمان تام
-                                )
-                              : const EmptyScreen(),
+                        child: RepaintBoundary(
+                          child: Header(performance: performance),
                         ),
                       ),
-
                       SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
-                          child: InterviewsSummarySection(
-                            interviews: interviews,
+                        child: RepaintBoundary(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+                            child: (performance.totalExams != 0)
+                                ? TrainingPerformanceCard(
+                                    performance: performance,
+                                    cubit: context.read<HomeCubitCandidate>(),
+                                  )
+                                : const EmptyScreen(),
+                          ),
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: RepaintBoundary(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
+                            child: InterviewsSummarySection(
+                              interviews: interviews,
+                            ),
                           ),
                         ),
                       ),

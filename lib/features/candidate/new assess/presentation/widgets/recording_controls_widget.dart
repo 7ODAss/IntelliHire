@@ -26,13 +26,15 @@ class RecordingControlsWidget extends StatefulWidget {
 class _RecordingControlsWidgetState extends State<RecordingControlsWidget> {
   final AudioRecorder _recorder = AudioRecorder();
   final AudioPlayer _player = AudioPlayer();
+  StreamSubscription? _playerCompleteSub; // stored so we can cancel it
   Timer? _timer;
   int _recordDuration = 0;
 
   @override
   void dispose() {
-    _recorder.dispose;
-    _timer?.cancel(); // 🌟 تأمين التايمر();
+    _recorder.dispose(); // was: _recorder.dispose — getter, not a call, so it was a no-op
+    _timer?.cancel();
+    _playerCompleteSub?.cancel(); // cancel any in-flight playback subscription
     _player.dispose();
     super.dispose();
   }
@@ -98,9 +100,15 @@ class _RecordingControlsWidgetState extends State<RecordingControlsWidget> {
 
     cubit.onPlaybackStarted();
     await _player.play(DeviceFileSource(path));
-    _startTimer(); // 🌟 تشغيل التايمر
-    _player.onPlayerComplete.listen((_) {
-      _stopTimer(); // 🌟 إيقاف التايمر
+    _startTimer();
+
+    // Cancel any previous subscription before creating a new one.
+    // Without this, every tap on "Play" stacks another listener and all
+    // of them fire on completion — causing duplicate state updates and
+    // setState calls on a potentially unmounted widget.
+    _playerCompleteSub?.cancel();
+    _playerCompleteSub = _player.onPlayerComplete.listen((_) {
+      _stopTimer();
       if (mounted) cubit.onPlaybackStopped();
     });
   }
