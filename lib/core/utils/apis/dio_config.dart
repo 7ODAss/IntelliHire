@@ -37,10 +37,7 @@ class DioConfig {
     Map<String, dynamic>? data,
     FormData? formData,
   }) async {
-    return _dio.post(
-      path,
-      data: formData ?? data,
-    );
+    return _dio.post(path, data: formData ?? data);
   }
 
   static Future<Response<dynamic>> putData({

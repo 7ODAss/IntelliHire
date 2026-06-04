@@ -17,7 +17,6 @@ part 'login_state.dart';
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(const LoginState());
 
-
   void changeIndex(int index) {
     emit(state.copyWith(currentIndex: index));
   }
@@ -88,7 +87,9 @@ class LoginCubit extends Cubit<LoginState> {
             } else if (error.response?.data != null) {
               // Try to parse error from server response
               try {
-                message = ErrorMessageModel.fromJson(error.response!.data).message;
+                message = ErrorMessageModel.fromJson(
+                  error.response!.data,
+                ).message;
               } catch (_) {
                 message = 'Server error: ${error.response?.statusCode}';
               }
@@ -98,7 +99,10 @@ class LoginCubit extends Cubit<LoginState> {
           }
           print('message: $message');
           emit(
-            state.copyWith(loginState: RequestState.error, loginMessage: message),
+            state.copyWith(
+              loginState: RequestState.error,
+              loginMessage: message,
+            ),
           );
         });
   }
@@ -115,7 +119,8 @@ class LoginCubit extends Cubit<LoginState> {
       // 2. هنفتح المتصفح ونستنى الـ Scheme بتاعنا
       final result = await FlutterWebAuth2.authenticate(
         url: authUrl,
-        callbackUrlScheme: "intellihire", // ده الـ Scheme اللي في AndroidManifest
+        callbackUrlScheme:
+            "intellihire", // ده الـ Scheme اللي في AndroidManifest
       );
 
       // 3. اللينك هيرجعلك من الباك إند بالشكل ده:

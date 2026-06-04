@@ -13,8 +13,6 @@ import '../../models/sign_up_company_model.dart';
 part 'sign_up_state.dart';
 
 class SignUpCubit extends Cubit<SignUpState> {
-
-
   //Company Information
   final List<String> industries = [
     'Software Engineering & Development',
@@ -114,11 +112,13 @@ class SignUpCubit extends Cubit<SignUpState> {
     required String companyName,
     required String industry,
   }) {
-    emit(state.copyWith(
-      workPhone: phoneNumber,
-      companyName: companyName,
-      industry: industry,
-    ));
+    emit(
+      state.copyWith(
+        workPhone: phoneNumber,
+        companyName: companyName,
+        industry: industry,
+      ),
+    );
   }
 
   void completeLocationCompany({
@@ -126,17 +126,13 @@ class SignUpCubit extends Cubit<SignUpState> {
     required String gov,
     required String address,
   }) {
-    emit(state.copyWith(
-      country: country,
-      gov: gov,
-      address: address,
-    ));
+    emit(state.copyWith(country: country, gov: gov, address: address));
   }
-
 
   void setCountryName(String country) {
     emit(state.copyWith(country: country));
   }
+
   void setGovernorateName(String governorate) {
     emit(state.copyWith(gov: governorate));
   }
@@ -187,38 +183,6 @@ class SignUpCubit extends Cubit<SignUpState> {
     }
   }
 
-  // void clearAllControllers() {
-  //   state.companyName='';
-  //   industryController.clear();
-  //   countryController.clear();
-  //   govController.clear();
-  //   addressController.clear();
-  //   searchCountryController.clear();
-  //   searchGovController.clear();
-  //   linkCompanyController.clear();
-  //   emit(
-  //     state.copyWith(
-  //       currentScreen: 0,
-  //       selectedIndustry: '',
-  //       selectedCountry: '',
-  //       selectedGovernorate: '',
-  //     ),
-  //   );
-  // }
-
-  // bool validateCurrentStep() {
-  //   switch (state.currentScreen) {
-  //     case 0:
-  //       return industryFormKey.currentState?.validate() ?? false;
-  //     case 1:
-  //       return locationFormKey.currentState?.validate() ?? false;
-  //     case 2:
-  //       return linkCompanyFormKey.currentState?.validate() ?? false;
-  //     default:
-  //       return false;
-  //   }
-  // }
-
   SignUpCompanyModel? signUpCompanyModel;
 
   void signUpCompany({
@@ -261,7 +225,8 @@ class SignUpCubit extends Cubit<SignUpState> {
           if (error is DioException && error.response != null) {
             final errorData = error.response!.data;
             if (errorData is Map<String, dynamic>) {
-              message = ErrorMessageModel.fromJson(errorData).message ?? message;
+              message =
+                  ErrorMessageModel.fromJson(errorData).message ?? message;
             } else if (errorData is String) {
               message = errorData;
             }
@@ -282,7 +247,9 @@ class SignUpCubit extends Cubit<SignUpState> {
   }) async {
     emit(state.copyWith(completeSignUpState: RequestState.loading));
     MultipartFile? logoFile;
-    if (companyLogo != null && companyLogo.isNotEmpty && companyLogo != 'skipped') {
+    if (companyLogo != null &&
+        companyLogo.isNotEmpty &&
+        companyLogo != 'skipped') {
       logoFile = await MultipartFile.fromFile(
         companyLogo,
         filename: companyLogo.split('/').last, // بياخد اسم الملف الحقيقي
@@ -319,7 +286,8 @@ class SignUpCubit extends Cubit<SignUpState> {
             final errorData = error.response!.data;
             if (errorData is Map<String, dynamic>) {
               // لو الإيرور راجع JSON سليم
-              message = ErrorMessageModel.fromJson(errorData).message ?? message;
+              message =
+                  ErrorMessageModel.fromJson(errorData).message ?? message;
             } else if (errorData is String) {
               // لو الإيرور راجع نص عادي
               message = errorData;

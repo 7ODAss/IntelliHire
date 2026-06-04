@@ -163,4 +163,12 @@ class AppTextStyle {
     fontSize: 14,
     color: Colors.white,
   );
+
+  //candidateprofile
+
+  static const TextStyle candidateFunStyle = TextStyle(
+    fontFamily: AppFont.interRegular,
+    fontSize: 14,
+    color: AppColor.primary,
+  );
 }

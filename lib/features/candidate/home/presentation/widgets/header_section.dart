@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intelli_hire/features/candidate/home/domain/entities/training_performance.dart';
 
 import '../../../../../core/utils/app_color.dart';
 import '../../../../../core/utils/app_font.dart';
 
 class Header extends StatelessWidget {
-  final String userName;
-
-  const Header({super.key,required this.userName});
+  final TrainingPerformance performance;
+  const Header({super.key, required this.performance});
 
   String _initials(String name) {
     final parts = name.trim().split(' ');
@@ -17,6 +17,9 @@ class Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('header build');
+
+    final String displayName = performance.firstName;
+
     return SafeArea(
       bottom: false,
       child: Padding(
@@ -36,7 +39,7 @@ class Header extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  userName,
+                  displayName,
                   style: const TextStyle(
                     fontFamily: AppFont.poppinsBold,
                     fontSize: 22,
@@ -59,7 +62,7 @@ class Header extends StatelessWidget {
               ),
               child: Center(
                 child: Text(
-                  _initials(userName),
+                  _initials(displayName),
                   style: TextStyle(
                     fontFamily: AppFont.interBold,
                     fontSize: 14,

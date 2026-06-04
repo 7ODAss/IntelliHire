@@ -6,6 +6,7 @@ import 'package:intelli_hire/core/utils/app_font.dart';
 import 'package:intelli_hire/core/utils/shared/context_extension.dart';
 import 'package:intelli_hire/features/candidate/assess%20manage/presentation/screens/performance_report_screen.dart';
 import 'package:intelli_hire/features/candidate/home/presentation/controller/home_cubit.dart';
+import 'package:intelli_hire/features/candidate/new%20assess/domain/entities/cv_data.dart';
 import 'package:intelli_hire/features/candidate/new%20assess/domain/entities/question_type.dart';
 import 'package:intelli_hire/features/candidate/new%20assess/presentation/controller/assessment_session_cubit.dart';
 import 'package:intelli_hire/features/candidate/new%20assess/presentation/widgets/exit_assessment_dialog.dart';
@@ -17,18 +18,8 @@ import '../../../../../core/enums/snack_bar_type.dart';
 import '../../../../../core/service/service_locator.dart';
 import '../../../assess manage/presentation/controller/assess_manage_cubit.dart';
 
-/// StatefulWidget: owns AnimationController for staggered entrance animation.
 class InterviewQuestionScreen extends StatefulWidget {
-  final String assessmentId;
-  final String title;
-  final String track;
-
-  const InterviewQuestionScreen({
-    super.key,
-    required this.assessmentId,
-    required this.title,
-    required this.track,
-  });
+  const InterviewQuestionScreen({super.key});
 
   @override
   State<InterviewQuestionScreen> createState() =>
@@ -84,10 +75,7 @@ class _InterviewQuestionScreenState extends State<InterviewQuestionScreen>
     cubit.onQuestionAnswered();
 
     if (state.isLastQuestion) {
-      cubit.submitInterview(
-       widget.assessmentId,
-        widget.title,
-      );
+      cubit.submitInterview();
     } else {
       cubit.nextQuestion();
       _entryController
@@ -110,27 +98,28 @@ class _InterviewQuestionScreenState extends State<InterviewQuestionScreen>
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<AssessmentSessionCubit>()
-        ..loadQuestions(
-          widget.title,
-          widget.track,
-        ),
+      create: (context) =>
+          getIt<AssessmentSessionCubit>()..startAssessmentFlow(),
+
       child: BlocConsumer<AssessmentSessionCubit, AssessmentSessionState>(
-        listenWhen: (prev, curr) => prev.submitStatus != curr.submitStatus ||
+        listenWhen: (prev, curr) =>
+            prev.submitStatus != curr.submitStatus ||
             prev.remainingTimeInSeconds != curr.remainingTimeInSeconds,
-        listener: (context, state) {
-          if (state.remainingTimeInSeconds == 0 && state.submitStatus == RequestState.loading) {
+        listener: (context, state) async {
+          if (state.remainingTimeInSeconds == 0 &&
+              state.submitStatus == RequestState.loading) {
             context.showSnackBar(
-                type: SnackBarType.error,
-                'Time is up! Submitting your answers automatically...'
+              type: SnackBarType.error,
+              'Time is up! Submitting your answers automatically...',
             );
           }
-          if (state.submitStatus == RequestState.success && state.submittedReport != null) {
+          if (state.submitStatus == RequestState.success &&
+              state.submittedReport != null) {
             final report = state.submittedReport!;
             final cubit = context.read<AssessmentSessionCubit>();
 
             cubit.sendAssessment(
-              trackName: report.track,
+              trackName: state.cv?.jobTitle ?? 'Unknown Position',
               assessmentName: report.title,
               overallAiScore: report.overallAiScore,
               accuracy: report.accuracy,
@@ -147,6 +136,7 @@ class _InterviewQuestionScreenState extends State<InterviewQuestionScreen>
                   value: getIt<AssessManageCubit>(),
                   child: PerformanceReportScreen(
                     comeFromAssess: true,
+                    jobTitle: state.cv?.jobTitle ?? 'Unknown Position',
                     report: state.submittedReport!,
                   ),
                 ),
@@ -184,10 +174,7 @@ class _InterviewQuestionScreenState extends State<InterviewQuestionScreen>
                     Text(state.errorMessage),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: () => cubit.loadQuestions(
-                        widget.title,
-                        widget.track,
-                      ),
+                      onPressed: () => cubit.startAssessmentFlow(),
                       child: const Text('Retry'),
                     ),
                   ],

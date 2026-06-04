@@ -4,7 +4,7 @@ import 'question_result_model.dart';
 class PerformanceReportModel extends PerformanceReport {
   const PerformanceReportModel({
     required super.title,
-    required super.track,
+
     required super.overallAiScore,
     required super.questionsCount,
     required super.accuracy,
@@ -13,34 +13,40 @@ class PerformanceReportModel extends PerformanceReport {
     required super.questions,
   });
 
-  factory PerformanceReportModel.fromJson(Map<String, dynamic> json) => PerformanceReportModel(
+  factory PerformanceReportModel.fromJson(Map<String, dynamic> json) =>
+      PerformanceReportModel(
         title: json['title'] as String? ?? '',
-        track: json['track'] as String? ?? '',
+
         overallAiScore: (json['overallAiScore'] as num?)?.toDouble() ?? 0,
         questionsCount: (json['questionsCount'] as int?) ?? 0,
         accuracy: (json['accuracy'] as num?)?.toDouble() ?? 0,
         totalTime: json['totalTime'] ?? 0,
-        avgReply: json['avgReply']?? 0,
-        questions: (json['questions'] as List<dynamic>?)
-                ?.map((e) => QuestionResultModel.fromJson(e as Map<String, dynamic>))
+        avgReply: json['avgReply'] ?? 0,
+        questions:
+            (json['questions'] as List<dynamic>?)
+                ?.map(
+                  (e) =>
+                      QuestionResultModel.fromJson(e as Map<String, dynamic>),
+                )
                 .toList() ??
             [],
       );
 
   Map<String, dynamic> toJson() => {
-        'title': title,
-        'track': track,
-        'overallAiScore': overallAiScore,
-        'questionsCount': questionsCount,
-        'accuracy': accuracy,
-        'totalTime': totalTime,
-        'avgReply': avgReply,
-        'questions': questions
-            .map((r) => QuestionResultModel(
-                  questionText: r.questionText,
-                  userAnswer: r.userAnswer,
-                  idealAnswer: r.idealAnswer,
-                ).toJson())
-            .toList(),
-      };
+    'title': title,
+    'overallAiScore': overallAiScore,
+    'questionsCount': questionsCount,
+    'accuracy': accuracy,
+    'totalTime': totalTime,
+    'avgReply': avgReply,
+    'questions': questions
+        .map(
+          (r) => QuestionResultModel(
+            questionText: r.questionText,
+            userAnswer: r.userAnswer,
+            idealAnswer: r.idealAnswer,
+          ).toJson(),
+        )
+        .toList(),
+  };
 }

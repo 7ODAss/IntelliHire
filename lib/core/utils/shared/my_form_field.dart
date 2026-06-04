@@ -15,7 +15,7 @@ class MyFormField extends StatelessWidget {
   final String? hintText;
   final List<TextInputFormatter>? inputFormatters;
   final int? maxLines;
-
+  final bool enabled;
 
   const MyFormField({
     super.key,
@@ -31,12 +31,14 @@ class MyFormField extends StatelessWidget {
     this.prefixIconColor,
     this.inputFormatters,
     this.maxLines = 1,
+    this.enabled = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      enabled: enabled,
       maxLines: maxLines,
       keyboardType: type,
       obscureText: obscureText,
@@ -61,29 +63,21 @@ class MyFormField extends StatelessWidget {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
-          borderSide: const BorderSide(
-            color: Colors.red,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: Colors.red, width: 1.5),
         ),
         focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10.0),
-        borderSide: const BorderSide(
-          color: Colors.red,
-          width: 2.0,
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: const BorderSide(color: Colors.red, width: 2.0),
         ),
-      ),
-        suffixIcon: suffixIcon != null ? IconButton(
-          onPressed: onSuffixPressed,
-          icon: Icon(
-           suffixIcon,
-            color: suffixIconColor,
-          ),
-        ) : null,
-        prefixIcon: prefixIcon != null ? Icon(
-            prefixIcon,
-            color: prefixIconColor,
-          ) : null,
+        suffixIcon: suffixIcon != null
+            ? IconButton(
+                onPressed: onSuffixPressed,
+                icon: Icon(suffixIcon, color: suffixIconColor),
+              )
+            : null,
+        prefixIcon: prefixIcon != null
+            ? Icon(prefixIcon, color: prefixIconColor)
+            : null,
       ),
     );
   }

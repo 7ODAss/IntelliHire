@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart'; // 🌟 الـ import الجديد للكاش
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
@@ -7,11 +8,13 @@ import 'package:intelli_hire/core/utils/app_text_style.dart';
 class CandidatePhotoPicker extends StatefulWidget {
   final void Function(File image) onImageSelected;
   final String initials;
+  final String? imageUrl;
 
   const CandidatePhotoPicker({
     super.key,
     required this.onImageSelected,
     required this.initials,
+    this.imageUrl,
   });
 
   @override
@@ -34,8 +37,24 @@ class _CandidatePhotoPickerState extends State<CandidatePhotoPicker> {
     print('image: $_image');
   }
 
+  DecorationImage? _getDecorationImage() {
+    if (_image != null) {
+      return DecorationImage(image: FileImage(_image!), fit: BoxFit.cover);
+    } else if (widget.imageUrl != null && widget.imageUrl!.trim().isNotEmpty) {
+      return DecorationImage(
+        image: CachedNetworkImageProvider(widget.imageUrl!),
+        fit: BoxFit.cover,
+      );
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final bool showInitials =
+        _image == null &&
+        (widget.imageUrl == null || widget.imageUrl!.trim().isEmpty);
+
     return GestureDetector(
       onTap: _pickImage,
       child: Row(
@@ -54,20 +73,15 @@ class _CandidatePhotoPickerState extends State<CandidatePhotoPicker> {
                     width: 1.5,
                   ),
                   shape: BoxShape.circle,
-                  image: _image != null
-                      ? DecorationImage(
-                    image: FileImage(_image!),
-                    fit: BoxFit.cover,
-                  )
-                      : null,
+                  image: _getDecorationImage(),
                 ),
-                child: _image == null
+                child: showInitials
                     ? Center(
-                  child: Text(
-                    widget.initials,
-                    style: AppTextStyle.iconNamePostScreen,
-                  ),
-                )
+                        child: Text(
+                          widget.initials,
+                          style: AppTextStyle.iconNamePostScreen,
+                        ),
+                      )
                     : null,
               ),
               Positioned(
@@ -78,11 +92,7 @@ class _CandidatePhotoPickerState extends State<CandidatePhotoPicker> {
                   child: const CircleAvatar(
                     radius: 16,
                     backgroundColor: AppColor.iconProfileBorderColor,
-                    child: Icon(
-                      Icons.edit,
-                      color: Colors.white,
-                      size: 16,
-                    ),
+                    child: Icon(Icons.edit, color: Colors.white, size: 16),
                   ),
                 ),
               ),

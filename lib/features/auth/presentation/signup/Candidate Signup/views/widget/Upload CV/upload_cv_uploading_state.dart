@@ -11,10 +11,12 @@ class UploadCvUploadingState extends StatelessWidget {
     required this.onPressed,
     required this.progress,
     required this.fileName,
+    this.isDisabled,
   });
   final void Function() onPressed;
   final double progress;
   final String fileName;
+  final bool? isDisabled;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -76,7 +78,8 @@ class UploadCvUploadingState extends StatelessWidget {
           ),
           const SizedBox(height: 48),
 
-          CustomButton(isDisabled: true, title: "Upload CV"),
+          if (isDisabled == true)
+            CustomButton(isDisabled: true, title: "Upload CV"),
         ],
       ),
     );

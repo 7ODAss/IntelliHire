@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intelli_hire/features/candidate/profile/presentation/screen/login_and_security_screen.dart';
 import '../../../../../core/utils/app_text_style.dart';
 import '../controller/candidate_profile_cubit.dart';
-import '../screen/candidate_login_security_screen.dart';
+import 'change_password/candidate_login_security_screen.dart';
 import '../screen/personal_information_screen.dart';
 import 'optionfield.dart';
 
@@ -32,16 +33,24 @@ class AccountOption extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            BlocProvider.value(
-                              value: cubit,
-                              child: PersonalInformationScreen(
-                                name: cubit.state.candidateProfileModel!.fullName,
-                                email: cubit.state.candidateProfileModel!.email,
-                                phone: cubit.state.candidateProfileModel!.photo,
-                                photo: cubit.state.candidateProfileModel!.photo,
-                              ),
-                            ),
+                        builder: (context) => BlocProvider.value(
+                          value: cubit,
+                          child: PersonalInformationScreen(
+                            name:
+                                cubit.state.candidateProfileModel?.fullName ??
+                                '',
+                            email:
+                                cubit.state.candidateProfileModel?.email ?? '',
+                            phone:
+                                cubit
+                                    .state
+                                    .candidateProfileModel
+                                    ?.phoneNumber ??
+                                '',
+                            photo:
+                                cubit.state.candidateProfileModel?.photo ?? '',
+                          ),
+                        ),
                       ),
                     );
                   },
@@ -58,11 +67,7 @@ class AccountOption extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            BlocProvider.value(
-                              value: cubit,
-                              child: CandidateLoginSecurityScreen(),
-                            ),
+                        builder: (context) => LoginAndSecurityScreen(),
                       ),
                     );
                   },

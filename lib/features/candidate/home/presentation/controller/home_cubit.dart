@@ -1,8 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:intelli_hire/core/service/service_locator.dart';
 import 'package:intelli_hire/features/candidate/home/domain/entities/home_summary.dart';
 import 'package:intelli_hire/features/candidate/home/domain/usecases/get_home_summary_usecase.dart';
 import 'package:intelli_hire/features/candidate/home/domain/usecases/get_next_week_usecase.dart';
+import 'package:intelli_hire/features/candidate/profile/presentation/controller/candidate_profile_cubit.dart';
 
 import '../../../../../core/enums/request.dart';
 import '../../../../../core/usecase/base_usecase.dart';
@@ -24,7 +26,6 @@ class HomeCubitCandidate extends Cubit<HomeState> {
     this.getPrevWeekUseCase,
     this.resetWeekUseCase,
   ) : super(const HomeState());
-
 
   List<String> weekDays = ['S', 'S', 'M', 'T', 'W', 'T', 'F'];
 
@@ -66,6 +67,26 @@ class HomeCubitCandidate extends Cubit<HomeState> {
     return map[wd] ?? -1;
   }
 
+  void updateHomeHeaderName(String newName) {
+    if (state.homeSummary != null) {
+      // 🌟 بنعمل copyWith للموديل الحالي وبنعدل الـ firstName بس بنظافة
+      final updatedPerformance = state.homeSummary!.trainingPerformance
+          .copyWith(firstName: newName);
+
+      final updatedSummary = state.homeSummary!.copyWith(
+        trainingPerformance: updatedPerformance,
+      );
+
+      emit(
+        state.copyWith(
+          homeSummary: updatedSummary,
+          homeSummaryStatus:
+              RequestState.success, // عشان يجبر الـ buildWhen يشتغل
+        ),
+      );
+    }
+  }
+
   Future<void> loadHomeData() async {
     emit(state.copyWith(homeSummaryStatus: RequestState.loading));
     final result = await getHomeSummaryUseCase(const NoParameters());
@@ -78,9 +99,14 @@ class HomeCubitCandidate extends Cubit<HomeState> {
           homeSummaryMessage: failure.message,
         ),
       ),
-      (summary) => emit(
-        state.copyWith(homeSummaryStatus: RequestState.success, homeSummary: summary),
-      ),
+      (summary) {
+        emit(
+          state.copyWith(
+            homeSummaryStatus: RequestState.success,
+            homeSummary: summary,
+          ),
+        );
+      },
     );
     print('home model: ${state.homeSummary}');
   }
@@ -95,14 +121,18 @@ class HomeCubitCandidate extends Cubit<HomeState> {
     if (isClosed) return;
 
     result.fold(
-          (failure) => emit(
+      (failure) => emit(
         state.copyWith(
           weekActivityState: RequestState.error,
           weekActivityMessage: failure.message,
         ),
       ),
-          (summary) => emit(
-        state.copyWith(weekActivityState: RequestState.success, weekActivity: summary, weekOffset: state.weekOffset + 1),
+      (summary) => emit(
+        state.copyWith(
+          weekActivityState: RequestState.success,
+          weekActivity: summary,
+          weekOffset: state.weekOffset + 1,
+        ),
       ),
     );
     print('home model: ${state.homeSummary}');
@@ -114,33 +144,41 @@ class HomeCubitCandidate extends Cubit<HomeState> {
     if (isClosed) return;
 
     result.fold(
-          (failure) => emit(
+      (failure) => emit(
         state.copyWith(
           weekActivityState: RequestState.error,
           weekActivityMessage: failure.message,
         ),
       ),
-          (summary) => emit(
-        state.copyWith(weekActivityState: RequestState.success, weekActivity: summary, weekOffset: state.weekOffset - 1),
+      (summary) => emit(
+        state.copyWith(
+          weekActivityState: RequestState.success,
+          weekActivity: summary,
+          weekOffset: state.weekOffset - 1,
+        ),
       ),
     );
     print('home model: ${state.homeSummary}');
   }
 
-  void resetWeek() async{
+  void resetWeek() async {
     emit(state.copyWith(weekActivityState: RequestState.loading));
     final result = await resetWeekUseCase(const NoParameters());
     if (isClosed) return;
 
     result.fold(
-          (failure) => emit(
+      (failure) => emit(
         state.copyWith(
           weekActivityState: RequestState.error,
           weekActivityMessage: failure.message,
         ),
       ),
-          (summary) => emit(
-        state.copyWith(weekActivityState: RequestState.success, weekActivity: summary, weekOffset: 0),
+      (summary) => emit(
+        state.copyWith(
+          weekActivityState: RequestState.success,
+          weekActivity: summary,
+          weekOffset: 0,
+        ),
       ),
     );
     print('home model: ${state.homeSummary}');

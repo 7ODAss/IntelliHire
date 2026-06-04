@@ -1,6 +1,8 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/utils/app_text_style.dart';
+import 'package:intelli_hire/features/candidate/home/presentation/widgets/performance_line_chart.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../../core/utils/app_font.dart';
@@ -61,7 +63,6 @@ class TrainingPerformanceCard extends StatelessWidget {
               ),
             ),
 
-            // 🌟 السر التاني: استبدال الإزاز ببوكسات عادية وقت التحميل فقط
             Skeleton.replace(
               replacement: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -71,7 +72,7 @@ class TrainingPerformanceCard extends StatelessWidget {
                       child: Container(
                         height: 90,
                         decoration: BoxDecoration(
-                          color: Colors.white10, // لون البوكس وقت التحميل
+                          color: Colors.white10,
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
@@ -89,19 +90,22 @@ class TrainingPerformanceCard extends StatelessWidget {
                   ],
                 ),
               ),
-              // ده الكارت الحقيقي اللي هيظهر بعد التحميل ما يخلص
+
               child: LiquidGlassCard(performance: performance),
             ),
 
             const SizedBox(height: 10),
-            BlocSelector<HomeCubitCandidate, HomeState,WeeklyActivitySummary?>(
+            BlocSelector<HomeCubitCandidate, HomeState, WeeklyActivitySummary?>(
               selector: (state) => state.weekActivity,
               builder: (context, state) {
                 print('🔄 إعادة بناء جزء التقويم فقط');
                 final labelString = state?.weekLabel ?? performance.weekLabel;
 
                 final textPainter = TextPainter(
-                  text: TextSpan(text: labelString, style: AppTextStyle.candidateHomePageCalenderTitle),
+                  text: TextSpan(
+                    text: labelString,
+                    style: AppTextStyle.candidateHomePageCalenderTitle,
+                  ),
                   maxLines: 1,
                   textDirection: TextDirection.ltr,
                 )..layout();
@@ -118,7 +122,7 @@ class TrainingPerformanceCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 12),
                         DateGlassCard(
-                          weekLabel:labelString,
+                          weekLabel: labelString,
                           dynamicWidth: dynamicWidth,
                         ),
                         const SizedBox(width: 12),
@@ -150,8 +154,12 @@ class TrainingPerformanceCard extends StatelessWidget {
               selector: (state) => state.weekActivity,
               builder: (context, state) {
                 print('📊 إعادة بناء العواميد فقط');
-                final activity = state?.weeklyActivity ?? performance.weeklyActivity;
-                final maxVal = activity.isEmpty ? 0 : activity.reduce((a, b) => a > b ? a : b);
+                final activity =
+                    state?.weeklyActivity ?? performance.weeklyActivity;
+                final maxVal = activity.isEmpty
+                    ? 0
+                    : activity.reduce((a, b) => a > b ? a : b);
+                final scores = performance.dailyAverageScores;
                 return Skeleton.replace(
                   replacement: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -171,27 +179,32 @@ class TrainingPerformanceCard extends StatelessWidget {
                     ),
                   ),
                   child: SizedBox(
-                    height: 140,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: List.generate(cubit.weekDays.length, (i) {
-                        final fraction = maxVal == 0
-                            ? 0.0
-                            : (activity[i] / maxVal);
-                        final isToday = i == cubit.todayIndex;
-                        final barH = maxVal == 0
-                            ? 6.0
-                            : ((activity[i] / maxVal) * 80).clamp(6.0, 80.0);
-                        return Expanded(
-                          child: ActivityBar(
-                            fraction: fraction,
-                            height: barH,
-                            label: cubit.weekDays[i],
-                            count: activity[i],
-                            isToday: isToday,
-                          ),
-                        );
-                      }),
+                    height: 200,
+                    child: PerformanceLineChart(
+                      scores: scores,
+                      weekDays:
+                          cubit.weekDays, // باصينا أيام الأسبوع من الكيوبت
+                      examsTakenList: activity, // عدد الامتحانات اليومية
+                      /* examsTakenList: [
+                        2,
+                        3,
+                        1,
+                        4,
+                        5,
+                        2,
+                        3,
+                      ], // باصينا عدد الامتحانات اليومية من الكيو 
+                      */
+                      /* scores: [
+                        50,
+                        75.2,
+                        60.7,
+                        85.9,
+                        90,
+                        70,
+                        80,
+                      ], // باصينا الدرجات من الكيوبت
+                       */
                     ),
                   ),
                 );

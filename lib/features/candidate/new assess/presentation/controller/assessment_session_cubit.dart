@@ -3,9 +3,13 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:intelli_hire/core/enums/request.dart';
+import 'package:intelli_hire/core/usecase/base_usecase.dart';
 import 'package:intelli_hire/features/candidate/assess%20manage/domain/entities/performance_report.dart';
+import 'package:intelli_hire/features/candidate/new%20assess/domain/entities/cv_data.dart';
 import 'package:intelli_hire/features/candidate/new%20assess/domain/entities/question.dart';
 import 'package:intelli_hire/features/candidate/new%20assess/domain/usecases/fetch_assessment_questions_usecase.dart';
+import 'package:intelli_hire/features/candidate/new%20assess/domain/usecases/get_candidate_cv_usecase.dart';
+import 'package:intelli_hire/features/candidate/new%20assess/domain/usecases/get_candidate_id_usecase.dart';
 import 'package:intelli_hire/features/candidate/new%20assess/domain/usecases/send_assessment_usecase.dart';
 import 'package:intelli_hire/features/candidate/new%20assess/domain/usecases/submit_interview_usecase.dart';
 
@@ -22,19 +26,20 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
   final FetchAssessmentQuestionsUseCase fetchQuestionsUseCase;
   final SubmitInterviewUseCase submitInterviewUseCase;
   final SendAssessmentUseCase sendAssessmentUseCase;
+  final GetCandidateIdUseCase getCandidateIdUseCase;
+  final GetCandidateCvUseCase getCandidateCvUseCase;
+  AssessmentSessionCubit(
+    this.fetchQuestionsUseCase,
+    this.submitInterviewUseCase,
+    this.sendAssessmentUseCase,
+    this.getCandidateIdUseCase,
+    this.getCandidateCvUseCase,
+  ) : super(const AssessmentSessionState());
 
   // 🌟 متغيرات الوقت
   Timer? _assessmentTimer;
   DateTime? _questionStartTime;
   final List<int> _replyTimesInSeconds = [];
-  final String _assessmentTitle = "Software Engineering"; // عشان نستخدمهم في الـ auto submit
-  final String _assessmentTrack = "Flutter Developer";
-
-  AssessmentSessionCubit(
-    this.fetchQuestionsUseCase,
-    this.submitInterviewUseCase,
-    this.sendAssessmentUseCase,
-  ) : super(const AssessmentSessionState());
 
   @override
   Future<void> close() {
@@ -60,10 +65,7 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
         _assessmentTimer?.cancel();
         if (state.submitStatus != RequestState.loading &&
             state.submitStatus != RequestState.success) {
-          submitInterview(
-            state.submittedReport?.title ?? _assessmentTitle,
-            state.submittedReport?.track ?? _assessmentTrack,
-          );
+          submitInterview();
         }
       }
     });
@@ -91,10 +93,10 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
     return avg.toStringAsFixed(1);
   }
 
-  Future<void> loadQuestions(String title, String track) async {
-    emit(state.copyWith(status: RequestState.loading));
+  Future<void> loadQuestions(CvData cv) async {
+    emit(state.copyWith(status: RequestState.loading, cv: cv));
     final result = await fetchQuestionsUseCase(
-      FetchAssessmentQuestionsParams(title, track),
+      FetchAssessmentQuestionsParams(cv: cv),
     );
     result.fold(
       (failure) => emit(
@@ -184,7 +186,7 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
     emit(state.copyWith(selectedOption: option, mcqAnswers: updatedMcq));
   }
 
-  Future<void> submitInterview(String title, String track) async {
+  Future<void> submitInterview() async {
     _assessmentTimer?.cancel(); // 🌟 وقف التايمر
     // 🌟 بنحسب الوقت الفعلي اللي أخدوه (30 دقيقة ناقص اللي اتبقى)
     final timeSpentInSeconds =
@@ -192,13 +194,13 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
     final timeSpentInMinutes = (timeSpentInSeconds / 60).toStringAsFixed(1);
     emit(state.copyWith(submitStatus: RequestState.loading));
     final recordingPaths = state.recordingPathsMap.values.toList();
+
     final result = await submitInterviewUseCase(
       SubmitInterviewParams(
         voiceTextAnswers: state.recordingPathsMap,
         mcqAnswers: state.mcqAnswers,
         originalQuestions: state.questions,
-        title: title,
-        track: track,
+        cv: state.cv!,
         avgReply: getAvgReply(),
         totalTime: timeSpentInMinutes,
       ),
@@ -234,10 +236,22 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
     required List<QuestionResult> questions,
   }) async {
     emit(state.copyWith(sendAssessment: RequestState.loading));
+    final String exp = state.candidateExp;
+    final double years = double.tryParse(exp) ?? 0.0;
+
+    String level = "Junior";
+    if (years > 1.5 && years <= 4.0) {
+      level = "Mid-Level";
+    } else if (years > 4.0) {
+      level = "Senior";
+    }
+
+    final String finalTitle = "$level $trackName Assessment";
+
     final result = await sendAssessmentUseCase(
       SendAssessmentParams(
         trackName: trackName,
-        assessmentName: assessmentName,
+        assessmentName: finalTitle,
         overallAiScore: overallAiScore,
         accuracy: accuracy,
         avgReply: avgReply,
@@ -264,5 +278,80 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
         emit(state.copyWith(sendAssessment: RequestState.success));
       },
     );
+  }
+
+  Future<void> getCandidateId() async {
+    emit(state.copyWith(candidateIdStatus: RequestState.loading));
+    final result = await getCandidateIdUseCase(NoParameters());
+    result.fold(
+      (l) => emit(
+        state.copyWith(
+          candidateIdStatus: RequestState.error,
+          candidateIdMessage: l.message,
+        ),
+      ),
+      (r) => emit(
+        state.copyWith(
+          candidateIdStatus: RequestState.success,
+          candidateId: r.$1,
+          candidateExp: r.$2,
+        ),
+      ),
+    );
+  }
+
+  Future<void> getCandidateCv(String candidateId) async {
+    emit(state.copyWith(cvStatus: RequestState.loading));
+    final result = await getCandidateCvUseCase(
+      GetCandidateCvParams(candidateId),
+    );
+    result.fold(
+      (l) => emit(
+        state.copyWith(cvStatus: RequestState.error, cvMessage: l.message),
+      ),
+      (r) => emit(state.copyWith(cvStatus: RequestState.success, cv: r)),
+    );
+  }
+
+  Future<void> startAssessmentFlow() async {
+    // 1. نوري اليوزر الـ Loading الأساسي للشاشة
+    emit(state.copyWith(status: RequestState.loading));
+
+    // 2. نجيب الـ ID ونستنى الدالة تخلص
+    await getCandidateId();
+
+    // نشيك: لو حصل إيرور وإحنا بنجيب الـ ID، نوقف ونعرض الإيرور
+    if (state.candidateIdStatus == RequestState.error) {
+      emit(
+        state.copyWith(
+          status: RequestState.error,
+          errorMessage: state.candidateIdMessage,
+        ),
+      );
+      return; // 🌟 بنوقف التنفيذ هنا عشان ميكملش
+    }
+
+    // بما إنه نجح، نقرأ الـ ID من الـ State
+    final String id = state.candidateId;
+
+    // 3. نجيب الـ CV باستخدام الـ ID ونستنى يخلص
+    await getCandidateCv(id);
+
+    // نشيك: لو حصل إيرور وإحنا بنجيب الـ CV، نوقف ونعرض الإيرور
+    if (state.cvStatus == RequestState.error) {
+      emit(
+        state.copyWith(
+          status: RequestState.error,
+          errorMessage: state.cvMessage,
+        ),
+      );
+      return;
+    }
+
+    // بما إنه نجح، نقرأ الـ CV من الـ State
+    final CvData cv = state.cv!;
+
+    // 4. أخيراً، نبعت الـ CV لدالة الأسئلة (وهي جواها بتعمل emit للـ Success أو الـ Error بتاعها)
+    await loadQuestions(cv);
   }
 }

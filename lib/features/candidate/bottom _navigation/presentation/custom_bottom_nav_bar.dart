@@ -71,23 +71,15 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
                   width: 60,
                   height: 60,
                   child: FloatingActionButton(
-                    onPressed: () async{
+                    onPressed: () async {
                       bool skipInstructions = await showAgain();
                       if (!context.mounted) return;
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (newContext)  => skipInstructions
-                              ? InterviewQuestionScreen(
-                                  assessmentId: 'assess_123',
-                                  title: 'Software Engineer',
-                                  track: 'Flutter Development',
-                                )
-                              : const NewAssessScreen(
-                                  assessmentId: 'assess_123',
-                                  title: 'Software Engineer',
-                                  track: 'Flutter Development',
-                                ),
+                          builder: (newContext) => skipInstructions
+                              ? InterviewQuestionScreen()
+                              : const NewAssessScreen(),
                         ),
                       );
                     },
@@ -110,16 +102,14 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
                       Row(
                         children: [
                           NavItem(
-                            iconPath:
-                                "assets/image/icon svg/home.svg",
+                            iconPath: "assets/image/icon svg/home.svg",
                             height: 26,
                             onPressed: () => _onNavItemTapped(0, state.index),
                             isActive: state.index == 0,
                           ),
                           const SizedBox(width: 32),
                           NavItem(
-                            iconPath:
-                                "assets/image/icon svg/electric.svg",
+                            iconPath: "assets/image/icon svg/electric.svg",
                             height: 22,
                             onPressed: () => _onNavItemTapped(1, state.index),
                             isActive: state.index == 1,
@@ -129,15 +119,13 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
                       Row(
                         children: [
                           NavItem(
-                            iconPath:
-                                "assets/image/icon svg/bell.svg",
+                            iconPath: "assets/image/icon svg/bell.svg",
                             onPressed: () => _onNavItemTapped(2, state.index),
                             isActive: state.index == 2,
                           ),
                           const SizedBox(width: 32),
                           NavItem(
-                            iconPath:
-                                "assets/image/icon svg/profile.svg",
+                            iconPath: "assets/image/icon svg/profile.svg",
                             isActive: state.index == 3,
                             onPressed: () => _onNavItemTapped(3, state.index),
                           ),

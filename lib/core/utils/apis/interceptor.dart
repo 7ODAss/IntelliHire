@@ -13,7 +13,10 @@ class TokenInterceptor extends Interceptor {
   TokenInterceptor(this.dio);
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  void onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     final token = await CacheHelper.getData(key: 'token');
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
@@ -26,7 +29,6 @@ class TokenInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     // 1. لو الإيرور 401 (التوكن خلصان)
     if (err.response?.statusCode == 401) {
-
       // 🌟 لو فيه دالة ريفرش شغالة، استناها.. لو مفيش، شغلها
       _refreshFuture ??= _refreshToken();
       bool isRefreshed = await _refreshFuture!;
@@ -56,8 +58,9 @@ class TokenInterceptor extends Interceptor {
         await CacheHelper.removeData(key: 'expiresOn');
 
         ApiConstant.navigatorKey.currentState?.pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
-                (route) => false);
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          (route) => false,
+        );
 
         return handler.next(err);
       }
@@ -76,15 +79,8 @@ class TokenInterceptor extends Interceptor {
       // 🌟 لازم نحدد الهيدر هنا عشان السيرفر يفهم الـ JSON
       final response = await Dio().post(
         ApiConstant.refreshToken,
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        ),
-        data: {
-          'accessToken': accessToken,
-          'refreshToken': refreshToken,
-        },
+        options: Options(headers: {'Content-Type': 'application/json'}),
+        data: {'accessToken': accessToken, 'refreshToken': refreshToken},
       );
 
       if (response.statusCode == 200) {
@@ -94,9 +90,15 @@ class TokenInterceptor extends Interceptor {
 
         if (newAccessToken != null && newRefreshToken != null) {
           await CacheHelper.saveData(key: 'token', value: newAccessToken);
-          await CacheHelper.saveData(key: 'refreshToken', value: newRefreshToken);
+          await CacheHelper.saveData(
+            key: 'refreshToken',
+            value: newRefreshToken,
+          );
           if (newExpiresOn != null) {
-            await CacheHelper.saveData(key: 'expiresOn', value: newExpiresOn.toString());
+            await CacheHelper.saveData(
+              key: 'expiresOn',
+              value: newExpiresOn.toString(),
+            );
           }
 
           print("✅ تم تجديد التوكن بنجاح في الخفاء!");

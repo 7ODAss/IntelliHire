@@ -11,6 +11,7 @@ import '../controller/candidate_profile_cubit.dart';
 
 class UploadCvCandidate extends StatelessWidget {
   final String? newTitle;
+
   const UploadCvCandidate({super.key, this.newTitle});
 
   @override
@@ -24,15 +25,17 @@ class UploadCvCandidate extends StatelessWidget {
         final cubit = context.read<CandidateProfileCubit>();
 
         if (state.cvUploadStatus == RequestState.initial) {
-          return UploadCvIdleState(onPressed: cubit.pickCv);
+          return UploadCvIdleState(onPressed: cubit.pickCv, isDisabled: false);
         }
 
         if (state.cvUploadStatus == RequestState.loading) {
-          final fileName = state.selectedCvFile?.path.split('/').last ?? 'Uploading...';
+          final fileName =
+              state.selectedCvFile?.path.split('/').last ?? 'Uploading...';
           return UploadCvUploadingState(
             progress: state.cvUploadProgress,
             fileName: fileName,
             onPressed: () {},
+            isDisabled: false,
           );
         }
 
@@ -42,20 +45,15 @@ class UploadCvCandidate extends StatelessWidget {
           return UploadCvUploadedState(
             fileName: fileName,
             onClear: cubit.clearCv,
-            onPressed: () {
-              cubit.changeCareerDetails(ChangeCareerDetailsParams(
-                currentRole: cubit.currentRoleController.text,
-                experienceYears: int.tryParse(cubit.experienceYearsController.text) ?? 0,
-                cv: state.selectedCvFile!.path,
-              ));
-            },
+            onPressed: cubit.pickCv,
+            isDisabled: false,
           );
         }
 
         if (state.cvUploadStatus == RequestState.error) {
           return Column(
             children: [
-              UploadCvIdleState(onPressed: cubit.pickCv),
+              UploadCvIdleState(onPressed: cubit.pickCv, isDisabled: false),
               const SizedBox(height: 12),
               Text(
                 state.cvErrorMessage,
@@ -64,7 +62,7 @@ class UploadCvCandidate extends StatelessWidget {
             ],
           );
         }
-        return UploadCvIdleState(onPressed: cubit.pickCv);
+        return UploadCvIdleState(onPressed: cubit.pickCv, isDisabled: false);
       },
     );
   }

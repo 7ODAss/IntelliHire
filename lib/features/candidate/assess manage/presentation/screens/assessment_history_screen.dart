@@ -4,6 +4,7 @@ import 'package:intelli_hire/core/enums/request.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
 import 'package:intelli_hire/features/candidate/assess%20manage/domain/entities/assessment.dart';
+import 'package:intelli_hire/features/candidate/new%20assess/presentation/controller/assessment_session_cubit.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../../core/service/service_locator.dart';
@@ -16,8 +17,9 @@ import 'performance_report_screen.dart';
 class AssessmentHistoryScreen extends StatelessWidget {
   const AssessmentHistoryScreen({super.key});
 
-  static final _dummyList = List.generate(3, (i) =>
-    const Assessment(
+  static final _dummyList = List.generate(
+    3,
+    (i) => const Assessment(
       sessionId: '',
       title: 'Front-End Assessment',
       track: 'Frontend Engineering Track',
@@ -75,16 +77,19 @@ class AssessmentHistoryScreen extends StatelessWidget {
                       context.read<AssessManageCubit>().loadPerformanceReport(
                         assessments[index].sessionId,
                       );
+
+                      final String userJobTitle =
+                          getIt<AssessmentSessionCubit>().state.cv?.jobTitle ??
+                          assessments[index].title;
+
                       Navigator.of(context, rootNavigator: true).push(
                         MaterialPageRoute(
-                          builder: (_) =>
-                              BlocProvider.value(
-                                value: context.read<AssessManageCubit>(),
-                                child: PerformanceReportFromCubitScreen(
-                                  // title: assessments[index].title,
-                                  // track: assessments[index].track,
-                                ),
-                              ),
+                          builder: (_) => BlocProvider.value(
+                            value: context.read<AssessManageCubit>(),
+                            child: PerformanceReportFromCubitScreen(
+                              jobTitle: userJobTitle,
+                            ),
+                          ),
                         ),
                       );
                     }

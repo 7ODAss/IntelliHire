@@ -4,6 +4,7 @@ import 'package:intelli_hire/core/helpers/cache_helper.dart';
 import 'package:intelli_hire/core/service/service_locator.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
+import 'package:intelli_hire/features/candidate/new%20assess/domain/entities/cv_data.dart';
 import 'package:intelli_hire/features/candidate/new%20assess/presentation/controller/assessment_session_cubit.dart';
 import 'package:intelli_hire/features/candidate/new%20assess/presentation/screens/interview_question_screen.dart';
 import 'package:intelli_hire/features/candidate/profile/presentation/widgets/pop_action_menu.dart';
@@ -13,10 +14,7 @@ import '../widgets/info_row.dart';
 import '../widgets/show_again_check_box.dart';
 
 class NewAssessScreen extends StatelessWidget {
-  final String assessmentId;
-  final String title;
-  final String track;
-  const NewAssessScreen({super.key, required this.assessmentId, required this.title, required this.track});
+  const NewAssessScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,19 +23,20 @@ class NewAssessScreen extends StatelessWidget {
         backgroundColor: AppColor.backgroundColor,
         body: LayoutBuilder(
           builder: (context, constraints) {
-           return SingleChildScrollView(
-             child: ConstrainedBox(
-               constraints: BoxConstraints(
-                 minHeight: constraints.maxHeight, // بنقوله أقل طول ليك هو طول الشاشة
-               ),
-               child: IntrinsicHeight(
-                 child: Padding(
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight:
+                      constraints.maxHeight, // بنقوله أقل طول ليك هو طول الشاشة
+                ),
+                child: IntrinsicHeight(
+                  child: Padding(
                     padding: const EdgeInsets.all(24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         PopActionMenu(
-                          title: 'Assessment $title',
+                          title: 'Assessment Session',
                           fun: Navigator.of(context).pop,
                         ),
                         const SizedBox(height: 32),
@@ -89,7 +88,8 @@ class NewAssessScreen extends StatelessWidget {
                         const SizedBox(height: 12),
                         InfoRow(
                           icon: Icons.timer_outlined,
-                          text: 'You have 30 minutes to complete the assessment',
+                          text:
+                              'You have 30 minutes to complete the assessment',
                         ),
                         const Spacer(),
                         SizedBox(
@@ -109,11 +109,7 @@ class NewAssessScreen extends StatelessWidget {
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => InterviewQuestionScreen(
-                                        assessmentId: 'assess_123',
-                                        title: 'Software Engineer',
-                                        track: 'Flutter Development',
-                                      ),
+                                      builder: (_) => InterviewQuestionScreen(),
                                     ),
                                   );
                                 },
@@ -125,10 +121,10 @@ class NewAssessScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-               ),
-             ),
-           );
-          } ,
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

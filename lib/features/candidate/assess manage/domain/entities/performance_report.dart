@@ -3,7 +3,7 @@ import 'question_result.dart';
 
 class PerformanceReport extends Equatable {
   final String title;
-  final String track;
+
   final double overallAiScore;
   final int questionsCount;
   final double accuracy;
@@ -13,7 +13,7 @@ class PerformanceReport extends Equatable {
 
   const PerformanceReport({
     required this.title,
-    required this.track,
+
     required this.overallAiScore,
     required this.questionsCount,
     required this.accuracy,
@@ -23,17 +23,24 @@ class PerformanceReport extends Equatable {
   });
 
   factory PerformanceReport.empty() => const PerformanceReport(
-        title: '',
-        track: '',
-        overallAiScore: 0,
-        questionsCount: 0,
-        accuracy: 0,
-        totalTime: '',
-        avgReply: '0',
-        questions: [],
-      );
+    title: '',
+
+    overallAiScore: 0,
+    questionsCount: 0,
+    accuracy: 0,
+    totalTime: '',
+    avgReply: '0',
+    questions: [],
+  );
 
   @override
-  List<Object?> get props =>
-      [title,track, overallAiScore, questionsCount, accuracy, totalTime, avgReply, questions];
+  List<Object?> get props => [
+    title,
+    overallAiScore,
+    questionsCount,
+    accuracy,
+    totalTime,
+    avgReply,
+    questions,
+  ];
 }

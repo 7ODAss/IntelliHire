@@ -14,7 +14,6 @@ import 'external_log_in.dart';
 import 'field_item.dart';
 
 class LogInPage extends StatefulWidget {
-
   const LogInPage({super.key});
 
   @override
@@ -36,11 +35,11 @@ class _LogInPageState extends State<LogInPage> {
 
   @override
   void dispose() {
-    super.dispose();
     candidateEmailController.dispose();
     candidatePasswordController.dispose();
-    candidateFormKey.currentState?.dispose();
+    super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<LoginCubit>();
@@ -49,7 +48,7 @@ class _LogInPageState extends State<LogInPage> {
       child: Form(
         key: candidateFormKey,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0,vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -107,24 +106,29 @@ class _LogInPageState extends State<LogInPage> {
                     if (cubit.loginModel!.userType == 'Company') {
                       Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (context) => const CustomBottomNavBarWrapper()),
-                            (route) => false,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const CustomBottomNavBarWrapper(),
+                        ),
+                        (route) => false,
                       );
                     }
                     if (cubit.loginModel!.userType == 'Individual') {
                       Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (context) => const CustomBottomNavBarWrapperCandidate()),
-                            (route) => false,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const CustomBottomNavBarWrapperCandidate(),
+                        ),
+                        (route) => false,
                       );
                     }
+                  } else if (state.loginState == RequestState.error) {
+                    context.showSnackBar(
+                      state.loginMessage,
+                      type: SnackBarType.error,
+                    );
                   }
-                   else if (state.loginState == RequestState.error) {
-                      context.showSnackBar(
-                        state.loginMessage,
-                        type: SnackBarType.error,
-                      );
-                    }
                 },
                 builder: (context, state) {
                   return Column(
@@ -133,15 +137,12 @@ class _LogInPageState extends State<LogInPage> {
                         padding: const EdgeInsets.symmetric(vertical: 24.0),
                         child: ButtonAction(
                           title: "Log In",
-                          isLoading:
-                              state.loginState == RequestState.loading,
+                          isLoading: state.loginState == RequestState.loading,
                           onPressed: () {
-                            if (candidateFormKey.currentState!
-                                .validate()) {
+                            if (candidateFormKey.currentState!.validate()) {
                               cubit.login(
                                 email: candidateEmailController.text,
-                                password:
-                                    candidatePasswordController.text,
+                                password: candidatePasswordController.text,
                                 rememberMe: cubit.state.rememberMeCheck,
                               );
                             }
@@ -177,10 +178,7 @@ class _LogInPageState extends State<LogInPage> {
               const SizedBox(height: 30),
               const ExternalLogIn(userType: 'candidate'),
               Padding(
-                padding: const EdgeInsets.only(
-                  top: 32.0,
-                  bottom: 32.0,
-                ),
+                padding: const EdgeInsets.only(top: 32.0, bottom: 32.0),
                 child: NavigatorToAccount(
                   text: 'Don\'t have account?',
                   actionText: ' Sign Up',

@@ -107,9 +107,7 @@ class AssessmentCard extends StatelessWidget {
                     vertical: 5,
                   ),
                   decoration: BoxDecoration(
-                    color: _getBadgeColor(
-                      assessment.label,
-                    ).withOpacity(0.12),
+                    color: _getBadgeColor(assessment.label).withOpacity(0.12),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(

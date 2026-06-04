@@ -20,21 +20,51 @@ class ApiConstant {
   //candidate
   //home
   static const String candidateDashboard = "$baseUrl/User/mobile-dashboard";
-  static const String candidateDashboardNext = "$baseUrl/User/mobile-dashboard/next";
-  static const String candidateDashboardPrev = "$baseUrl/User/mobile-dashboard/prev";
-  static const String candidateDashboardReset = "$baseUrl/User/mobile-dashboard/reset";
+  static const String candidateDashboardNext =
+      "$baseUrl/User/mobile-dashboard/next";
+  static const String candidateDashboardPrev =
+      "$baseUrl/User/mobile-dashboard/prev";
+  static const String candidateDashboardReset =
+      "$baseUrl/User/mobile-dashboard/reset";
   //assess history
-  static const String candidateAssessmentHistory = "$baseUrl/User/mobile-assessments";
-  static const String candidateAssessmentSubmit = "$baseUrl/User/mobile-assessments/submit";
-  static  String candidatePerformanceReport(String assessmentId) => "$baseUrl/User/mobile-assessments/report/$assessmentId";
+  static const String candidateAssessmentHistory =
+      "$baseUrl/User/mobile-assessments";
+  static const String candidateAssessmentSubmit =
+      "$baseUrl/User/mobile-assessments/submit";
+  static String candidatePerformanceReport(String assessmentId) =>
+      "$baseUrl/User/mobile-assessments/report/$assessmentId";
+
+  //new assess
+
+  static const String getCandidateId = "$baseUrl/User/profile";
+  static String getCandidateCv(String id) =>
+      "$baseUrl/User/professional-profile/$id";
+
   //candidate profile
-  static const String candidateProfile = "$baseUrl/user/settings/account";
-  static const String candidateChangePassword = "$baseUrl/user/settings/update-password";
-  static const String candidateDeleteAccount = "$baseUrl/user/settings/account";
-  static const String candidateChangeCareerDetails = "$baseUrl/user/settings/career-details";
+  static const String candidateProfile = "$baseUrl/Setting/account";
+  static const String candidateChangePersonalInfoProfile =
+      "$baseUrl/Setting/personal-info";
+  static const String candidateChangePassword =
+      "$baseUrl/settings/update-password";
+  static const String candidateDeleteAccount =
+      "$baseUrl/Setting/delete-account";
+  static const String candidateChangeCareerDetails =
+      "$baseUrl/Setting/career-details";
+
+  static const String candidateChangeEmailVerifyPass =
+      "$baseUrl/Setting/change-email-password-request";
+
+  static const String candidateChangeEmailRequestOtp =
+      "$baseUrl/Setting/change-email-request";
+
+  static const String candidateChangeEmailConfirmOtp =
+      "$baseUrl/Setting/change-email-Confirm";
+
   //company profile
-  static const String companyChangePassword = "$baseUrl/candidate/settings/security/change-password";
-  static const String companyDeleteAccount = "$baseUrl/candidate/settings/security/delete-account";
+  static const String companyChangePassword =
+      "$baseUrl/candidate/settings/security/change-password";
+  static const String companyDeleteAccount =
+      "$baseUrl/candidate/settings/security/delete-account";
 
   //keys
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

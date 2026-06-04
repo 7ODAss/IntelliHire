@@ -1,9 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intelli_hire/core/enums/request.dart';
+import 'package:intelli_hire/core/enums/snack_bar_type.dart';
+import 'package:intelli_hire/core/utils/app_text_style.dart';
+import 'package:intelli_hire/core/utils/shared/context_extension.dart';
+import 'package:intelli_hire/features/candidate/bottom%20_navigation/controller/bottom_nav_candidate_cubit.dart'; // تأكد من الـ import ده
 import 'package:intelli_hire/features/auth/presentation/login/widget/button_action.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/field_item.dart';
 import 'package:intelli_hire/features/candidate/profile/presentation/widgets/candidate_photo_picker.dart';
+import 'package:intelli_hire/features/candidate/profile/presentation/widgets/change_email/change_email_steps.dart';
 
 import '../../../../../core/service/service_locator.dart';
 import '../../../../../core/utils/shared/egyptian_phone_formatter.dart';
@@ -31,9 +39,9 @@ class PersonalInformationScreen extends StatefulWidget {
 }
 
 class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
-  // Personal Info
-  final cubit = getIt<CandidateProfileCubit>();
-  late TextEditingController photoController;
+  // 🌟 مسار ملف الصورة المحلي الجديد (بيبدأ بـ null)
+  File? _selectedLocalImage;
+
   late TextEditingController nameController;
   late TextEditingController phoneController;
   late TextEditingController emailController;
@@ -42,22 +50,14 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   @override
   void initState() {
     super.initState();
-    photoController = TextEditingController(text: widget.photo);
-    nameController = TextEditingController(
-      text: widget.name,
-    );
-    phoneController = TextEditingController(
-      text: widget.phone,
-    );
-    emailController = TextEditingController(
-      text: widget.email,
-    );
+    nameController = TextEditingController(text: widget.name);
+    phoneController = TextEditingController(text: widget.phone);
+    emailController = TextEditingController(text: widget.email);
     personalInfoKey = GlobalKey<FormState>();
   }
 
   @override
   void dispose() {
-    photoController.dispose();
     nameController.dispose();
     phoneController.dispose();
     emailController.dispose();
@@ -67,95 +67,173 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<CandidateProfileCubit>();
-    return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Form(
-              key: personalInfoKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  PopActionMenu(title: 'Personal Information'),
-                  const SizedBox(height: 16),
-                  CandidatePhotoPicker(
-                    onImageSelected: (image) {
-                      photoController.text = image.path;
-                    },
-                    initials: GetInitials.getInitials(
-                      cubit.state.candidateProfileModel!.fullName,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
 
-                  FieldItem(
-                    controller: nameController,
-                    title: 'Full Name',
-                    type: TextInputType.text,
-                    prefixIcon: Icons.person_outline,
-                    prefixIconColor: Color(0xFFB4ADAE),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Name is required";
-                      }
-                      if (value.length < 3) {
-                        return "Please enter a valid name";
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  FieldItem(
-                    controller: phoneController,
-                    title: 'Phone Number',
-                    type: TextInputType.phone,
-                    prefixIcon: Icons.phone_outlined,
-                    prefixIconColor: Color(0xFFB4ADAE),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      EgyptianPhoneFormatter(),
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Phone number is required";
-                      }
-                      // Length is 14 because: 11 digits + 3 spaces
-                      if (value.length < 14) {
-                        return "Please enter a valid phone number";
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  const Divider(color: Color(0xFFD6D6D6), thickness: 1),
-                  const SizedBox(height: 16),
-                  FieldItem(
-                    controller: emailController,
-                    title: 'Email address\nUsed for login and notifications',
-                    type: TextInputType.text,
-                    prefixIcon: Icons.email_outlined,
-                    prefixIconColor: Color(0xFFB4ADAE),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Work email is required";
-                      }
-                      if (!value.contains('gmail')) {
-                        return "Please enter a valid work email";
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 48),
-                  ButtonAction(
-                    title: 'Save Changes',
-                    onPressed: () {
-                      if (personalInfoKey.currentState!.validate()) {
-                        // cubit.updateProfile();
-                      }
-                    },
-                  ),
-                ],
+    return SafeArea(
+      child: BlocListener<CandidateProfileCubit, CandidateProfileState>(
+        listener: (context, state) {
+          if (state.changePersonalInfoState == RequestState.success) {
+            context.showSnackBar(
+              'Profile updated successfully',
+              type: SnackBarType.success,
+            );
+            // 🌟 بعد النجاح، اطلب داتا البروفايل الجديدة عشان تسمع في الـ Header والـ Profile أوتوماتيك
+          } else if (state.changePersonalInfoState == RequestState.error) {
+            context.showSnackBar(
+              'Failed to update profile',
+              type: SnackBarType.error,
+            );
+          }
+        },
+        child: Scaffold(
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Form(
+                key: personalInfoKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 🌟 ربط زرار الرجوع بالـ Cubit بتاع الـ Navigation عشان يرجع صح
+                    PopActionMenu(title: 'Personal Information'),
+                    const SizedBox(height: 16),
+                    CandidatePhotoPicker(
+                      imageUrl: widget.photo,
+                      onImageSelected: (image) {
+                        setState(() {
+                          _selectedLocalImage =
+                              image; // حفظ كائن الملف الحقيقي المختار
+                        });
+                      },
+                      initials: GetInitials.getInitials(
+                        cubit.state.candidateProfileModel?.fullName ??
+                            widget.name,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+
+                    FieldItem(
+                      controller: nameController,
+                      title: 'Full Name',
+                      type: TextInputType.text,
+                      prefixIcon: Icons.person_outline,
+                      prefixIconColor: const Color(0xFFB4ADAE),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Name is required";
+                        }
+                        if (value.length < 3) {
+                          return "Please enter a valid name";
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    FieldItem(
+                      controller: phoneController,
+                      title: 'Phone Number',
+                      type: TextInputType.phone,
+                      prefixIcon: Icons.phone_outlined,
+                      prefixIconColor: const Color(0xFFB4ADAE),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        EgyptianPhoneFormatter(),
+                      ],
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Phone number is required";
+                        }
+                        if (value.replaceAll(' ', '').length < 11) {
+                          return "Please enter a valid phone number";
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    const Divider(color: Color(0xFFD6D6D6), thickness: 1),
+                    const SizedBox(height: 16),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: FieldItem(
+                            controller: emailController,
+                            enabled: false,
+                            title:
+                                'Email address\nUsed for login and notifications',
+                            type: TextInputType.text,
+                            prefixIcon: Icons.email_outlined,
+                            prefixIconColor: const Color(0xFFB4ADAE),
+                            validator: (value) =>
+                                null, // الـ Field معطل كدة كدة
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(8),
+                            onTap: cubit.state.candidateProfileModel == null
+                                ? null
+                                : () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            BlocProvider.value(
+                                              value: cubit,
+                                              child: ChangeEmailSteps(
+                                                currentEmail: cubit
+                                                    .state
+                                                    .candidateProfileModel!
+                                                    .email,
+                                              ),
+                                            ),
+                                      ),
+                                    );
+                                  },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 18.0,
+                              ),
+                              child: Text(
+                                'Change',
+                                style: AppTextStyle.candidateFunStyle,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 48),
+                    BlocSelector<
+                      CandidateProfileCubit,
+                      CandidateProfileState,
+                      bool
+                    >(
+                      selector: (state) =>
+                          state.changePersonalInfoState == RequestState.loading,
+                      builder: (context, isLoading) {
+                        return ButtonAction(
+                          title: 'Save Changes',
+                          isLoading: isLoading,
+                          onPressed: () {
+                            if (personalInfoKey.currentState!.validate()) {
+                              final cleanPhoneNumber = phoneController.text
+                                  .replaceAll(' ', '');
+
+                              // 🌟 إرسال البيانات النظيفة؛ والـ image هتروح بـ null لو متمش اختيار صورة جديدة
+                              cubit.updateProfile(
+                                nameController.text,
+                                cleanPhoneNumber,
+                                _selectedLocalImage,
+                              );
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

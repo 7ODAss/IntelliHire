@@ -17,6 +17,15 @@ class CandidateProfileState extends Equatable {
   final RequestState cvUploadStatus;
   final double cvUploadProgress;
   final String cvErrorMessage;
+  final bool obsecure;
+  final RequestState changePersonalInfoState;
+  final String changePersonalInfoMessage;
+  final RequestState changeEmailPasswordCheckState;
+  final String changeEmailPasswordCheckMessage;
+  final RequestState changeEmailEmailCheckState;
+  final String changeEmailEmailCheckMessage;
+  final RequestState otpState;
+  final String otpMessage;
 
   const CandidateProfileState({
     this.status = RequestState.initial,
@@ -35,6 +44,15 @@ class CandidateProfileState extends Equatable {
     this.cvUploadStatus = RequestState.initial,
     this.cvUploadProgress = 0.0,
     this.cvErrorMessage = '',
+    this.obsecure = true,
+    this.changePersonalInfoState = RequestState.initial,
+    this.changePersonalInfoMessage = '',
+    this.changeEmailPasswordCheckState = RequestState.initial,
+    this.changeEmailPasswordCheckMessage = '',
+    this.changeEmailEmailCheckState = RequestState.initial,
+    this.changeEmailEmailCheckMessage = '',
+    this.otpState = RequestState.initial,
+    this.otpMessage = '',
   });
 
   CandidateProfileState copyWith({
@@ -56,23 +74,56 @@ class CandidateProfileState extends Equatable {
     String? cvErrorMessage,
     bool clearCvFile =
         false, // حيلة عشان نقدر نخلي الملف بـ null لو اليوزر مسحه
+    bool? obsecure,
+    RequestState? changePersonalInfoState,
+    String? changePersonalInfoMessage,
+    RequestState? changeEmailPasswordCheckState,
+    String? changeEmailPasswordCheckMessage,
+    RequestState? changeEmailEmailCheckState,
+    String? changeEmailEmailCheckMessage,
+    RequestState? otpState,
+    String? otpMessage,
   }) => CandidateProfileState(
     status: status ?? this.status,
     changePasswordStatus: changePasswordStatus ?? this.changePasswordStatus,
     changePasswordMessage: changePasswordMessage ?? this.changePasswordMessage,
     candidateProfileModel: candidateProfileModel ?? this.candidateProfileModel,
-    candidateProfileStatus: candidateProfileStatus ?? this.candidateProfileStatus,
-    candidateProfileMessage: candidateProfileMessage ?? this.candidateProfileMessage,
+    candidateProfileStatus:
+        candidateProfileStatus ?? this.candidateProfileStatus,
+    candidateProfileMessage:
+        candidateProfileMessage ?? this.candidateProfileMessage,
     deleteAccountStatus: deleteAccountStatus ?? this.deleteAccountStatus,
     deleteAccountMessage: deleteAccountMessage ?? this.deleteAccountMessage,
-    changeCareerDetailsStatus: changeCareerDetailsStatus ?? this.changeCareerDetailsStatus,
-    changeCareerDetailsMessage: changeCareerDetailsMessage ?? this.changeCareerDetailsMessage,
-    userProfileCandidateLogOutState: userProfileCandidateLogOutState ?? this.userProfileCandidateLogOutState,
-    userProfileCandidateLogOutMessage: userProfileCandidateLogOutMessage ?? this.userProfileCandidateLogOutMessage,
-    selectedCvFile: clearCvFile ? null : (selectedCvFile ?? this.selectedCvFile),
+    changeCareerDetailsStatus:
+        changeCareerDetailsStatus ?? this.changeCareerDetailsStatus,
+    changeCareerDetailsMessage:
+        changeCareerDetailsMessage ?? this.changeCareerDetailsMessage,
+    userProfileCandidateLogOutState:
+        userProfileCandidateLogOutState ?? this.userProfileCandidateLogOutState,
+    userProfileCandidateLogOutMessage:
+        userProfileCandidateLogOutMessage ??
+        this.userProfileCandidateLogOutMessage,
+    selectedCvFile: clearCvFile
+        ? null
+        : (selectedCvFile ?? this.selectedCvFile),
     cvUploadStatus: cvUploadStatus ?? this.cvUploadStatus,
     cvUploadProgress: cvUploadProgress ?? this.cvUploadProgress,
     cvErrorMessage: cvErrorMessage ?? this.cvErrorMessage,
+    obsecure: obsecure ?? this.obsecure,
+    changeEmailPasswordCheckState:
+        changeEmailPasswordCheckState ?? this.changeEmailPasswordCheckState,
+    changeEmailPasswordCheckMessage:
+        changeEmailPasswordCheckMessage ?? this.changeEmailPasswordCheckMessage,
+    changeEmailEmailCheckState:
+        changeEmailEmailCheckState ?? this.changeEmailEmailCheckState,
+    changeEmailEmailCheckMessage:
+        changeEmailEmailCheckMessage ?? this.changeEmailEmailCheckMessage,
+    otpState: otpState ?? this.otpState,
+    otpMessage: otpMessage ?? this.otpMessage,
+    changePersonalInfoState:
+        changePersonalInfoState ?? this.changePersonalInfoState,
+    changePersonalInfoMessage:
+        changePersonalInfoMessage ?? this.changePersonalInfoMessage,
   );
 
   @override
@@ -91,5 +142,14 @@ class CandidateProfileState extends Equatable {
     cvUploadStatus,
     cvUploadProgress,
     cvErrorMessage,
+    obsecure,
+    changePersonalInfoState,
+    changePersonalInfoMessage,
+    changeEmailPasswordCheckState,
+    changeEmailPasswordCheckMessage,
+    changeEmailEmailCheckState,
+    changeEmailEmailCheckMessage,
+    otpState,
+    otpMessage,
   ];
 }

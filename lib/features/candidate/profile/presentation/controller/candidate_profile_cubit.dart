@@ -4,7 +4,13 @@ import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intelli_hire/core/service/service_locator.dart';
+import 'package:intelli_hire/features/candidate/home/presentation/controller/home_cubit.dart';
 import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_career_details_usecase.dart';
+import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_email_enter_current_password_usecase.dart';
+import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_email_enter_new_email_usecase.dart';
+import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_email_otp_usecase.dart';
+import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_personal_info_usecase.dart';
 
 import '../../../../../core/enums/request.dart';
 import '../../../../../core/usecase/base_usecase.dart';
@@ -13,30 +19,51 @@ import '../../domain/entities/candidate_profile.dart';
 import '../../domain/usecases/change_password_candidate_usecase.dart';
 import '../../domain/usecases/delete_account_candidate_usecase.dart';
 import '../../domain/usecases/log_out_user_candidate_profile_usecase.dart';
-import '../../domain/usecases/profile_usecases.dart';
+import '../../domain/usecases/fetch_candidate_profile_usecases.dart';
 
 part 'candidate_profile_state.dart';
 
 class CandidateProfileCubit extends Cubit<CandidateProfileState> {
   final FetchCandidateProfileUseCase fetchProfileUseCase;
+  final ChangePersonalInfoUsecase updateCandidateProfileUseCase;
   final ChangePasswordCandidateUseCase changePasswordCandidateUseCase;
   final DeleteAccountCandidateUseCase deleteAccountCandidateUseCase;
   final ChangeCareerDetailsUseCase changeCareerDetailsUseCase;
   final LogOutUserCandidateProfileUseCase logOutUserCandidateProfileUseCase;
+  final ChangeEmailEnterCurrentPasswordUseCase
+  changeEmailEnterCurrentPasswordUseCase;
+  final ChangeEmailEnterNewEmailUseCase changeEmailEnterNewEmailUseCase;
+  final ChangeEmailOtpUseCase changeEmailOtpUseCase;
 
   CandidateProfileCubit(
     this.fetchProfileUseCase,
+    this.updateCandidateProfileUseCase,
     this.changePasswordCandidateUseCase,
     this.deleteAccountCandidateUseCase,
     this.changeCareerDetailsUseCase,
     this.logOutUserCandidateProfileUseCase,
+    this.changeEmailEnterCurrentPasswordUseCase,
+    this.changeEmailEnterNewEmailUseCase,
+    this.changeEmailOtpUseCase,
   ) : super(const CandidateProfileState());
 
-  // Career Details
-  final TextEditingController currentRoleController = TextEditingController();
-  final TextEditingController experienceYearsController =
-      TextEditingController();
-  final GlobalKey<FormState> careerDetailsInfoKey = GlobalKey<FormState>();
+  void resetOtpState() {
+    emit(state.copyWith(otpState: RequestState.initial));
+  }
+
+  void resetEmailChangeStepsStates() {
+    emit(
+      state.copyWith(
+        changeEmailPasswordCheckState: RequestState.initial,
+        changeEmailEmailCheckState: RequestState.initial,
+        otpState: RequestState.initial, // بالمرة نأمن الـ OTP
+      ),
+    );
+  }
+
+  void changeObsecure() {
+    emit(state.copyWith(obsecure: !state.obsecure));
+  }
 
   void showDiscardDialog(BuildContext context) {
     showDialog(
@@ -67,21 +94,63 @@ class CandidateProfileCubit extends Cubit<CandidateProfileState> {
   }
 
   Future<void> loadProfile() async {
+    if (isClosed) return;
     emit(state.copyWith(status: RequestState.loading));
+
     final result = await fetchProfileUseCase(const NoParameters());
+
+    if (isClosed) return;
+
+    result.fold(
+      (failure) {
+        if (isClosed) return;
+        emit(
+          state.copyWith(
+            status: RequestState.error,
+            candidateProfileMessage: failure.message,
+          ),
+        );
+      },
+      (profile) {
+        if (isClosed) return;
+        emit(
+          state.copyWith(
+            status: RequestState.success,
+            candidateProfileModel: profile,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> updateProfile(
+    String fullName,
+    String phoneNumber,
+    File? image,
+  ) async {
+    if (state.candidateProfileModel == null) return;
+    emit(state.copyWith(changePersonalInfoState: RequestState.loading));
+    final result = await updateCandidateProfileUseCase(
+      ChangePersonalInfoParams(
+        fullName: fullName,
+        phoneNumber: phoneNumber,
+        image: image,
+      ),
+    );
     result.fold(
       (failure) => emit(
         state.copyWith(
-          status: RequestState.error,
-          candidateProfileMessage: failure.message,
+          changePersonalInfoState: RequestState.error,
+          changePersonalInfoMessage: failure.message,
         ),
       ),
-      (profile) => emit(
-        state.copyWith(
-          status: RequestState.success,
-          candidateProfileModel: profile,
-        ),
-      ),
+      (r) {
+        emit(state.copyWith(changePersonalInfoState: RequestState.success));
+        loadProfile();
+        if (getIt.isRegistered<HomeCubitCandidate>()) {
+          getIt<HomeCubitCandidate>().updateHomeHeaderName(fullName);
+        }
+      },
     );
   }
 
@@ -97,7 +166,10 @@ class CandidateProfileCubit extends Cubit<CandidateProfileState> {
           changePasswordMessage: failure.message,
         ),
       ),
-      (r) => emit(state.copyWith(changePasswordStatus: RequestState.success)),
+      (r) {
+        emit(state.copyWith(changePasswordStatus: RequestState.success));
+        loadProfile();
+      },
     );
   }
 
@@ -118,9 +190,14 @@ class CandidateProfileCubit extends Cubit<CandidateProfileState> {
     );
   }
 
-  Future<void> changeCareerDetails(ChangeCareerDetailsParams parameters) async {
+  Future<void> changeCareerDetails({
+    required String newCvPath,
+    required String oldCvData,
+  }) async {
     emit(state.copyWith(changeCareerDetailsStatus: RequestState.loading));
-    final result = await changeCareerDetailsUseCase(parameters);
+    final result = await changeCareerDetailsUseCase(
+      ChangeCareerDetailsParams(oldCvData: oldCvData, newCvPath: newCvPath),
+    );
     result.fold(
       (l) => emit(
         state.copyWith(
@@ -128,8 +205,10 @@ class CandidateProfileCubit extends Cubit<CandidateProfileState> {
           changeCareerDetailsMessage: l.message,
         ),
       ),
-      (r) =>
-          emit(state.copyWith(changeCareerDetailsStatus: RequestState.success)),
+      (r) {
+        emit(state.copyWith(changeCareerDetailsStatus: RequestState.success));
+        loadProfile();
+      },
     );
   }
 
@@ -205,6 +284,104 @@ class CandidateProfileCubit extends Cubit<CandidateProfileState> {
         cvUploadProgress: 0.0,
         cvErrorMessage: '',
       ),
+    );
+  }
+
+  Future<void> confirmCurrentPassword({
+    required String currentEmail,
+    required String currentPassword,
+  }) async {
+    if (isClosed) return;
+    emit(state.copyWith(changeEmailPasswordCheckState: RequestState.loading));
+
+    final result = await changeEmailEnterCurrentPasswordUseCase(
+      ChangeEmailEnterCurrentPasswordParams(
+        currentEmail: currentEmail,
+        currentPassword: currentPassword,
+      ),
+    );
+    result.fold(
+      (l) {
+        if (isClosed) return;
+        emit(
+          state.copyWith(
+            changeEmailPasswordCheckState: RequestState.error,
+            changeEmailPasswordCheckMessage: l.message,
+          ),
+        );
+      },
+      (r) {
+        if (isClosed) return;
+        emit(
+          state.copyWith(
+            changeEmailPasswordCheckState: RequestState.success,
+            changeEmailPasswordCheckMessage: r,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> sendCode({
+    required String currentEmail,
+    required String newEmail,
+  }) async {
+    if (isClosed) return;
+    emit(state.copyWith(changeEmailEmailCheckState: RequestState.loading));
+    final result = await changeEmailEnterNewEmailUseCase(
+      ChangeEmailEnterNewEmailParams(
+        currentEmail: currentEmail,
+        newEmail: newEmail,
+      ),
+    );
+    result.fold(
+      (l) {
+        if (isClosed) return;
+        emit(
+          state.copyWith(
+            changeEmailEmailCheckState: RequestState.error,
+            changeEmailEmailCheckMessage: l.message,
+          ),
+        );
+      },
+      (r) {
+        if (isClosed) return;
+        emit(
+          state.copyWith(
+            changeEmailEmailCheckState: RequestState.success,
+            changeEmailEmailCheckMessage: r,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> verifyCode({
+    required String currentEmail,
+    required String newEmail,
+    required String code,
+  }) async {
+    if (isClosed) return;
+    emit(state.copyWith(otpState: RequestState.loading));
+    final result = await changeEmailOtpUseCase(
+      ChangeEmailOtpParams(
+        currentEmail: currentEmail,
+        newEmail: newEmail,
+        otp: code,
+      ),
+    );
+    result.fold(
+      (l) {
+        if (isClosed) return;
+        emit(
+          state.copyWith(otpState: RequestState.error, otpMessage: l.message),
+        );
+      },
+      (r) {
+        if (isClosed) return;
+        emit(state.copyWith(otpState: RequestState.success, otpMessage: r));
+        loadProfile();
+      },
     );
   }
 }

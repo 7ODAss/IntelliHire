@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/custom_button.dart';
 
 class UploadCvIdleState extends StatelessWidget {
-  const UploadCvIdleState({super.key, required this.onPressed});
+  final bool? isDisabled;
+  const UploadCvIdleState({
+    super.key,
+    required this.onPressed,
+    this.isDisabled,
+  });
 
   final VoidCallback onPressed;
 
@@ -41,7 +46,8 @@ class UploadCvIdleState extends StatelessWidget {
           ),
           const SizedBox(height: 48),
 
-          CustomButton(isDisabled: true, title: "Upload CV"),
+          if (isDisabled == true)
+            CustomButton(isDisabled: true, title: "Upload CV"),
         ],
       ),
     );

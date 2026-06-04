@@ -20,10 +20,7 @@ class CareerOption extends StatelessWidget {
           color: Colors.white,
           elevation: 2,
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 20,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -32,15 +29,30 @@ class CareerOption extends StatelessWidget {
                   categoryName: 'Career Details',
                   options: ['Current role , Experience Yrs , CV'],
                   fun: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) =>
-                          BlocProvider.value(
-                           value: cubit,
-                            child: CareerDetails(),
-                          ),));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BlocProvider.value(
+                          value: cubit,
+                          child: CareerDetails(
+                            currentRole:
+                                cubit
+                                    .state
+                                    .candidateProfileModel
+                                    ?.currentRole ??
+                                '',
+                            experienceYears:
+                                cubit
+                                    .state
+                                    .candidateProfileModel
+                                    ?.experienceYears ??
+                                0,
+                          ),
+                        ),
+                      ),
+                    );
                   },
                 ),
-
               ],
             ),
           ),

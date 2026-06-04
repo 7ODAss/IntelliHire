@@ -7,6 +7,7 @@ class TrainingPerformanceModel extends TrainingPerformance {
     required super.averageScore,
     required super.weekLabel,
     required super.weeklyActivity,
+    required super.dailyAverageScores,
   });
   factory TrainingPerformanceModel.fromJson(Map<String, dynamic> json) {
     return TrainingPerformanceModel(
@@ -14,16 +15,26 @@ class TrainingPerformanceModel extends TrainingPerformance {
       totalExams: json['totalExams'],
       averageScore: json['averageScore'],
       weekLabel: json['weekLabel'],
-      weeklyActivity: List<int>.from(json['weeklyActivity']),
+      weeklyActivity:
+          (json['weeklyActivity'] as List?)
+              ?.map((e) => (e as num?)?.toInt() ?? 0)
+              .toList() ??
+          [],
+      dailyAverageScores:
+          (json['dailyAverageScores'] as List?)
+              ?.map((e) => (e as num?)?.toDouble() ?? 0.0)
+              .toList() ??
+          [],
     );
   }
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
       'firstName': firstName,
       'totalExams': totalExams,
       'averageScore': averageScore,
       'weekLabel': weekLabel,
       'weeklyActivity': weeklyActivity,
+      'dailyAverageScores': dailyAverageScores,
     };
   }
 }

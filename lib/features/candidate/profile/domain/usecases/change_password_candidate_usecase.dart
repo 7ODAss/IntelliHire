@@ -14,11 +14,12 @@ class ChangePasswordParams extends Equatable {
   List<Object?> get props => [currentPassword, newPassword];
 }
 
-class ChangePasswordCandidateUseCase extends BaseUseCase<void, ChangePasswordParams> {
+class ChangePasswordCandidateUseCase
+    extends BaseUseCase<void, ChangePasswordParams> {
   final BaseCandidateProfileRepository repo;
   ChangePasswordCandidateUseCase(this.repo);
 
   @override
   Future<Either<Failure, void>> call(ChangePasswordParams parameters) =>
-      repo.changePassword(parameters.currentPassword, parameters.newPassword);
+      repo.changePassword(parameters);
 }

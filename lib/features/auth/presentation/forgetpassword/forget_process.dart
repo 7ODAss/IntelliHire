@@ -27,7 +27,9 @@ class _ForgetProcess extends StatelessWidget {
     final cubit = context.read<ForgetPasswordCubit>();
     // 🌟 ضفنا BlocBuilder عشان نراقب إحنا في أي صفحة لحظة بلحظة
     return BlocBuilder<ForgetPasswordCubit, ForgetPasswordState>(
-      buildWhen: (previous, current) => previous.pageIndex != current.pageIndex || previous.checkEmailState != current.checkEmailState,
+      buildWhen: (previous, current) =>
+          previous.pageIndex != current.pageIndex ||
+          previous.checkEmailState != current.checkEmailState,
       builder: (context, state) {
         final isLoading = state.checkEmailState == RequestState.loading;
         return PopScope(
@@ -35,7 +37,7 @@ class _ForgetProcess extends StatelessWidget {
           // إحنا عايزينه يمنع القفل (false) بس لو هو في صفحة الـ OTP (اللي هي صفحة رقم 1)
           canPop: state.pageIndex != 1 && !isLoading,
 
-          onPopInvoked: (didPop) {
+          onPopInvokedWithResult: (didPop, result) {
             // لو didPop بـ true معناه إنه كان في صفحة 0 أو 2 وقفل الشاشة خلاص (مش هنعمل حاجة)
             if (didPop) return;
             if (isLoading) return;
@@ -55,7 +57,9 @@ class _ForgetProcess extends StatelessWidget {
               child: Scaffold(
                 body: Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0, vertical: 50),
+                    horizontal: 24.0,
+                    vertical: 50,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -67,11 +71,10 @@ class _ForgetProcess extends StatelessWidget {
                             cubit.changeIndex(index);
                           },
                           itemCount: forgetPasswordList.length,
-                          itemBuilder: (context, index) =>
-                              ForgetPasswordItem(
-                                pageIndex: index,
-                                forgetPasswordList: forgetPasswordList,
-                              ),
+                          itemBuilder: (context, index) => ForgetPasswordItem(
+                            pageIndex: index,
+                            forgetPasswordList: forgetPasswordList,
+                          ),
                         ),
                       ),
                       SmoothPageIndicator(

@@ -18,6 +18,7 @@ class FieldItem extends StatelessWidget {
   final String? hintText;
   final List<TextInputFormatter>? inputFormatters;
   final int? maxLines;
+  final bool enabled;
 
   const FieldItem({
     super.key,
@@ -35,6 +36,7 @@ class FieldItem extends StatelessWidget {
     this.prefixIconColor,
     this.inputFormatters,
     this.maxLines = 1,
+    this.enabled = true,
   });
 
   @override
@@ -42,13 +44,12 @@ class FieldItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: AppTextStyle.fieldTitleStyle,
-        ),
+        Text(title, style: AppTextStyle.fieldTitleStyle),
         SizedBox(height: 8),
         MyFormField(
           controller: controller,
+
+          enabled: enabled,
           type: type,
           validator: validator,
           suffixIcon: suffixIcon,
@@ -59,7 +60,7 @@ class FieldItem extends StatelessWidget {
           prefixIcon: prefixIcon,
           prefixIconColor: prefixIconColor,
           inputFormatters: inputFormatters,
-          maxLines:maxLines
+          maxLines: maxLines,
         ),
       ],
     );

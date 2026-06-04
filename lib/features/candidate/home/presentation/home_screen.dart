@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intelli_hire/features/candidate/assess%20manage/presentation/widgets/candidate_error_widget.dart';
 import 'package:intelli_hire/features/candidate/home/presentation/widgets/empty_screen.dart';
 import 'package:intelli_hire/features/candidate/home/presentation/widgets/error_banner.dart';
 import 'package:intelli_hire/features/candidate/home/presentation/widgets/header_section.dart';
@@ -22,6 +23,7 @@ class HomeScreen extends StatelessWidget {
     averageScore: 0,
     weekLabel: 'Loading Week',
     weeklyActivity: [0, 0, 0, 0, 0, 0, 0],
+    dailyAverageScores: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
   );
 
   static const _emptyInterviews = InterviewSummary(
@@ -37,10 +39,7 @@ class HomeScreen extends StatelessWidget {
       child: Scaffold(
         body: BlocBuilder<HomeCubitCandidate, HomeState>(
           buildWhen: (previous, current) {
-            // 🌟 السطر ده هو السحر:
-            // هيمنع الشاشة الرئيسية إنها تتبني لما الكيوبت يبعت Loading للتقويم
-            // أو لما الـ weekActivity تتغير.
-            return previous.homeSummary != current.homeSummary || previous.homeSummary == null;
+            return previous.homeSummaryStatus != current.homeSummaryStatus;
           },
           builder: (context, state) {
             switch (state.homeSummaryStatus) {
@@ -49,11 +48,10 @@ class HomeScreen extends StatelessWidget {
                   slivers: [
                     SliverFillRemaining(
                       hasScrollBody: false,
-                      child: Center(
-                        child: ErrorBanner(
-                          message: state.homeSummaryMessage,
-                          onRetry: () => context.read<HomeCubitCandidate>().loadHomeData(),
-                        ),
+                      child: CandidateErrorWidget(
+                        message: state.homeSummaryMessage,
+                        onRetry: () =>
+                            context.read<HomeCubitCandidate>().loadHomeData(),
                       ),
                     ),
                   ],
@@ -62,28 +60,35 @@ class HomeScreen extends StatelessWidget {
               case RequestState.initial:
               case RequestState.loading:
               case RequestState.success:
-
-                final isLoading = state.homeSummaryStatus == RequestState.loading || state.homeSummaryStatus == RequestState.initial;
+                final isLoading =
+                    state.homeSummaryStatus == RequestState.loading ||
+                    state.homeSummaryStatus == RequestState.initial;
 
                 // تجهيز الداتا (لو بيحمل هياخد الوهمية، لو خلص هياخد الحقيقية)
-                final performance = state.homeSummary?.trainingPerformance ??
-                    _emptyPerformance;
-                final interviews = state.homeSummary?.interviewSummary ??
-                    _emptyInterviews;
+                final performance =
+                    state.homeSummary?.trainingPerformance ?? _emptyPerformance;
+                final interviews =
+                    state.homeSummary?.interviewSummary ?? _emptyInterviews;
 
                 return Skeletonizer(
                   enabled: isLoading,
                   child: CustomScrollView(
                     slivers: [
                       SliverToBoxAdapter(
-                        child: Header(userName: performance.firstName),
+                        child: Header(performance: performance),
                       ),
                       SliverToBoxAdapter(
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
-                          child: (performance.totalExams != 0) ?
-                          TrainingPerformanceCard(performance: performance, cubit: context.read<HomeCubitCandidate>(), // 🌟 شغال هنا بأمان تام
-                          ) : const EmptyScreen(),
+                          child: (performance.totalExams != 0)
+                              ? TrainingPerformanceCard(
+                                  performance: performance,
+                                  cubit: context
+                                      .read<
+                                        HomeCubitCandidate
+                                      >(), // 🌟 شغال هنا بأمان تام
+                                )
+                              : const EmptyScreen(),
                         ),
                       ),
 
