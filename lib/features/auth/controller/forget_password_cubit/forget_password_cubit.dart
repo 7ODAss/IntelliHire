@@ -45,7 +45,7 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
           emit(
             state.copyWith(
               checkEmailState: RequestState.success,
-              checkEmailMessage: value.data.toString(),
+              checkEmailMessage: value.data['message'].toString(),
             ),
           );
         })
@@ -67,7 +67,7 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
         )
         .then((value) {
           print('verify code response: ${value.data}');
-          token = value.data['token'];
+          token = value.data['token']['data'];
           emit(
             state.copyWith(
               otpState: RequestState.success,

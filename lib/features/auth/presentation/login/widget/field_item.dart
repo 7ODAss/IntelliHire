@@ -44,7 +44,6 @@ class FieldItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: AppTextStyle.fieldTitleStyle),
         Text(
           title,
           style: AppTextStyle.fieldTitleStyle,

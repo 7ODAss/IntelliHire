@@ -9,6 +9,10 @@ import 'package:intelli_hire/features/auth/controller/candidate%20register%20cub
 import 'package:intelli_hire/features/auth/controller/profile%20setup%20cubit/profile_setup_cubit.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/account_setup_view.dart';
 
+import '../../../../../../core/utils/app_text_style.dart';
+import '../../../login/login_screen.dart';
+import '../../../login/widget/button_action.dart';
+
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({super.key});
 
@@ -146,6 +150,19 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                     style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                   const SizedBox(height: 48),
+                  ButtonAction(
+                    title: 'Back to Login',
+                    style: AppTextStyle.subTitleStyle.copyWith(
+                      color: Colors.white,
+                    ),
+                    onPressed: (){
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                            (route) => false,
+                      );
+                    },
+                  ),
 
                   
                 ],

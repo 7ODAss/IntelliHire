@@ -17,11 +17,14 @@ class ChangePasswordStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<ForgetPasswordCubit>();
     return BlocListener<ForgetPasswordCubit, ForgetPasswordState>(
-      listenWhen: (previous, current) => previous.resetPasswordState != current.resetPasswordState,
+      listenWhen: (previous, current) =>
+          previous.resetPasswordState != current.resetPasswordState,
       listener: (context, state) {
         if (state.resetPasswordState == RequestState.success) {
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => LoginScreen()));
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+          );
           context.showSnackBar(
             state.resetPasswordMessage,
             type: SnackBarType.success,
@@ -63,8 +66,9 @@ class ChangePasswordStep extends StatelessWidget {
                       return "Password must be at least 8 characters long";
                     }
                     // Must contain at least one lowercase [a-z] AND one uppercase [A-Z]
-                    if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z]).+$').hasMatch(
-                        value)) {
+                    if (!RegExp(
+                      r'^(?=.*[a-z])(?=.*[A-Z]).+$',
+                    ).hasMatch(value)) {
                       return "Password must contain both uppercase and lowercase letters";
                     }
                     return null;
@@ -103,24 +107,66 @@ class ChangePasswordStep extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             const SizedBox(height: 16),
-            ButtonAction(
-              title: 'Continue',
-              onPressed: () {
-                if (cubit.formKey.currentState!.validate()) {
-                  cubit.resetPassword(
-                    email: cubit.emailController.text,
-                    token: cubit.token,
-                    password: cubit.passwordController.text,
-                    confirmPassword: cubit.confirmPasswordController.text,
-                  );
-                }
+            BlocSelector<
+              ForgetPasswordCubit,
+              ForgetPasswordState,
+              RequestState
+            >(
+              selector: (state) {
+                return state.resetPasswordState;
+              },
+              builder: (context, state) {
+                return ButtonAction(
+                  title: 'Continue',
+                  isLoading: state == RequestState.loading,
+                  onPressed: () {
+                    if (cubit.formKey.currentState!.validate()) {
+                      cubit.resetPassword(
+                        email: cubit.emailController.text,
+                        token: cubit.token,
+                        password: cubit.passwordController.text,
+                        confirmPassword: cubit.confirmPasswordController.text,
+                      );
+                    }
+                  },
+                );
               },
             ),
             const SizedBox(height: 16),
-            TextButton(onPressed: () {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()));
-            }, child: Text('Cancel', style: AppTextStyle.subTitleStyle,))
+            BlocSelector<
+              ForgetPasswordCubit,
+              ForgetPasswordState,
+              RequestState
+            >(
+              selector: (state) {
+                return state.resetPasswordState;
+              },
+              builder: (context, state) {
+                bool isLoading = state == RequestState.loading;
+                return TextButton(
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginScreen(),
+                            ),
+                          );
+                        },
+                  child: isLoading
+                      ? const SizedBox(
+                          height: 30,
+                          width: 30,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text('Cancel', style: AppTextStyle.subTitleStyle),
+                );
+              },
+            ),
           ],
         ),
       ),

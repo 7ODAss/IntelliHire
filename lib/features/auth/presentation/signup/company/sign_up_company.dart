@@ -263,7 +263,7 @@ class _SignUpCompanyState extends State<SignUpCompany> {
                           Padding(
                             padding: const EdgeInsets.symmetric(
                               vertical: 32.0,
-                              horizontal: 80,
+                              horizontal: 40,
                             ),
                             child: NavigatorToAccount(
                               text: 'Already have account?',
