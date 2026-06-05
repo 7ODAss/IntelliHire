@@ -6,7 +6,6 @@ import 'package:intelli_hire/core/utils/shared/auth_step_layout.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/field_item.dart';
 import '../../../../../../core/enums/snack_bar_type.dart';
 import '../../../../../../core/utils/shared/context_extension.dart';
-import '../../../../../Organization/bottom _navigation/presentation/custom_bottom_nav_bar.dart';
 import '../../../../../Organization/bottom _navigation/presentation/custom_bottom_nav_bar_wrapper.dart';
 import '../../../../controller/sign_up_cubit/sign_up_cubit.dart';
 import '../../../login/widget/button_action.dart';
@@ -37,11 +36,10 @@ class _SignUpLinkCompanyState extends State<SignUpLinkCompany> {
 
   @override
   void dispose() {
-    super.dispose();
     photoCompanyController.dispose();
     linkCompanyController.dispose();
     aboutCompanyController.dispose();
-    linkCompanyFormKey.currentState?.dispose();
+    super.dispose();
   }
 
   @override
@@ -70,19 +68,19 @@ class _SignUpLinkCompanyState extends State<SignUpLinkCompany> {
                 message: 'Enter your Website Company',
                 type: TextInputType.url,
                 hintText: 'https://www.company.com',
-                // validator: (value) {
-                //   if (value == null || value.trim().isEmpty) {
-                //     return 'Please enter a Company Website or LinkedIn URL';
-                //   }
-                //   final urlRegExp = RegExp(
-                //     r'^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$',
-                //     caseSensitive: false,
-                //   );
-                //   if (!urlRegExp.hasMatch(value.trim())) {
-                //     return 'Please enter a valid URL (e.g., https://company.com)';
-                //   }
-                //   return null;
-                // },
+                 validator: (value) {
+                 if (value == null || value.trim().isEmpty) {
+                   return 'Please enter a Company Website or LinkedIn URL';
+                   }
+                   final urlRegExp = RegExp(
+                     r'^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$',
+                     caseSensitive: false,
+                   );
+                   if (!urlRegExp.hasMatch(value.trim())) {
+                     return 'Please enter a valid URL (e.g., https://company.com)';
+                   }
+                   return null;
+                 },
               ),
               const SizedBox(height: 32),
               FieldItem(

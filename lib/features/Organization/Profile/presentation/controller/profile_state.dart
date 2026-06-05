@@ -17,6 +17,34 @@ class ProfileState extends Equatable {
   final RequestState? userProfileLogOutState;
   final String? userProfileLogOutMessage;
 
+  // Change Email Flow States
+  final RequestState? changeEmailPasswordCheckState;
+  final String? changeEmailPasswordCheckMessage;
+  final RequestState? changeEmailEmailCheckState;
+  final String? changeEmailEmailCheckMessage;
+  final RequestState? otpState;
+  final String? otpMessage;
+  final bool obsecure;
+  final String? companyEmail;
+
+  // Company Account Fetching State
+  final RequestState? getCompanyAccountState;
+  final String? getCompanyAccountMessage;
+  final CompanyAccountModel? companyAccount;
+
+  // Change Password Flow States (New)
+  final RequestState? changePasswordRequestState;
+  final String? changePasswordRequestMessage;
+  final RequestState? changePasswordOtpState;
+  final String? changePasswordOtpMessage;
+  final String? pendingCurrentPassword;
+  final String? pendingNewPassword;
+  final String? passwordChangeToken;
+
+  // Delete Account States (New)
+  final RequestState? deleteAccountState;
+  final String? deleteAccountMessage;
+
   const ProfileState({
     this.detailedAddress,
     this.websiteLink,
@@ -33,6 +61,30 @@ class ProfileState extends Equatable {
     this.changePasswordCompanyMessage,
     this.userProfileLogOutState,
     this.userProfileLogOutMessage,
+    
+    this.changeEmailPasswordCheckState = RequestState.initial,
+    this.changeEmailPasswordCheckMessage = '',
+    this.changeEmailEmailCheckState = RequestState.initial,
+    this.changeEmailEmailCheckMessage = '',
+    this.otpState = RequestState.initial,
+    this.otpMessage = '',
+    this.obsecure = true,
+    this.companyEmail,
+
+    this.getCompanyAccountState = RequestState.initial,
+    this.getCompanyAccountMessage = '',
+    this.companyAccount,
+
+    this.changePasswordRequestState = RequestState.initial,
+    this.changePasswordRequestMessage = '',
+    this.changePasswordOtpState = RequestState.initial,
+    this.changePasswordOtpMessage = '',
+    this.pendingCurrentPassword = '',
+    this.pendingNewPassword = '',
+    this.passwordChangeToken = '',
+
+    this.deleteAccountState = RequestState.initial,
+    this.deleteAccountMessage = '',
   });
 
   ProfileState copyWith({
@@ -51,6 +103,30 @@ class ProfileState extends Equatable {
     String? changePasswordCompanyMessage,
     RequestState? userProfileLogOutState,
     String? userProfileLogOutMessage,
+    
+    RequestState? changeEmailPasswordCheckState,
+    String? changeEmailPasswordCheckMessage,
+    RequestState? changeEmailEmailCheckState,
+    String? changeEmailEmailCheckMessage,
+    RequestState? otpState,
+    String? otpMessage,
+    bool? obsecure,
+    String? companyEmail,
+
+    RequestState? getCompanyAccountState,
+    String? getCompanyAccountMessage,
+    CompanyAccountModel? companyAccount,
+
+    RequestState? changePasswordRequestState,
+    String? changePasswordRequestMessage,
+    RequestState? changePasswordOtpState,
+    String? changePasswordOtpMessage,
+    String? pendingCurrentPassword,
+    String? pendingNewPassword,
+    String? passwordChangeToken,
+
+    RequestState? deleteAccountState,
+    String? deleteAccountMessage,
   }) {
     return ProfileState(
       detailedAddress: detailedAddress ?? this.detailedAddress,
@@ -68,6 +144,30 @@ class ProfileState extends Equatable {
       changePasswordCompanyMessage: changePasswordCompanyMessage ?? this.changePasswordCompanyMessage,
       userProfileLogOutState: userProfileLogOutState ?? this.userProfileLogOutState,
       userProfileLogOutMessage: userProfileLogOutMessage ?? this.userProfileLogOutMessage,
+      
+      changeEmailPasswordCheckState: changeEmailPasswordCheckState ?? this.changeEmailPasswordCheckState,
+      changeEmailPasswordCheckMessage: changeEmailPasswordCheckMessage ?? this.changeEmailPasswordCheckMessage,
+      changeEmailEmailCheckState: changeEmailEmailCheckState ?? this.changeEmailEmailCheckState,
+      changeEmailEmailCheckMessage: changeEmailEmailCheckMessage ?? this.changeEmailEmailCheckMessage,
+      otpState: otpState ?? this.otpState,
+      otpMessage: otpMessage ?? this.otpMessage,
+      obsecure: obsecure ?? this.obsecure,
+      companyEmail: companyEmail ?? this.companyEmail,
+
+      getCompanyAccountState: getCompanyAccountState ?? this.getCompanyAccountState,
+      getCompanyAccountMessage: getCompanyAccountMessage ?? this.getCompanyAccountMessage,
+      companyAccount: companyAccount ?? this.companyAccount,
+
+      changePasswordRequestState: changePasswordRequestState ?? this.changePasswordRequestState,
+      changePasswordRequestMessage: changePasswordRequestMessage ?? this.changePasswordRequestMessage,
+      changePasswordOtpState: changePasswordOtpState ?? this.changePasswordOtpState,
+      changePasswordOtpMessage: changePasswordOtpMessage ?? this.changePasswordOtpMessage,
+      pendingCurrentPassword: pendingCurrentPassword ?? this.pendingCurrentPassword,
+      pendingNewPassword: pendingNewPassword ?? this.pendingNewPassword,
+      passwordChangeToken: passwordChangeToken ?? this.passwordChangeToken,
+
+      deleteAccountState: deleteAccountState ?? this.deleteAccountState,
+      deleteAccountMessage: deleteAccountMessage ?? this.deleteAccountMessage,
     );
   }
 
@@ -88,5 +188,29 @@ class ProfileState extends Equatable {
     changePasswordCompanyMessage,
     userProfileLogOutState,
     userProfileLogOutMessage,
+    
+    changeEmailPasswordCheckState,
+    changeEmailPasswordCheckMessage,
+    changeEmailEmailCheckState,
+    changeEmailEmailCheckMessage,
+    otpState,
+    otpMessage,
+    obsecure,
+    companyEmail,
+
+    getCompanyAccountState,
+    getCompanyAccountMessage,
+    companyAccount,
+
+    changePasswordRequestState,
+    changePasswordRequestMessage,
+    changePasswordOtpState,
+    changePasswordOtpMessage,
+    pendingCurrentPassword,
+    pendingNewPassword,
+    passwordChangeToken,
+
+    deleteAccountState,
+    deleteAccountMessage,
   ];
 }

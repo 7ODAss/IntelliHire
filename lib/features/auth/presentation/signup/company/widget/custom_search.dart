@@ -76,11 +76,17 @@ class SharedBottomSheetSelector extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: Text(
-                hasSelection ? selectedItem! : title, // Show title if no selection
-                style: hasSelection
-                    ? AppTextStyle.signUpDropDownCompanyStyle
-                    : AppTextStyle.hintTextStyle,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Text(
+                  hasSelection ? selectedItem! : title, // Show title if no selection
+                  maxLines: 1,
+                  softWrap: false,
+                  style: hasSelection
+                      ? AppTextStyle.signUpDropDownCompanyStyle
+                      : AppTextStyle.hintTextStyle,
+                ),
               ),
             ),
             Icon(

@@ -33,11 +33,10 @@ class _SignUpInformationCompanyState extends State<SignUpInformationCompany> {
 
   @override
   void dispose() {
-    super.dispose();
     workPhoneController.dispose();
     companyNameController.dispose();
     industryController.dispose();
-    industryFormKey.currentState?.dispose();
+    super.dispose();
   }
 
   @override

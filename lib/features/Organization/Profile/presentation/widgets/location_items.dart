@@ -33,12 +33,9 @@ class _LocationItemsState extends State<LocationItems> {
 
   @override
   void dispose() {
-    super.dispose();
     countryController.dispose();
     govController.dispose();
-    // locationFormKey.currentState?.dispose();
-    // searchCountryController.dispose();
-    // searchGovController.dispose();
+    super.dispose();
   }
   @override
   Widget build(BuildContext context) {
@@ -92,7 +89,7 @@ class _LocationItemsState extends State<LocationItems> {
           controller: widget.addressController,
           title: 'Detailed Address',
           type: TextInputType.text,
-          hintText: 'Building 4 , Street 9 , Maadi',
+          hintText: 'e.g. Building 4, Street 9, Maadi',
         ),
       ],
     );

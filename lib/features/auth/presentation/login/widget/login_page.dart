@@ -5,12 +5,20 @@ import 'package:intelli_hire/core/utils/shared/context_extension.dart';
 import 'package:intelli_hire/features/auth/controller/login_cubit/login_cubit.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/button_action.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/remember_me.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/social_buttons.dart';
+import 'package:intelli_hire/features/auth/controller/external%20login/external_login_cubit.dart';
+import 'package:intelli_hire/features/auth/controller/external%20login/external_login_state.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/Candidate Signup/views/account_setup_view.dart';
+import 'package:intelli_hire/features/Organization/bottom _navigation/presentation/custom_bottom_nav_bar_wrapper.dart';
+import 'package:intelli_hire/core/service/service_locator.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_process.dart';
+import 'package:intelli_hire/features/candidate/bottom _navigation/presentation/custom_bottom_nav_bar_wrapper_candidate.dart';
+import 'package:intelli_hire/features/auth/controller/sign_up_cubit/sign_up_cubit.dart';
+import 'package:intelli_hire/features/auth/controller/profile%20setup%20cubit/profile_setup_cubit.dart';
+
 import '../../../../../core/enums/snack_bar_type.dart';
-import '../../../../Organization/bottom _navigation/presentation/custom_bottom_nav_bar_wrapper.dart';
-import '../../../../candidate/bottom _navigation/presentation/custom_bottom_nav_bar_wrapper_candidate.dart';
 import '../../../../onboarding/presentation/landing_screen.dart';
 import '../../signup/company/widget/navigator_to_account.dart';
-import 'external_log_in.dart';
 import 'field_item.dart';
 
 class LogInPage extends StatefulWidget {
@@ -20,183 +28,311 @@ class LogInPage extends StatefulWidget {
   State<LogInPage> createState() => _LogInPageState();
 }
 
-class _LogInPageState extends State<LogInPage> {
-  late TextEditingController candidateEmailController;
-  late TextEditingController candidatePasswordController;
-  late GlobalKey<FormState> candidateFormKey;
+enum UserType { candidate, company }
 
-  @override
-  void initState() {
-    super.initState();
-    candidateEmailController = TextEditingController();
-    candidatePasswordController = TextEditingController();
-    candidateFormKey = GlobalKey<FormState>();
-  }
+class _LogInPageState extends State<LogInPage> {
+  UserType selectedType = UserType.candidate; // الافتراضي مترشح
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    candidateEmailController.dispose();
-    candidatePasswordController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
     super.dispose();
+  }
+
+  // دالة بناء الـ Tab الاحترافي
+  Widget _buildTabItem({required String title, required UserType type}) {
+    bool isSelected = selectedType == type;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => selectedType = type),
+        child: Container(
+          margin: const EdgeInsets.all(4),
+          height: 42,
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 4,
+                    ),
+                  ]
+                : [],
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            title,
+            style: TextStyle(
+              color: isSelected
+                  ? const Color(0xFF0F172A)
+                  : const Color(0xFFAFAFAF),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<LoginCubit>();
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: Form(
-        key: candidateFormKey,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              FieldItem(
-                controller: candidateEmailController,
-                title: "Email",
-                message: "Please enter your email",
-                type: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Email is required";
-                  } else if (!RegExp(
-                    r"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$",
-                  ).hasMatch(value)) {
-                    return "Enter a valid email address";
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              BlocSelector<LoginCubit, LoginState, bool>(
-                selector: (state) => state.changeSuffix,
-                builder: (context, state) {
-                  return FieldItem(
-                    controller: candidatePasswordController,
-                    title: "Password",
-                    message: "Please enter your password",
-                    type: TextInputType.visiblePassword,
-                    obscureText: state,
-                    suffixIcon: state ? Icons.visibility_off : Icons.visibility,
-                    suffixIconColor: const Color(0xFF134CC7),
-                    onSuffixPressed: () {
-                      context.read<LoginCubit>().changeSuffix();
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Password is required";
-                      } else if (value.length < 6) {
-                        return "Password must be at least 6 characters long";
-                      }
-                      return null;
-                    },
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-              const RememberMe(),
-              BlocConsumer<LoginCubit, LoginState>(
-                listenWhen: (previous, current) =>
-                    previous.loginState != current.loginState,
-                listener: (context, state) {
-                  if (state.loginState == RequestState.success) {
-                    context.showSnackBar(
-                      state.loginMessage,
-                      type: SnackBarType.success,
-                    );
-                    if (cubit.loginModel!.userType == 'Company') {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const CustomBottomNavBarWrapper(),
-                        ),
-                        (route) => false,
-                      );
-                    }
-                    if (cubit.loginModel!.userType == 'Individual') {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const CustomBottomNavBarWrapperCandidate(),
-                        ),
-                        (route) => false,
-                      );
-                    }
-                  } else if (state.loginState == RequestState.error) {
-                    context.showSnackBar(
-                      state.loginMessage,
-                      type: SnackBarType.error,
-                    );
-                  }
-                },
-                builder: (context, state) {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 24.0),
-                        child: ButtonAction(
-                          title: "Log In",
-                          isLoading: state.loginState == RequestState.loading,
-                          onPressed: () {
-                            if (candidateFormKey.currentState!.validate()) {
-                              cubit.login(
-                                email: candidateEmailController.text,
-                                password: candidatePasswordController.text,
-                                rememberMe: cubit.state.rememberMeCheck,
-                              );
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-
-              const Row(
-                children: [
-                  Expanded(
-                    child: Divider(color: Color(0xFF9CA3AF), thickness: 1.5),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      "OR CONTINUE WITH",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF9CA3AF),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Divider(color: Color(0xFF9CA3AF), thickness: 1.5),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-              const ExternalLogIn(userType: 'candidate'),
-              Padding(
-                padding: const EdgeInsets.only(top: 32.0, bottom: 32.0),
-                child: NavigatorToAccount(
-                  text: 'Don\'t have account?',
-                  actionText: ' Sign Up',
-                  onTap: () {
-                    Navigator.push(
+    return MultiBlocListener(
+      listeners: [
+        // 1. المستمع الأول: الخاص بتسجيل الدخول بجوجل (External Login)
+        BlocListener<ExternalLoginCubit, ExternalLoginState>(
+          listener: (context, state) {
+            if (state is ExternalLoginSuccess) {
+              Future.delayed(Duration.zero, () {
+                final bool isCompany = state.userType == 'Company' || state.userType == 'company';
+                if (isCompany) {
+                  if (state.isProfileComplete) {
+                    Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const LandingScreen(),
+                        builder: (_) => const CustomBottomNavBarWrapper(),
                       ),
+                      (route) => false,
                     );
-                  },
+                  } else {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider(
+                          create: (context) => SignUpCubit(),
+                          child: const SignUpProcess(),
+                        ),
+                      ),
+                      (route) => false,
+                    );
+                  }
+                } else {
+                  if (state.isProfileComplete) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            const CustomBottomNavBarWrapperCandidate(),
+                      ),
+                      (route) => false,
+                    );
+                  } else {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider(
+                          create: (context) => ProfileSetupCubit(
+                            getIt(),
+                            userToken: state.token,
+                          ),
+                          child: const AccountSetupView(),
+                        ),
+                      ),
+                      (route) => false,
+                    );
+                  }
+                }
+              });
+            } else if (state is ExternalLoginFailure) {
+              context.showSnackBar(state.error, type: SnackBarType.error);
+            }
+          },
+        ),
+
+        // 🌟 2. المستمع التاني: الخاص بتسجيل الدخول العادي (تم تعديله لمنع الدخول ببروفايل ناقص)
+        BlocListener<LoginCubit, LoginState>(
+          listener: (context, state) {
+            if (state.loginState == RequestState.success) {
+              // 🔴 جلب حالة اكتمال البروفايل ونوع الحساب من استجابة السيرفر تلقائياً
+              final bool isProfileComplete = state.loginModel?.isProfileComplete ?? true;
+              final String userType = state.loginModel?.userType ?? '';
+              final bool isCompany = userType == 'Company' || userType == 'company';
+
+              if (isProfileComplete) {
+                // ✅ البروفايل كامل -> التوجيه لـ Home حسب نوع الحساب الحقيقي
+                if (isCompany) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const CustomBottomNavBarWrapper(),
+                    ),
+                    (route) => false,
+                  );
+                } else {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const CustomBottomNavBarWrapperCandidate(),
+                    ),
+                    (route) => false,
+                  );
+                }
+              } else {
+                // ❌ البروفايل ناقص -> التوجيه لشاشات إكمال البيانات حسب نوع الحساب الحقيقي
+                if (isCompany) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider(
+                        create: (context) => SignUpCubit(),
+                        child: const SignUpProcess(),
+                      ),
+                    ),
+                    (route) => false,
+                  );
+                } else {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider(
+                        create: (context) => ProfileSetupCubit(
+                          getIt(),
+                          userToken: state.loginModel!.token,
+                        ),
+                        child: const AccountSetupView(),
+                      ),
+                    ),
+                    (route) => false,
+                  );
+                }
+              }
+            } else if (state.loginState == RequestState.error) {
+              context.showSnackBar(
+                state.loginMessage,
+                type: SnackBarType.error,
+              );
+            }
+          },
+        ),
+      ],
+      // 🌟 BlocBuilder عشان نحدث الشاشة لو بيحمل (Loading)
+      child: BlocBuilder<LoginCubit, LoginState>(
+        builder: (context, loginState) {
+          return SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 16,
+                ),
+                child: Column(
+                  children: [
+                    // الـ Tab الاحترافي
+                    Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F1F1),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        children: [
+                          _buildTabItem(
+                            title: "Candidate",
+                            type: UserType.candidate,
+                          ),
+                          _buildTabItem(
+                            title: "Company",
+                            type: UserType.company,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    FieldItem(
+                      controller: emailController,
+                      title: "Email",
+                      message: "Enter Email",
+                      type: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 16),
+                    FieldItem(
+                      controller: passwordController,
+                      title: "Password",
+                      message: "Enter Password",
+                      type: TextInputType.visiblePassword,
+                      obscureText: true,
+                    ),
+
+                    const SizedBox(height: 16),
+                    const RememberMe(),
+                    const SizedBox(height: 16),
+
+                    const Row(
+                      children: [
+                        Expanded(
+                          child: Divider(
+                            color: Color(0xFF9CA3AF),
+                            thickness: 1.5,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(
+                            "OR CONTINUE WITH",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF9CA3AF),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Divider(
+                            color: Color(0xFF9CA3AF),
+                            thickness: 1.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // زرار تسجيل الدخول
+                    loginState.loginState == RequestState.loading
+                        ? const Center(child: CircularProgressIndicator())
+                        : ButtonAction(
+                            title: "Log In",
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                context.read<LoginCubit>().login(
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text,
+                                  rememberMe: true,
+                                );
+                              }
+                            },
+                          ),
+
+                    const SizedBox(height: 20),
+                    // إرسال '0' أو '1'
+                    SocialButtons(
+                      type: selectedType == UserType.candidate ? '0' : '1',
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32.0),
+                      child: NavigatorToAccount(
+                        text: 'Don\'t have account?',
+                        actionText: ' Sign Up',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const LandingScreen(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

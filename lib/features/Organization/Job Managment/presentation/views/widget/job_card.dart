@@ -8,16 +8,23 @@ import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/
 import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/views/widget/custom_popup_menu.dart';
 
 class JobCard extends StatelessWidget {
-  const JobCard({
-    super.key,
-    required this.job, // 🔴 بنستقبل job
-  });
+  const JobCard({super.key, required this.job});
 
-  // 🔴 التعديل هنا: غيرنا النوع من JobModel لـ JobItemEntity
   final JobItemEntity job;
+
+  String _formatDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return 'Recent';
+    try {
+      final date = DateTime.parse(dateStr);
+      return "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
+    } catch (e) {
+      return dateStr;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("📌 Job Name: ${job.title} | Job ID: ${job.id}");
     return InkWell(
       onTap: () {
         context.read<ApplicantsCubit>().fetchApplicantsForJob(job.id);
@@ -39,7 +46,6 @@ class JobCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: const [
-            // ضفت const للـ box shadow
             BoxShadow(
               color: Color(0xff898989),
               spreadRadius: 0,
@@ -65,7 +71,7 @@ class JobCard extends StatelessWidget {
             const SizedBox(height: 4),
 
             Text(
-              "${job.location ?? 'Remote'} • ${job.postedAt}",
+              "• ${job.location ?? 'Remote'}   • ${_formatDate(job.postedAt)}",
               style: AppTextStyle.textstyle12.copyWith(
                 color: const Color(0xff475569),
               ),
@@ -89,7 +95,6 @@ class JobCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
-                    // 🔴 عدلنا job.jobType لـ job.type حسب الـ Entity
                     job.type,
                     style: AppTextStyle.textstyle12.copyWith(
                       color: AppColor.primary,
@@ -106,7 +111,6 @@ class JobCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      // 🔴 عدلنا candidatesCount لـ applicantsCount حسب الـ Entity
                       "${job.applicantsCount} Candidate",
                       style: AppTextStyle.textstyle12.copyWith(
                         fontWeight: FontWeight.w500,

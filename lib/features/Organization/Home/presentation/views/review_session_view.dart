@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:dio/dio.dart';
+import 'package:intelli_hire/core/service/api_service.dart';
 import 'package:intelli_hire/core/models/applicant_model.dart';
 import 'package:intelli_hire/features/Organization/Home/presentation/controller/review%20session%20cubit/cubit/review_session_cubit.dart';
 import 'package:intelli_hire/features/Organization/Home/presentation/controller/review%20session%20cubit/cubit/review_session_state.dart';
@@ -22,6 +26,8 @@ class ReviewSessionView extends StatefulWidget {
 class _ReviewSessionViewState extends State<ReviewSessionView> {
   int currentIndex = 0;
   late PageController _pageController;
+  bool _isSubmitting = false;
+  List<ApplicantModel>? _localApplicants;
 
   @override
   void initState() {
@@ -35,14 +41,117 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
     super.dispose();
   }
 
-  void nextCandidate(int totalCandidates) {
-    if (currentIndex < totalCandidates - 1) {
+  void removeCurrentCandidateAndTransition() {
+    if (_localApplicants == null || _localApplicants!.isEmpty) return;
+
+    final int total = _localApplicants!.length;
+
+    if (total == 1) {
+      // Last candidate in the list, close the screen
+      Navigator.pop(context);
+      return;
+    }
+
+    if (currentIndex < total - 1) {
+      // 1. Animate to the next candidate (page = currentIndex + 1)
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
+
+      // 2. After animation completes, remove the candidate and reset controller silently
+      Future.delayed(const Duration(milliseconds: 310), () {
+        if (!mounted) return;
+        setState(() {
+          _localApplicants!.removeAt(currentIndex);
+          // currentIndex remains the same because the next candidate shifted down
+          // We jump silently to the same index to sync the PageController
+          _pageController.jumpToPage(currentIndex);
+        });
+      });
     } else {
-      Navigator.pop(context);
+      // We are on the last candidate in the list (but total > 1)
+      // 1. Animate to the previous candidate (page = currentIndex - 1)
+      _pageController.previousPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+
+      // 2. After animation completes, remove the candidate and reset controller silently
+      Future.delayed(const Duration(milliseconds: 310), () {
+        if (!mounted) return;
+        setState(() {
+          _localApplicants!.removeAt(currentIndex);
+          currentIndex = currentIndex - 1;
+          _pageController.jumpToPage(currentIndex);
+        });
+      });
+    }
+  }
+
+  Future<void> _downloadFile({
+    required String sessionId,
+    required String applicantName,
+    required String fileType, // 'cv' or 'report'
+  }) async {
+    final suffix = fileType == 'cv' ? 'CV' : 'Report';
+    try {
+      final endpoint = "api/Employer/$sessionId/download/$fileType";
+      
+      final directory = await getApplicationDocumentsDirectory();
+      final savePath = "${directory.path}/${applicantName.replaceAll(' ', '_')}_$suffix.pdf";
+
+      print("--- [DOWNLOAD REQUEST] Start ---");
+      print("Endpoint: $endpoint");
+      print("Save Path: $savePath");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Downloading $suffix..."),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+
+      await ApiService().download(
+        endPoint: endpoint,
+        savePath: savePath,
+      );
+
+      print("--- [DOWNLOAD RESPONSE] Success ---");
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("$suffix downloaded successfully!"),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      await OpenFilex.open(savePath);
+    } catch (e) {
+      print("--- [DOWNLOAD ERROR] Failed ---");
+      print("Error: $e");
+      if (!mounted) return;
+
+      String message = "Failed to download $suffix.";
+      if (e is DioException) {
+        final statusCode = e.response?.statusCode;
+        if (statusCode == 500) {
+          message = "Failed to download $suffix: Candidate may not have a $suffix uploaded.";
+        } else if (statusCode == 404) {
+          message = "Failed to download $suffix: File not found on the server.";
+        } else {
+          message = "Failed to download $suffix: Server error ($statusCode)";
+        }
+      } else {
+        message = "Failed to download $suffix: ${e.toString().split('\n').first}";
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -50,8 +159,18 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
   Widget build(BuildContext context) {
     return BlocListener<ReviewSessionCubit, ReviewSessionState>(
       listener: (context, state) {
-        if (state is ReviewDecisionSuccess) {
+        if (state is ReviewDecisionSubmitting) {
+          setState(() {
+            _isSubmitting = true;
+          });
+        } else if (state is ReviewDecisionSuccess) {
+          setState(() {
+            _isSubmitting = false;
+          });
         } else if (state is ReviewDecisionError) {
+          setState(() {
+            _isSubmitting = false;
+          });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message), backgroundColor: Colors.red),
           );
@@ -79,6 +198,10 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
                   state is ReviewSessionLoading ||
                   state is ReviewSessionInitial;
 
+              if (!isLoading && _localApplicants == null && state is ReviewSessionLoaded) {
+                _localApplicants = List.from(state.applicants);
+              }
+
               // 🟢 Using a dummy model for Skeletonizer instead of ApplicantModel.empty()
               final List<ApplicantModel> applicants = isLoading
                   ? [
@@ -95,7 +218,7 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
                         "weaknessPoints": "",
                       }),
                     ]
-                  : (state is ReviewSessionLoaded ? state.applicants : []);
+                  : (_localApplicants ?? []);
 
               if (!isLoading && applicants.isEmpty) {
                 return const Center(child: Text("No candidates to review"));
@@ -107,7 +230,7 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
               return BlocListener<ReviewSessionCubit, ReviewSessionState>(
                 listener: (context, state) {
                   if (state is ReviewDecisionSuccess) {
-                    nextCandidate(totalCandidates);
+                    removeCurrentCandidateAndTransition();
                   }
                 },
                 child: Skeletonizer(
@@ -138,7 +261,7 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
                       Expanded(
                         child: PageView.builder(
                           controller: _pageController,
-                          physics: isLoading
+                          physics: (isLoading || _isSubmitting)
                               ? const NeverScrollableScrollPhysics()
                               : const BouncingScrollPhysics(),
                           itemCount: totalCandidates,
@@ -161,27 +284,45 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
                                   const SizedBox(height: 16),
                                   CandidateScoreAvatar(applicant: applicant),
                                   const SizedBox(height: 16),
-                                  const Row(
+                                  Row(
                                     children: [
                                       Expanded(
-                                        child: ReportButton(
-                                          text: "5+",
-                                          label: "Years",
+                                        child: IgnorePointer(
+                                          ignoring: true,
+                                          child: ReportButton(
+                                            text: "${applicant.experienceYears}+",
+                                            label: "Years",
+                                            onPressed: () {},
+                                          ),
                                         ),
                                       ),
-                                      SizedBox(width: 8),
+                                      const SizedBox(width: 8),
                                       Expanded(
                                         child: ReportButton(
                                           icon:
                                               "assets/image/icon svg/download.svg",
                                           label: "PDF Report",
+                                          onPressed: () {
+                                            _downloadFile(
+                                              sessionId: applicant.sessionId,
+                                              applicantName: applicant.name,
+                                              fileType: "report",
+                                            );
+                                          },
                                         ),
                                       ),
-                                      SizedBox(width: 8),
+                                      const SizedBox(width: 8),
                                       Expanded(
                                         child: ReportButton(
                                           icon: "assets/image/icon svg/cv.svg",
                                           label: "Download CV",
+                                          onPressed: () {
+                                            _downloadFile(
+                                              sessionId: applicant.sessionId,
+                                              applicantName: applicant.name,
+                                              fileType: "cv",
+                                            );
+                                          },
                                         ),
                                       ),
                                     ],
@@ -197,6 +338,8 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
                                       averageResponseTime: applicant
                                           .averageResponseTime
                                           .toString(),
+                                      strengthPoints: applicant.strengths.join(' | '),
+                                      weaknessesPoints: applicant.weaknesses.join(' | '),
                                     ),
                                   ),
                                   const SizedBox(height: 24),
@@ -204,7 +347,7 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
                                     children: [
                                       Expanded(
                                         child: OutlinedButton(
-                                          onPressed: isLoading
+                                          onPressed: (isLoading || _isSubmitting)
                                               ? null
                                               : () {
                                                   context
@@ -241,7 +384,7 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
                                       const SizedBox(width: 16),
                                       Expanded(
                                         child: ElevatedButton(
-                                          onPressed: isLoading
+                                          onPressed: (isLoading || _isSubmitting)
                                               ? null
                                               : () {
                                                   context

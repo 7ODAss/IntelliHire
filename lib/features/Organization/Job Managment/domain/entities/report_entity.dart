@@ -7,6 +7,7 @@ class ReportEntity {
   final double? accuracyPercent;
   final String? strengthPoints;
   final String? weaknessesPoints;
+  final String? photo;
 
   ReportEntity({
     required this.sessionId,
@@ -17,5 +18,6 @@ class ReportEntity {
     this.accuracyPercent,
     this.strengthPoints,
     this.weaknessesPoints,
+    this.photo,
   });
 }

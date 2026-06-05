@@ -1,67 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intelli_hire/features/auth/controller/external%20login/external_login_cubit.dart';
 
-import '../../../../../../../../core/utils/app_text_style.dart';
-
 class SocialButtons extends StatelessWidget {
+  final String type; 
   const SocialButtons({super.key, required this.type});
-  final int type;
 
   @override
   Widget build(BuildContext context) {
+    final externalCubit = context.read<ExternalLoginCubit>();
     return Row(
       children: [
         Expanded(
-          child: OutlinedButton.icon(
-            onPressed: () {
-              context.read<ExternalLoginCubit>().loginWithProvider(
-                provider: "google",
-                type: type.toString(),
-              );
-            },
+          child: ElevatedButton(
+            onPressed: () => externalCubit.loginWithProvider(provider: "google", type: type),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
-            icon: Image.asset(
-              "assets/image/google_icon.png",
-              width: 20,
-              height: 20,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset("assets/images/login/google.svg"),
+                const SizedBox(width: 8),
+                const Text("Google", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+              ],
             ),
-
-            label: const Text("Google", style: AppTextStyle.textstyle14),
           ),
         ),
-
         const SizedBox(width: 16),
-
         Expanded(
-          child: OutlinedButton.icon(
-            onPressed: () {
-              context.read<ExternalLoginCubit>().loginWithProvider(
-                provider: "microsoft",
-                type: type.toString(),
-              );
-            },
+          child: ElevatedButton(
+            onPressed: () => externalCubit.loginWithProvider(provider: "microsoft", type: type),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
-            icon: Image.asset(
-              "assets/image/logos_microsoft-icon.png",
-              width: 20,
-              height: 20,
-            ),
-            label: Text(
-              "Microsoft",
-              style: AppTextStyle.textstyle14.copyWith(
-                color: Color(0xff0F172A),
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset("assets/images/login/microsoft.svg"),
+                const SizedBox(width: 8),
+                const Text("Microsoft", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+              ],
             ),
           ),
         ),

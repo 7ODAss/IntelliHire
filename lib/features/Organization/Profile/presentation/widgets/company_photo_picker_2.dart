@@ -7,11 +7,13 @@ import 'package:intelli_hire/core/utils/app_text_style.dart'; // تأكد من �
 class CompanyPhotoPicker2 extends StatefulWidget {
   final void Function(File? image) onImageSelected;
   final String initials;
+  final String? imageUrl;
 
   const CompanyPhotoPicker2({
     super.key,
     required this.onImageSelected,
     this.initials = 'Tc',
+    this.imageUrl,
   });
 
   @override
@@ -20,6 +22,7 @@ class CompanyPhotoPicker2 extends StatefulWidget {
 
 class _CompanyPhotoPickerState extends State<CompanyPhotoPicker2> {
   File? _image;
+  bool _isImageDeleted = false;
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -28,14 +31,15 @@ class _CompanyPhotoPickerState extends State<CompanyPhotoPicker2> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
+        _isImageDeleted = false;
       });
-      // بنبلغ الشاشة الأم بالصورة اللي تم اختيارها
       widget.onImageSelected(_image!);
     }
   }
   void _deleteImage() {
     setState(() {
       _image = null;
+      _isImageDeleted = true;
     });
     widget.onImageSelected(null);
   }
@@ -66,9 +70,14 @@ class _CompanyPhotoPickerState extends State<CompanyPhotoPicker2> {
                     image: FileImage(_image!),
                     fit: BoxFit.cover,
                   )
-                      : null,
+                      : (widget.imageUrl != null && widget.imageUrl!.isNotEmpty && !_isImageDeleted)
+                          ? DecorationImage(
+                        image: NetworkImage(widget.imageUrl!),
+                        fit: BoxFit.cover,
+                      )
+                          : null,
                 ),
-                child: _image == null
+                child: (_image == null && (widget.imageUrl == null || widget.imageUrl!.isEmpty || _isImageDeleted))
                     ? Center(
                   child: Text(
                     widget.initials,
@@ -94,7 +103,7 @@ class _CompanyPhotoPickerState extends State<CompanyPhotoPicker2> {
                 ),
               ),
 
-              if (_image != null)
+              if (_image != null || (widget.imageUrl != null && widget.imageUrl!.isNotEmpty && !_isImageDeleted))
               Positioned(
                 top: 0,
                 right: 0,

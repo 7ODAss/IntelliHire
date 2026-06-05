@@ -23,17 +23,24 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
   @override
   Future<void> deleteJob(String jobId) async {
     try {
-      await apiService.delete(endPoint: 'api/Jobs/$jobId');
+      await apiService.put(endPoint: 'api/Jobs/delete/$jobId');
     } on DioException catch (e) {
       print("Backend Error Data: ${e.response?.data}");
+      rethrow;
     }
   }
-@override
-Future<JobItemModel> getJobDetails(String jobId) async {
-  final response = await apiService.get(endPoint: 'api/Jobs/Details/$jobId');
-  return JobItemModel.fromJson(response.data);
-}
 
+@override
+  Future<JobItemModel> getJobDetails(String jobId) async {
+    final response = await apiService.get(endPoint: 'api/Jobs/Details/$jobId');
+    
+    // 🌟 السطرين دول هيكشفولنا الباك إند باعت إيه بالظبط في الـ Console
+    print("================ GET JOB DETAILS RESPONSE ================");
+    print(response.data);
+    print("==========================================================");
+
+    return JobItemModel.fromJson(response.data);
+  }
 @override
 Future<void> updateJob(String jobId, Map<String, dynamic> jobData) async {
   await apiService.put(endPoint: 'api/Jobs/$jobId', data: jobData);

@@ -45,7 +45,7 @@ class ApplicantsCubit extends Cubit<ApplicantsState> {
 
     if (filter == "Top Rated") {
       filteredList = _currentJobData!.applicants
-          .where((a) => ((a.overallScore ?? 0) * 10) >= 80)
+          .where((a) => (a.overallScore ?? 0) >= 80)
           .toList();
     } else if (filter != "All") {
       filteredList = _currentJobData!.applicants

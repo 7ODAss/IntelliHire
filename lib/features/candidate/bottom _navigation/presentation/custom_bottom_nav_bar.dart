@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intelli_hire/features/candidate/Notification/presentation/candidate_notifications_view.dart';
 import 'package:intelli_hire/features/candidate/new%20assess/presentation/screens/new_assess_screen.dart';
 import 'package:intelli_hire/features/candidate/profile/presentation/profile_screen_candidate.dart';
 
 import '../../../../core/helpers/cache_helper.dart';
 import '../../../../core/utils/app_color.dart';
-import '../../../../test.dart';
 import '../../../Organization/bottom _navigation/presentation/widget/nav_item.dart';
 import '../../assess manage/presentation/assess_manage_screen.dart';
 import '../../home/presentation/home_screen.dart';
 import '../../new assess/presentation/screens/interview_question_screen.dart';
-import '../../notification/presentation/notification_screen.dart';
 import '../controller/bottom_nav_candidate_cubit.dart';
+
+import 'package:intelli_hire/features/candidate/Notification/presentation/controller/NotificationCubit/CandidateNotificationCubit.dart';
+import 'package:intelli_hire/features/candidate/Notification/presentation/controller/NotificationCubit/CandidateNotificationState.dart';
 
 class CustomBottomNavBar extends StatefulWidget {
   const CustomBottomNavBar({super.key});
@@ -35,8 +37,7 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
   final List<Widget> rootScreens = [
     const HomeScreen(),
     const AssessManageScreen(),
-    //const NotificationScreen(),
-    const Test(),
+    const CandidateNotificationsView(),
     const ProfileScreenCandidate(),
   ];
 
@@ -118,10 +119,55 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
                       ),
                       Row(
                         children: [
-                          NavItem(
-                            iconPath: "assets/image/icon svg/bell.svg",
-                            onPressed: () => _onNavItemTapped(2, state.index),
-                            isActive: state.index == 2,
+                          BlocBuilder<CandidateNotificationcubit, Candidatenotificationstate>(
+                            builder: (context, notifState) {
+                              int unreadCount = 0;
+                              if (notifState is CandidateNotificationLoaded) {
+                                unreadCount = notifState.notifications
+                                    .where((n) => n.isRead == false)
+                                    .length;
+                              }
+
+                              return Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  NavItem(
+                                    iconPath: "assets/image/icon svg/bell.svg",
+                                    onPressed: () {
+                                      // 🌟 مش بنقرا هنا خالص! بنفتح الصفحة بس!
+                                      _onNavItemTapped(2, state.index);
+                                    },
+                                    isActive: state.index == 2,
+                                  ),
+                                  // 🌟 النقطة الحمرا بتختفي لوحدها لو دخلت الصفحة
+                                  if (unreadCount > 0 && state.index != 2)
+                                    Positioned(
+                                      right: 0,
+                                      top: -5,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: const BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        constraints: const BoxConstraints(
+                                          minWidth: 18,
+                                          minHeight: 18,
+                                        ),
+                                        child: Text(
+                                          '$unreadCount',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              );
+                            },
                           ),
                           const SizedBox(width: 32),
                           NavItem(
@@ -146,6 +192,10 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
         (route) => route.isFirst,
       );
     } else {
+      // 🌟 السحر كله هنا: أول ما تخرج من صفحة الإشعارات (index 2) لأي صفحة تانية، علمهم كمقروء!
+      if (currentIndex == 2) {
+        context.read<CandidateNotificationcubit>().markAllAsRead();
+      }
       context.read<BottomNavCandidateCubit>().changeIndex(tappedIndex);
     }
   }

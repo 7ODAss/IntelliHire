@@ -6,12 +6,12 @@ import 'package:intelli_hire/features/Organization/Job%20Managment/domain/entiti
 import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/controller/job_management_cubit/job_management_cubit.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/controller/post_job_cubit.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/post_job_view.dart';
-import 'package:intelli_hire/features/Organization/bottom%20_navigation/controller/bottom_nav_cubit.dart'; 
+import 'package:intelli_hire/features/Organization/bottom%20_navigation/controller/bottom_nav_cubit.dart';
 
 class CustomPopupMenu extends StatelessWidget {
   const CustomPopupMenu({super.key, required this.job});
-  
-  final JobItemEntity job; 
+
+  final JobItemEntity job;
 
   @override
   Widget build(BuildContext context) {
@@ -22,36 +22,26 @@ class CustomPopupMenu extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         side: const BorderSide(color: Color(0xffAFAFAF), width: 1),
       ),
-      constraints: const BoxConstraints.tightFor(width: 120), // زودنا العرض شوية عشان الكلام
+      constraints: const BoxConstraints.tightFor(
+        width: 120,
+      ), // زودنا العرض شوية عشان الكلام
       onSelected: (String value) {
         if (value == 'edit') {
-          // 🔴 التعديل السحري هنا:
-          // بننادي على الدالة اللي بتروح تجيب "الزتونة" (التفاصيل الكاملة) بالـ ID
-          context.read<PostJobCubit>().fetchAndLoadJobForEdit(job.id); 
-          
-          // بنفتح الشاشة، وبما إننا نادينا على fetchAndLoadJobForEdit، 
-          // الشاشة هتفتح وتوري المستخدم Loader لحد ما الداتا الكاملة توصل
-          Navigator.push(
-            context,
+          context.read<PostJobCubit>().fetchAndLoadJobForEdit(job.id);
+
+          Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute(
               builder: (newContext) => MultiBlocProvider(
                 providers: [
-                  BlocProvider.value(
-                    value: context.read<PostJobCubit>(),
-                  ),
-                  BlocProvider.value(
-                    value: context.read<JobManagementCubit>(),
-                  ),
-                  BlocProvider.value(
-                    value: context.read<BottomNavCubit>(),
-                  ),
+                  BlocProvider.value(value: context.read<PostJobCubit>()),
+                  BlocProvider.value(value: context.read<JobManagementCubit>()),
+                  BlocProvider.value(value: context.read<BottomNavCubit>()),
                 ],
                 child: const PostJobView(),
               ),
             ),
           );
         } else if (value == 'delete') {
-          // كود المسح اللي ظبطناه سوا
           context.read<JobManagementCubit>().deleteJob(job.id);
         }
       },

@@ -45,6 +45,10 @@ class FieldItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(title, style: AppTextStyle.fieldTitleStyle),
+        Text(
+          title,
+          style: AppTextStyle.fieldTitleStyle,
+        ),
         SizedBox(height: 8),
         MyFormField(
           controller: controller,
@@ -61,6 +65,7 @@ class FieldItem extends StatelessWidget {
           prefixIconColor: prefixIconColor,
           inputFormatters: inputFormatters,
           maxLines: maxLines,
+
         ),
       ],
     );

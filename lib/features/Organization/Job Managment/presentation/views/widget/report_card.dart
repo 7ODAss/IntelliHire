@@ -46,6 +46,22 @@ class ReportCard extends StatelessWidget {
     }
   }
 
+  String _formatAvgResponse(String? value) {
+    if (value == null || value.isEmpty || value.toLowerCase() == 'loading' || value.toLowerCase() == 'n/a') {
+      return value ?? "N/A";
+    }
+    String clean = value.trim();
+    bool hasSuffix = clean.toLowerCase().endsWith('s');
+    if (hasSuffix) {
+      clean = clean.substring(0, clean.length - 1).trim();
+    }
+    final parsed = double.tryParse(clean);
+    if (parsed != null) {
+      return "${parsed.toStringAsFixed(1)}s";
+    }
+    return value.endsWith('s') ? value : "${value}s";
+  }
+
   @override
   Widget build(BuildContext context) {
     final strengths = _parsePoints(report.strengthPoints);
@@ -108,7 +124,7 @@ class ReportCard extends StatelessWidget {
               Expanded(
                 child: StatusCard(
                   title: 'Avg. Response',
-                  value: report.averageResponseTime ?? "N/A",
+                  value: _formatAvgResponse(report.averageResponseTime),
                 ),
               ),
               const SizedBox(width: 12),

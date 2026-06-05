@@ -70,10 +70,16 @@ class ApiConstant {
       "$baseUrl/Setting/confirm-password-change";
 
   //company profile
-  static const String companyChangePassword =
-      "$baseUrl/candidate/settings/security/change-password";
-  static const String companyDeleteAccount =
-      "$baseUrl/candidate/settings/security/delete-account";
+  static const String requestPasswordChange = "$baseUrl/Setting/request-password-change";
+  static const String sendOtp = "$baseUrl/Setting/send-otp";
+  static const String confirmPasswordChange = "$baseUrl/Setting/confirm-password-change";
+  static const String deleteAccount = "$baseUrl/Setting/delete-account";
+  static const String updateCompanyInfo = "$baseUrl/Setting/personal-company-info";
+  static const String updateCompanyAbout = "$baseUrl/Setting/company-about";
+  static const String getCompanyAccount = "$baseUrl/Setting/company-account";
+  static const String changeEmailPasswordRequest = "$baseUrl/Setting/change-email-password-request";
+  static const String changeEmailRequest = "$baseUrl/Setting/change-email-request";
+  static const String changeEmailConfirm = "$baseUrl/Setting/change-email-Confirm";
 
   //keys
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

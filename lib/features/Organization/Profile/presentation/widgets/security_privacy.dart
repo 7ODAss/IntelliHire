@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intelli_hire/features/auth/controller/sign_up_cubit/sign_up_cubit.dart';
 import '../../../../../core/utils/app_text_style.dart';
-import '../../../../candidate/profile/presentation/widgets/change_password/candidate_change_password_step.dart';
-import '../screen/about_company.dart';
 import '../screen/company_login_security_screen.dart';
+import '../controller/profile_cubit.dart';
 import 'optionfield.dart';
 
 class SecurityPrivacy extends StatelessWidget {
@@ -20,7 +18,10 @@ class SecurityPrivacy extends StatelessWidget {
           color: Colors.white,
           elevation: 2,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 20,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -28,15 +29,19 @@ class SecurityPrivacy extends StatelessWidget {
                   icon: Icons.lock_outlined,
                   categoryName: 'Login & Security',
                   options: ['Password , Delete account'],
-                  fun: () {
+                  fun: (){
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CompanyLoginSecurityScreen(),
+                        builder: (context) => BlocProvider.value(
+                          value: context.read<ProfileCubit>(),
+                          child: const CompanyLoginSecurityScreen(),
+                        ),
                       ),
                     );
                   },
                 ),
+
               ],
             ),
           ),

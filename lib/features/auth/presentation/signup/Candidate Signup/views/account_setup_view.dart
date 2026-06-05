@@ -3,16 +3,20 @@ import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signu
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/Account%20Setup/account_setup_header.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/Account%20Setup/phone_number.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/Account%20Setup/profile_photo.dart';
+import 'package:intelli_hire/features/auth/presentation/login/login_screen.dart';
 
 class AccountSetupView extends StatefulWidget {
   const AccountSetupView({super.key});
 
+
   @override
   State<AccountSetupView> createState() => _AccountSetupViewState();
+  
 }
 
 class _AccountSetupViewState extends State<AccountSetupView> {
   int activeStep = 0;
+  
 
   final List<String> titles = [
     'Enter your phone number',
@@ -30,7 +34,15 @@ class _AccountSetupViewState extends State<AccountSetupView> {
     if (activeStep > 0) {
       setState(() => activeStep--);
     } else {
-      Navigator.pop(context);
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          (route) => false,
+        );
+      }
     }
   }
 
@@ -45,7 +57,7 @@ class _AccountSetupViewState extends State<AccountSetupView> {
             onPressed: previousStep,
           ),
           Expanded(
-            child: _buildCurrentStep(), // ✅ بيبني الصفحة الحالية بس
+            child: _buildCurrentStep(), 
           ),
         ],
       ),
@@ -54,14 +66,10 @@ class _AccountSetupViewState extends State<AccountSetupView> {
 
   Widget _buildCurrentStep() {
     switch (activeStep) {
-      case 0:
-        return PhoneNumber(onPressed: nextStep);
-      case 1:
-        return UploadCv(onPressed: nextStep);
-      case 2:
-        return ProfilePhoto(onPressed: nextStep);
-      default:
-        return const SizedBox.shrink();
+      case 0: return PhoneNumber(onPressed: nextStep);
+      case 1: return UploadCv(onPressed: nextStep);
+      case 2: return ProfilePhoto(onPressed: nextStep);
+      default: return const SizedBox.shrink();
     }
   }
 }

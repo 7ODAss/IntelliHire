@@ -14,15 +14,10 @@ class JobDescriptionView extends StatelessWidget {
     return BlocConsumer<PostJobCubit, PostJobState>(
       listener: (context, state) {
         if (state is PostJobSuccess) {
-        
           Navigator.pop(context);
         } else if (state is PostJobError) {
-          // لو حصل مشكلة في الرفع
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
           );
         }
       },
@@ -81,56 +76,41 @@ class JobDescriptionView extends StatelessWidget {
                     children: [
                       PostJobButton(
                         flex: 1,
-                        onPressed: cubit.previousStep,
+                        onPressed: () => cubit.previousStep(),
                         text: 'Back',
                         textColor: AppColor.darkBlue,
                         bgColor: Colors.transparent,
                         borderColor: const Color(0xffD6D6D6),
                       ),
                       const SizedBox(width: 16),
-                      
-                      Expanded(
+                      PostJobButton(
                         flex: 2,
-                        child: OutlinedButton(
-                          onPressed: state is PostJobLoading
-                              ? null 
-                              : () {
-                                  if (cubit.validateJobDesc()) {
-                                    cubit.submitJob(); 
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: const Text(
-                                          'Please fill all required fields!',
-                                        ),
-                                        backgroundColor: Colors.red,
-                                        behavior: SnackBarBehavior.floating,
-                                      ),
-                                    );
-                                  }
-                                },
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: state is PostJobLoading ? Colors.grey : AppColor.primary,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: state is PostJobLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                                )
-                              : Text(
-                                  cubit.editingJobId != null ? 'Update Job' : 'Post Job Now',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                        onPressed: () {
+                          if (cubit.validateJobDesc()) {
+                            cubit.nextStep();
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text(
+                                  'Please fill the job description and requirements.',
                                 ),
-                        ),
+                                backgroundColor: Colors.red,
+                                behavior: SnackBarBehavior.floating,
+                                margin: const EdgeInsets.only(
+                                  bottom: 30,
+                                  left: 24,
+                                  right: 24,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        text: 'Next Step', // 🌟 اتغيرت من Post Job لـ Next Step
+                        textColor: Colors.white,
+                        bgColor: AppColor.primary,
                       ),
                     ],
                   ),

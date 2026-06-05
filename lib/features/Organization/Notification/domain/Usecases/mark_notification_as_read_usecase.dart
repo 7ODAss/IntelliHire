@@ -1,11 +1,13 @@
-import 'package:intelli_hire/features/Organization/Notification/domain/Repos/notfication_repo.dart';
+import 'package:dartz/dartz.dart';
+import 'package:intelli_hire/core/error/failure.dart';
+import '../Repos/notfication_repo.dart';
 
-class MarkNotificationAsReadUseCase {
-  final NotificationRepository repository;
+class MarkAllNotificationsAsReadUseCase {
+  final BaseNotificationRepository repository;
 
-  MarkNotificationAsReadUseCase(this.repository);
+  MarkAllNotificationsAsReadUseCase(this.repository);
 
-  Future<void> call(String notificationId) async {
-    return await repository.markAsRead(notificationId);
+  Future<Either<Failure, void>> call() async {
+    return await repository.markAllAsRead();
   }
 }

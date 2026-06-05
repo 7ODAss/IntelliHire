@@ -17,12 +17,16 @@ class ReviewSessionCubit extends Cubit<ReviewSessionState> {
     final result = await getTopTalentUseCase.execute();
 
     result.fold((failure) => emit(ReviewSessionError(failure)), (candidates) {
-      if (candidates.isEmpty) {
+      final pendingCandidates = candidates
+          .where((a) => a.status == "Pending")
+          .toList();
+
+      if (pendingCandidates.isEmpty) {
         emit(
           ReviewSessionError("No top talent candidates available right now."),
         );
       } else {
-        emit(ReviewSessionLoaded(candidates));
+        emit(ReviewSessionLoaded(pendingCandidates));
       }
     });
   }
@@ -30,13 +34,11 @@ class ReviewSessionCubit extends Cubit<ReviewSessionState> {
   void submitDecision(String sessionId, int status) async {
     emit(ReviewDecisionSubmitting());
 
-    // 🔴 التعديل هنا: تمرير الـ status
     final result = await submitDecisionUseCase.execute(sessionId, status);
 
     result.fold((failure) => emit(ReviewDecisionError(failure)), (success) {
       emit(ReviewDecisionSuccess());
 
-      // 🟢 الخطوة السحرية: نطلب من الـ HomeCubit يرفرش الأرقام فوراً
       getIt<HomeOrganizationCubit>().fetchDashboard();
     });
   }

@@ -12,6 +12,8 @@ import 'package:intelli_hire/features/Organization/Home/presentation/views/widge
 import 'package:intelli_hire/features/Organization/Home/presentation/views/widget/top_canddidate_card.dart';
 import 'package:intelli_hire/features/Organization/Home/presentation/views/widget/top_section.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/controller/appliocants_cubit/applicants_cubit.dart';
+import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/controller/appliocants_cubit/applicants_state.dart';
 
 class OrganizationHomeView extends StatelessWidget {
   const OrganizationHomeView({super.key});
@@ -20,16 +22,32 @@ class OrganizationHomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => getIt<HomeOrganizationCubit>()..fetchDashboard()),
-        BlocProvider(create: (context) => getIt<JobManagementCubit>()),
+        BlocProvider.value(
+          value: getIt<HomeOrganizationCubit>()..fetchDashboard(),
+        ),
+        BlocProvider.value(
+          value: getIt<JobManagementCubit>(),
+        ),
       ],
       child: Scaffold(
-        body: BlocListener<JobManagementCubit, JobManagementState>(
-          listener: (context, state) {
-            if (state is JobDeletedSuccess) {
-              context.read<HomeOrganizationCubit>().fetchDashboard();
-            }
-          },
+        body: MultiBlocListener(
+          listeners: [
+            BlocListener<JobManagementCubit, JobManagementState>(
+              listener: (context, state) {
+                if (state is JobDeletedSuccess) {
+                  context.read<HomeOrganizationCubit>().fetchDashboard();
+                }
+              },
+            ),
+            BlocListener<ApplicantsCubit, ApplicantsState>(
+              listener: (context, state) {
+                if (state is DecisionSuccess) {
+                  context.read<HomeOrganizationCubit>().fetchDashboard();
+                  context.read<JobManagementCubit>().fetchJobs(); 
+                }
+              },
+            ),
+          ],
           child: BlocBuilder<HomeOrganizationCubit, HomeState>(
             builder: (context, state) {
               if (state is HomeError) {

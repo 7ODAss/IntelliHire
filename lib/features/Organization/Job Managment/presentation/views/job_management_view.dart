@@ -15,6 +15,8 @@ class JobManagementView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<JobManagementCubit>();
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -29,11 +31,42 @@ class JobManagementView extends StatelessWidget {
                 color: AppColor.darkBlue,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
+            
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: Colors.grey.shade400,
+                ),
+              ),
+              child: TextField(
+                onChanged: (value) => cubit.searchJobs(value),
+                decoration: InputDecoration(
+                  hintText: "Search your jobs...",
+                  hintStyle: TextStyle(
+                    color: Colors.grey.shade400,
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 15,
+                  ),
+                  suffixIcon: const Icon(
+                    Icons.search,
+                    color: Color(0xff898989),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
             Expanded(
               child: BlocConsumer<JobManagementCubit, JobManagementState>(
                 listener: (context, state) {
                   if (state is JobDeletedSuccess) {
+                    // Handle success if needed
                   } else if (state is JobManagementError) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -45,10 +78,8 @@ class JobManagementView extends StatelessWidget {
                   }
                 },
                 builder: (context, state) {
-                  final cubit = context.read<JobManagementCubit>();
                   bool isLoading =
-                      state is JobManagementInitial ||
-                      state is JobManagementLoading;
+                      state is JobManagementInitial || state is JobManagementLoading;
                   List<JobItemEntity> displayJobs = [];
 
                   if (state is JobManagementLoaded) {
@@ -58,51 +89,19 @@ class JobManagementView extends StatelessWidget {
                   }
 
                   bool shouldShowSkeleton = isLoading && displayJobs.isEmpty;
+                  
                   int itemCount = shouldShowSkeleton
                       ? 5
-                      : (displayJobs.isEmpty ? 2 : displayJobs.length + 1);
+                      : (displayJobs.isEmpty ? 1 : displayJobs.length);
 
                   return Skeletonizer(
                     enabled: shouldShowSkeleton,
                     child: RefreshIndicator(
                       onRefresh: () async => cubit.fetchJobs(),
                       child: ListView.builder(
-                        clipBehavior: Clip.none,
+                        padding: const EdgeInsets.only(bottom: 100),
                         itemCount: itemCount,
                         itemBuilder: (context, index) {
-                          if (index == 0) {
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 20.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: Colors.grey.shade400,
-                                  ),
-                                ),
-                                child: TextField(
-                                  onChanged: (value) => cubit.searchJobs(value),
-                                  decoration: InputDecoration(
-                                    hintText: "Search your jobs...",
-                                    hintStyle: TextStyle(
-                                      color: Colors.grey.shade400,
-                                    ),
-                                    border: InputBorder.none,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                      vertical: 15,
-                                    ),
-                                    suffixIcon: const Icon(
-                                      Icons.search,
-                                      color: Color(0xff898989),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-
                           if (shouldShowSkeleton) {
                             return JobCard(
                               job: JobItemEntity(
@@ -146,7 +145,7 @@ class JobManagementView extends StatelessWidget {
                             );
                           }
 
-                          return JobCard(job: displayJobs[index - 1]);
+                          return JobCard(job: displayJobs[index]);
                         },
                       ),
                     ),
