@@ -11,12 +11,12 @@ class UploadCvUploadingState extends StatelessWidget {
     required this.onPressed,
     required this.progress,
     required this.fileName,
-    this.isDisabled,
+    this.isDisabled = true,
   });
   final void Function() onPressed;
   final double progress;
   final String fileName;
-  final bool? isDisabled;
+  final bool isDisabled;
   @override
   Widget build(BuildContext context) {
     return Padding(
