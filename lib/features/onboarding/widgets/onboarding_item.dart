@@ -12,10 +12,11 @@ class OnboardingItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(child: SvgPicture.asset(onboardingList[pageIndex].image)),
         Padding(
-          padding: const EdgeInsets.only(top: 56, bottom: 16),
+          padding: const EdgeInsets.only(top: 56, bottom: 16,left: 16,right: 16),
           child: Text(
             onboardingList[pageIndex].title,
             style: AppTextStyle.titleStyle,
