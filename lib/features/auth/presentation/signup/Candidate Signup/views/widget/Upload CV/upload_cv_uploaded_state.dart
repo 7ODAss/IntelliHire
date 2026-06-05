@@ -11,12 +11,12 @@ class UploadCvUploadedState extends StatelessWidget {
     required this.onPressed,
     required this.onClear,
     required this.fileName,
-    this.isDisabled,
+    this.isDisabled = true,
   });
   final void Function() onPressed;
   final void Function() onClear;
   final String fileName;
-  final bool? isDisabled;
+  final bool isDisabled;
 
   @override
   Widget build(BuildContext context) {

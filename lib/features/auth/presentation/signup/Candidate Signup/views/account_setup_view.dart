@@ -7,15 +7,12 @@ import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signu
 class AccountSetupView extends StatefulWidget {
   const AccountSetupView({super.key});
 
-
   @override
   State<AccountSetupView> createState() => _AccountSetupViewState();
-  
 }
 
 class _AccountSetupViewState extends State<AccountSetupView> {
   int activeStep = 0;
-  
 
   final List<String> titles = [
     'Enter your phone number',
@@ -57,10 +54,14 @@ class _AccountSetupViewState extends State<AccountSetupView> {
 
   Widget _buildCurrentStep() {
     switch (activeStep) {
-      case 0: return PhoneNumber(onPressed: nextStep);
-      case 1: return UploadCv(onPressed: nextStep);
-      case 2: return ProfilePhoto(onPressed: nextStep);
-      default: return const SizedBox.shrink();
+      case 0:
+        return PhoneNumber(onPressed: nextStep);
+      case 1:
+        return UploadCv(onPressed: nextStep);
+      case 2:
+        return ProfilePhoto(onPressed: nextStep);
+      default:
+        return const SizedBox.shrink();
     }
   }
 }

@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/shared/custom_button.dart';
 
 class UploadCvIdleState extends StatelessWidget {
-  final bool? isDisabled;
+  final bool isDisabled;
   const UploadCvIdleState({
     super.key,
     required this.onPressed,
-    this.isDisabled,
+    this.isDisabled = true,
   });
 
   final VoidCallback onPressed;
