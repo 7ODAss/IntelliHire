@@ -97,6 +97,8 @@ class _LogInPageState extends State<LogInPage> {
               const SizedBox(height: 16),
               const RememberMe(),
               BlocConsumer<LoginCubit, LoginState>(
+                listenWhen: (previous, current) =>
+                    previous.loginState != current.loginState,
                 listener: (context, state) {
                   if (state.loginState == RequestState.success) {
                     context.showSnackBar(
