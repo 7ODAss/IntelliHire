@@ -1,0 +1,166 @@
+import 'package:flutter/material.dart';
+
+import 'app_color.dart';
+import 'app_font.dart';
+
+class AppTextStyle {
+  static const TextStyle titleStyle = TextStyle(
+    fontFamily: AppFont.poppinsBold,
+    fontSize: AppFont.titleFontSize,
+    fontWeight: FontWeight.bold,
+    color: AppColor.titleColor,
+  );
+
+  static const TextStyle subTitleStyle = TextStyle(
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.subtitleFontSize,
+    fontWeight: FontWeight.normal,
+    color: AppColor.subTitleColor,
+  );
+
+  static const TextStyle landingTitleStyle = TextStyle(
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.subtitleFontSize,
+    fontWeight: FontWeight.normal,
+    color: AppColor.landingTitleColor,
+  );
+  static const TextStyle landingLoginStyle = TextStyle(
+    fontFamily: AppFont.interMedium,
+    fontSize: AppFont.subtitleMediumFontSize,
+    fontWeight: FontWeight.w500,
+    color: AppColor.landingAccountColor,
+  );
+
+  static const TextStyle loginTitleStyle = TextStyle(
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.loginTitleFontSize,
+    fontWeight: FontWeight.w600,
+    color: AppColor.loginTitleColor,
+  );
+
+  static const TextStyle loginSubTitleStyle = TextStyle(
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.subtitleFontSize,
+    fontWeight: FontWeight.w400,
+    color: AppColor.loginSubTitleColor,
+  );
+
+  static const TextStyle loginButtonStyle = TextStyle(
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.subtitleFontSize,
+    color: AppColor.loginButtonColor,
+  );
+
+  static const TextStyle signUpTitleStyle = TextStyle(
+    fontFamily: AppFont.poppinsRegular,
+    fontSize: AppFont.signUpTitleFontSize,
+    fontWeight: FontWeight.w400,
+    color: AppColor.signUpTitleColor,
+  );
+
+  static const TextStyle fieldTitleStyle = TextStyle(
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.subtitleMediumFontSize,
+    color: AppColor.signUpFieldColor,
+  );
+
+  static const TextStyle signUpConditionStyle = TextStyle(
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.subtitleMediumFontSize,
+    fontWeight: FontWeight.w400,
+    color: AppColor.signUpConditionColor1,
+  );
+
+  static const TextStyle signUpTitleInformationCompanyStyle = TextStyle(
+    fontFamily: AppFont.interSemiBold,
+    fontSize: AppFont.signUpTitleInformationCompanyFontSize,
+    color: AppColor.signUpTitleInformationCompanyColor,
+  );
+
+  static const TextStyle signUpDropDownCompanyStyle = TextStyle(
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.loginTitleFontSize,
+    color: AppColor.signUpFieldColor,
+  );
+
+  static const TextStyle hintTextStyle = TextStyle(
+    fontFamily: AppFont.interRegular,
+    fontSize: 14,
+    color: AppColor.hintColor,
+  );
+
+  static const TextStyle searchTitleStyle = TextStyle(
+    fontFamily: AppFont.poppinsSemiBold,
+    fontSize: AppFont.searchTitleCompanyFontSize,
+    color: AppColor.searchTitleColor,
+  );
+
+  //omar
+  static const textstyle12 = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    fontFamily: AppFont.interRegular,
+    color: AppColor.grey,
+  );
+
+  static const textstyle14 = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    fontFamily: AppFont.interRegular,
+    color: Color(0xff0F172A),
+  );
+
+  static const textstyle20 = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w400,
+    fontFamily: AppFont.poppinsRegular,
+    color: AppColor.white,
+  );
+  static const textstyle16 = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+    fontFamily: AppFont.interRegular,
+    color: AppColor.darkBlue,
+  );
+
+  //////////////
+
+  static const TextStyle titlePostScreen = TextStyle(
+    fontFamily: AppFont.poppinsBold,
+    fontSize: AppFont.titlePostScreen,
+    color: AppColor.titlePostScreenColor,
+  );
+
+  static const TextStyle iconNamePostScreen = TextStyle(
+    fontFamily: AppFont.poppinsRegular,
+    fontSize: AppFont.iconNamePostScreen,
+    color: AppColor.iconProfileBorderColor,
+  );
+
+  static const TextStyle accountNamePostScreen = TextStyle(
+    fontFamily: AppFont.interBold,
+    fontSize: AppFont.accountNamePostScreen,
+    color: AppColor.accountNameProfileColor,
+  );
+
+  static const TextStyle accountSubNamePostScreen = TextStyle(
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.accountSubNamePostScreen,
+    color: AppColor.accountSubNameProfileColor,
+  );
+
+  //Personal information
+  static const TextStyle nameTitleField = TextStyle(
+    fontFamily: AppFont.interRegular,
+    fontSize: AppFont.accountTitleFieldInformationScreen,
+    color: AppColor.accountTitleFieldColor,
+  );
+
+  //candidateHomePageCalender
+
+  static const TextStyle candidateHomePageCalenderTitle = TextStyle(
+    fontFamily: AppFont.interSemiBold,
+    fontSize: 14,
+    color: Colors.white,
+  );
+}
