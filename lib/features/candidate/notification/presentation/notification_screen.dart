@@ -93,11 +93,7 @@ class _NotificationsView extends StatelessWidget {
 
           final isLoading = state.status != RequestState.success;
           final List<NotificationItem> notifications =
-<<<<<<< HEAD
           isLoading ? _dummyList : state.notifications;
-=======
-              isLoading ? _dummyList : state.notifications;
->>>>>>> final-omar
 
           if (!isLoading && notifications.isEmpty) {
             return _buildEmpty();

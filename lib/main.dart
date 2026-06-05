@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intelli_hire/core/helpers/cache_helper.dart';
 import 'package:intelli_hire/core/utils/apis/dio_config.dart';
 import 'package:intelli_hire/features/auth/presentation/login/login_screen.dart';
+import 'package:intelli_hire/features/splash/presentation/view/splash_view.dart';
 import 'core/helpers/deep_link_helper.dart';
 import 'core/service/service_locator.dart';
 import 'core/utils/apis/api_constant.dart';
@@ -44,7 +45,7 @@ void main() async {
       widget = const CustomBottomNavBarWrapperCandidate();
     }
   } else {
-    widget = const LoginScreen();
+    widget = const SplashView();
   }
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
