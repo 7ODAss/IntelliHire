@@ -4,7 +4,7 @@ import 'package:intelli_hire/core/enums/request.dart';
 import 'package:intelli_hire/core/service/service_locator.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
-import 'package:intelli_hire/features/candidate/notification/domain/entities/notification_item.dart';
+import '../domain/entities/notification_item.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'controller/notifications_cubit.dart';
 
@@ -92,7 +92,7 @@ class _NotificationsView extends StatelessWidget {
           }
 
           final isLoading = state.status != RequestState.success;
-          final notifications =
+          final List<NotificationItem> notifications =
               isLoading ? _dummyList : state.notifications;
 
           if (!isLoading && notifications.isEmpty) {

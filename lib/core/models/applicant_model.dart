@@ -1,6 +1,44 @@
+import 'package:intelli_hire/core/helpers/cache_helper.dart';
+
 class ApplicantModel {
   // Static cache to store candidate score and photo by sessionId
   static final Map<String, Map<String, dynamic>> sessionCache = {};
+  
+  // Static set to track processed sessions (accepted/rejected) during the app run
+  static final Set<String> processedSessionIds = {};
+  static bool isProcessedSessionIdsLoaded = false;
+
+  static Future<void> markSessionAsProcessed(String sessionId) async {
+    processedSessionIds.add(sessionId);
+    print("--- [PERSIST] Marking session as processed: $sessionId. Current list: $processedSessionIds");
+    try {
+      await CacheHelper.saveData(
+        key: 'processed_session_ids',
+        value: processedSessionIds.join(','),
+      );
+      print("--- [PERSIST] Saved successfully to CacheHelper.");
+    } catch (e) {
+      print("--- [PERSIST ERROR] Failed to save session IDs: $e");
+    }
+  }
+
+  static Future<void> loadProcessedSessionIds() async {
+    if (isProcessedSessionIdsLoaded) return;
+    print("--- [PERSIST] Loading processed session IDs from CacheHelper...");
+    try {
+      final String? savedIds = await CacheHelper.getData(key: 'processed_session_ids');
+      print("--- [PERSIST] Raw saved IDs from CacheHelper: '$savedIds'");
+      if (savedIds != null && savedIds.trim().isNotEmpty) {
+        processedSessionIds.addAll(
+          savedIds.split(',').map((s) => s.trim()).where((id) => id.isNotEmpty),
+        );
+        print("--- [PERSIST] Loaded session IDs: $processedSessionIds");
+      }
+    } catch (e) {
+      print("--- [PERSIST ERROR] Failed to load session IDs: $e");
+    }
+    isProcessedSessionIdsLoaded = true;
+  }
 
   final String id;
   final String sessionId;
@@ -80,11 +118,11 @@ class ApplicantModel {
         if (value == 2) return 'Rejected';
         return 'Pending';
       }
-      final str = value.toString().trim();
-      if (str == '0') return 'Pending';
-      if (str == '1') return 'Accepted';
-      if (str == '2') return 'Rejected';
-      return str;
+      final str = value.toString().trim().toLowerCase();
+      if (str == '0' || str == 'pending') return 'Pending';
+      if (str == '1' || str == 'accepted') return 'Accepted';
+      if (str == '2' || str == 'rejected') return 'Rejected';
+      return value.toString().trim();
     }
 
     return ApplicantModel(

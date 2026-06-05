@@ -24,16 +24,30 @@ class _CompanyPhotoPickerState extends State<CompanyPhotoPicker2> {
   File? _image;
   bool _isImageDeleted = false;
 
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+  bool _isPicking = false;
 
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-        _isImageDeleted = false;
-      });
-      widget.onImageSelected(_image!);
+  Future<void> _pickImage() async {
+    if (_isPicking) return;
+    setState(() {
+      _isPicking = true;
+    });
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+          _isImageDeleted = false;
+        });
+        widget.onImageSelected(_image!);
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isPicking = false;
+        });
+      }
     }
   }
   void _deleteImage() {

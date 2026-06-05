@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:dio/dio.dart';
+import 'package:intelli_hire/core/service/service_locator.dart';
 import 'package:intelli_hire/core/service/api_service.dart';
 import 'package:intelli_hire/core/models/applicant_model.dart';
 import 'package:intelli_hire/features/Organization/Home/presentation/controller/review%20session%20cubit/cubit/review_session_cubit.dart';
 import 'package:intelli_hire/features/Organization/Home/presentation/controller/review%20session%20cubit/cubit/review_session_state.dart';
+import '../controller/home cubit/home_cubit_cubit.dart';
 import 'package:intelli_hire/features/Organization/Home/presentation/views/widget/candidate_score_avatar.dart';
 import 'package:intelli_hire/features/Organization/Home/presentation/views/widget/progress_bar.dart';
 import 'package:intelli_hire/features/Organization/Home/presentation/views/widget/review_session_header.dart';
@@ -27,6 +29,7 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
   int currentIndex = 0;
   late PageController _pageController;
   bool _isSubmitting = false;
+  bool _isTransitioning = false;
   List<ApplicantModel>? _localApplicants;
 
   @override
@@ -38,19 +41,29 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
   @override
   void dispose() {
     _pageController.dispose();
+    if (_localApplicants != null) {
+      getIt<HomeOrganizationCubit>().updateTopTalentCount(_localApplicants!.length);
+    }
     super.dispose();
   }
 
   void removeCurrentCandidateAndTransition() {
+    if (_isTransitioning) return;
     if (_localApplicants == null || _localApplicants!.isEmpty) return;
 
     final int total = _localApplicants!.length;
 
     if (total == 1) {
-      // Last candidate in the list, close the screen
-      Navigator.pop(context);
+      // Last candidate in the list, clear local list and let the build method handle the single pop.
+      setState(() {
+        _localApplicants!.clear();
+      });
+      getIt<HomeOrganizationCubit>().updateTopTalentCount(0);
       return;
     }
+
+    _isTransitioning = true;
+    final int indexToRemove = currentIndex;
 
     if (currentIndex < total - 1) {
       // 1. Animate to the next candidate (page = currentIndex + 1)
@@ -63,11 +76,16 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
       Future.delayed(const Duration(milliseconds: 310), () {
         if (!mounted) return;
         setState(() {
-          _localApplicants!.removeAt(currentIndex);
-          // currentIndex remains the same because the next candidate shifted down
-          // We jump silently to the same index to sync the PageController
+          _localApplicants!.removeAt(indexToRemove);
+          // Since the candidate at indexToRemove is removed, the next candidate shifts down to indexToRemove.
+          // We set currentIndex to indexToRemove and jump silently to sync the PageController.
+          currentIndex = indexToRemove;
           _pageController.jumpToPage(currentIndex);
+          _isTransitioning = false;
         });
+
+        // Update the count outside immediately
+        getIt<HomeOrganizationCubit>().updateTopTalentCount(_localApplicants!.length);
       });
     } else {
       // We are on the last candidate in the list (but total > 1)
@@ -81,10 +99,14 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
       Future.delayed(const Duration(milliseconds: 310), () {
         if (!mounted) return;
         setState(() {
-          _localApplicants!.removeAt(currentIndex);
-          currentIndex = currentIndex - 1;
+          _localApplicants!.removeAt(indexToRemove);
+          currentIndex = indexToRemove - 1;
           _pageController.jumpToPage(currentIndex);
+          _isTransitioning = false;
         });
+
+        // Update the count outside immediately
+        getIt<HomeOrganizationCubit>().updateTopTalentCount(_localApplicants!.length);
       });
     }
   }
@@ -167,6 +189,7 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
           setState(() {
             _isSubmitting = false;
           });
+          removeCurrentCandidateAndTransition();
         } else if (state is ReviewDecisionError) {
           setState(() {
             _isSubmitting = false;
@@ -221,215 +244,213 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
                   : (_localApplicants ?? []);
 
               if (!isLoading && applicants.isEmpty) {
-                return const Center(child: Text("No candidates to review"));
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    Navigator.pop(context);
+                  }
+                });
+                return const Center(child: CircularProgressIndicator());
               }
 
               final totalCandidates = applicants.length;
               final currentApplicant = applicants[currentIndex];
 
-              return BlocListener<ReviewSessionCubit, ReviewSessionState>(
-                listener: (context, state) {
-                  if (state is ReviewDecisionSuccess) {
-                    removeCurrentCandidateAndTransition();
-                  }
-                },
-                child: Skeletonizer(
-                  enabled: isLoading,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24.0,
-                          vertical: 10.0,
-                        ),
-                        child: Column(
-                          children: [
-                            ReviewSessionHeader(
-                              role: currentApplicant.role,
-                              onPressed: () => Navigator.pop(context),
-                            ),
-                            const SizedBox(height: 20),
-                            ProgressBar(
-                              currentIndex: currentIndex,
-                              total: isLoading
-                                  ? 5
-                                  : totalCandidates, 
-                            ),
-                          ],
-                        ),
+              return Skeletonizer(
+                enabled: isLoading,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 10.0,
                       ),
-                      Expanded(
-                        child: PageView.builder(
-                          controller: _pageController,
-                          physics: (isLoading || _isSubmitting)
-                              ? const NeverScrollableScrollPhysics()
-                              : const BouncingScrollPhysics(),
-                          itemCount: totalCandidates,
-                          onPageChanged: (index) {
-                            setState(() {
-                              currentIndex = index;
-                            });
-                          },
-                          itemBuilder: (context, index) {
-                            final applicant = applicants[index];
+                      child: Column(
+                        children: [
+                          ReviewSessionHeader(
+                            role: currentApplicant.role,
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          const SizedBox(height: 20),
+                          ProgressBar(
+                            currentIndex: currentIndex,
+                            total: isLoading
+                                ? 5
+                                : totalCandidates, 
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: PageView.builder(
+                        controller: _pageController,
+                        physics: (isLoading || _isSubmitting)
+                            ? const NeverScrollableScrollPhysics()
+                            : const BouncingScrollPhysics(),
+                        itemCount: totalCandidates,
+                        onPageChanged: (index) {
+                          setState(() {
+                            currentIndex = index;
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          final applicant = applicants[index];
 
-                            return SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24.0,
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const SizedBox(height: 16),
-                                  CandidateScoreAvatar(applicant: applicant),
-                                  const SizedBox(height: 16),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: IgnorePointer(
-                                          ignoring: true,
-                                          child: ReportButton(
-                                            text: "${applicant.experienceYears}+",
-                                            label: "Years",
-                                            onPressed: () {},
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
+                          return SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24.0,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const SizedBox(height: 16),
+                                CandidateScoreAvatar(applicant: applicant),
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: IgnorePointer(
+                                        ignoring: true,
                                         child: ReportButton(
-                                          icon:
-                                              "assets/image/icon svg/download.svg",
-                                          label: "PDF Report",
-                                          onPressed: () {
-                                            _downloadFile(
-                                              sessionId: applicant.sessionId,
-                                              applicantName: applicant.name,
-                                              fileType: "report",
-                                            );
-                                          },
+                                          text: "${applicant.experienceYears}+",
+                                          label: "Years",
+                                          onPressed: () {},
                                         ),
                                       ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: ReportButton(
-                                          icon: "assets/image/icon svg/cv.svg",
-                                          label: "Download CV",
-                                          onPressed: () {
-                                            _downloadFile(
-                                              sessionId: applicant.sessionId,
-                                              applicantName: applicant.name,
-                                              fileType: "cv",
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 24),
-                                  job.ReportCard(
-                                    isreviewSession: true,
-                                    report: ReportEntity(
-                                      sessionId: applicant.sessionId,
-                                      fullName: applicant.name,
-                                      accuracyPercent:
-                                          applicant.accuracyPercent,
-                                      averageResponseTime: applicant
-                                          .averageResponseTime
-                                          .toString(),
-                                      strengthPoints: applicant.strengths.join(' | '),
-                                      weaknessesPoints: applicant.weaknesses.join(' | '),
                                     ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: ReportButton(
+                                        icon:
+                                            "assets/image/icon svg/download.svg",
+                                        label: "PDF Report",
+                                        onPressed: () {
+                                          _downloadFile(
+                                            sessionId: applicant.sessionId,
+                                            applicantName: applicant.name,
+                                            fileType: "report",
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: ReportButton(
+                                        icon: "assets/image/icon svg/cv.svg",
+                                        label: "Download CV",
+                                        onPressed: () {
+                                          _downloadFile(
+                                            sessionId: applicant.sessionId,
+                                            applicantName: applicant.name,
+                                            fileType: "cv",
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 24),
+                                job.ReportCard(
+                                  isreviewSession: true,
+                                  report: ReportEntity(
+                                    sessionId: applicant.sessionId,
+                                    fullName: applicant.name,
+                                    accuracyPercent:
+                                        applicant.accuracyPercent,
+                                    averageResponseTime: applicant
+                                        .averageResponseTime
+                                        .toString(),
+                                    strengthPoints: applicant.strengths.join(' | '),
+                                    weaknessesPoints: applicant.weaknesses.join(' | '),
                                   ),
-                                  const SizedBox(height: 24),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: OutlinedButton(
-                                          onPressed: (isLoading || _isSubmitting)
-                                              ? null
-                                              : () {
-                                                  context
-                                                      .read<
-                                                        ReviewSessionCubit
-                                                      >()
-                                                      .submitDecision(
-                                                        applicant.sessionId,
-                                                        2, // 🔴 رفض
-                                                      );
-                                                },
-                                          style: OutlinedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 16,
-                                            ),
-                                            side: const BorderSide(
-                                              color: Colors.red,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
+                                ),
+                                const SizedBox(height: 24),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: OutlinedButton(
+                                        onPressed: (isLoading || _isSubmitting)
+                                            ? null
+                                            : () {
+                                                context
+                                                    .read<
+                                                      ReviewSessionCubit
+                                                    >()
+                                                    .submitDecision(
+                                                      applicant.sessionId,
+                                                      2, // 🔴 رفض
+                                                    );
+                                              },
+                                        style: OutlinedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 16,
                                           ),
-                                          child: const Text(
-                                            "Reject",
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          side: const BorderSide(
+                                            color: Colors.red,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          "Reject",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 16),
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          onPressed: (isLoading || _isSubmitting)
-                                              ? null
-                                              : () {
-                                                  context
-                                                      .read<
-                                                        ReviewSessionCubit
-                                                      >()
-                                                      .submitDecision(
-                                                        applicant.sessionId,
-                                                        1, // 🟢 قبول
-                                                      );
-                                                },
-                                          style: ElevatedButton.styleFrom(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 16,
-                                            ),
-                                            backgroundColor: const Color(
-                                              0xFF1967D2,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            elevation: 0,
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        onPressed: (isLoading || _isSubmitting)
+                                            ? null
+                                            : () {
+                                                context
+                                                    .read<
+                                                      ReviewSessionCubit
+                                                    >()
+                                                    .submitDecision(
+                                                      applicant.sessionId,
+                                                      1, // 🟢 قبول
+                                                    );
+                                              },
+                                        style: ElevatedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 16,
                                           ),
-                                          child: const Text(
-                                            "Accept",
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          backgroundColor: const Color(
+                                            0xFF1967D2,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          elevation: 0,
+                                        ),
+                                        child: const Text(
+                                          "Accept",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 30),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 30),
+                              ],
+                            ),
+                          );
+                        },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               );
             },

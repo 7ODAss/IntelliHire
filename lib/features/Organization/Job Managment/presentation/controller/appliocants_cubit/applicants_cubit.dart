@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intelli_hire/core/models/applicant_model.dart';
 import 'package:intelli_hire/features/Organization/Job%20Managment/domain/entities/job_applicants_entity.dart';
 import 'package:intelli_hire/features/Organization/Job%20Managment/domain/usecases/get_applicant_report_usecase.dart';
 import 'package:intelli_hire/features/Organization/Job%20Managment/domain/usecases/get_job_applicants_usecase.dart';
@@ -96,12 +97,15 @@ class ApplicantsCubit extends Cubit<ApplicantsState> {
 
     result.fold(
       (error) => emit(DecisionError(error)),
-      (_) => emit(
-        DecisionSuccess(
-          selectedFilter: state.selectedFilter,
-          filteredApplicants: state.filteredApplicants,
-        ),
-      ),
+      (_) async {
+        await ApplicantModel.markSessionAsProcessed(sessionId);
+        emit(
+          DecisionSuccess(
+            selectedFilter: state.selectedFilter,
+            filteredApplicants: state.filteredApplicants,
+          ),
+        );
+      },
     );
   }
 }

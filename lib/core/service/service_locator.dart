@@ -70,8 +70,8 @@ import '../../features/candidate/Notification/domain/Usecases/mark_notification_
 import '../../features/candidate/Notification/presentation/controller/NotificationCubit/CandidateNotificationCubit.dart';
 
 // ── Candidate: Profile ───────────────────────────────────────────────────────
-import '../../features/candidate/notification/data/datasources/notification_remote_datasource.dart';
-import '../../features/candidate/notification/data/repositories/notification_repository_impl.dart';
+import '../../features/candidate/Notification/data/datasources/notification_remote_datasource.dart';
+import '../../features/candidate/Notification/data/repositories/notification_repository_impl.dart';
 import '../../features/candidate/profile/data/datasources/candidate_profile_remote_datasource.dart';
 import '../../features/candidate/profile/data/repositories/candidate_profile_repository_impl.dart';
 import '../../features/candidate/profile/domain/repositories/base_candidate_profile_repository.dart';
@@ -311,7 +311,7 @@ class ServiceLocator {
     getIt.registerLazySingleton(() => UpdateJobUseCase(getIt<JobRepo>()));
     getIt.registerLazySingleton(() => GetJobDetailsUseCase(getIt<JobRepo>()));
 
-    getIt.registerLazySingleton<JobManagementCubit>(
+    getIt.registerFactory<JobManagementCubit>(
           () => JobManagementCubit(
         getIt<GetJobsUseCase>(),
         getIt<DeleteJobUseCase>(),

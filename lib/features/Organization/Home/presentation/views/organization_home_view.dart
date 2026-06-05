@@ -26,7 +26,7 @@ class OrganizationHomeView extends StatelessWidget {
           value: getIt<HomeOrganizationCubit>()..fetchDashboard(),
         ),
         BlocProvider.value(
-          value: getIt<JobManagementCubit>(),
+          value: context.read<JobManagementCubit>(),
         ),
       ],
       child: Scaffold(
