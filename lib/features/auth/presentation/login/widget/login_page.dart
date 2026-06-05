@@ -249,14 +249,42 @@ class _LogInPageState extends State<LogInPage> {
                       title: "Email",
                       message: "Enter Email",
                       type: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Email is required";
+                        } else if (!RegExp(
+                          r"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$",
+                        ).hasMatch(value)) {
+                          return "Enter a valid email address";
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 16),
-                    FieldItem(
-                      controller: passwordController,
-                      title: "Password",
-                      message: "Enter Password",
-                      type: TextInputType.visiblePassword,
-                      obscureText: true,
+                    BlocSelector<LoginCubit, LoginState, bool>(
+                      selector: (state) => state.changeSuffix,
+                      builder: (context, state) {
+                        return FieldItem(
+                          controller: passwordController,
+                          title: "Password",
+                          message: "Please enter your password",
+                          type: TextInputType.visiblePassword,
+                          obscureText: state,
+                          suffixIcon: state ? Icons.visibility_off : Icons.visibility,
+                          suffixIconColor: const Color(0xFF134CC7),
+                          onSuffixPressed: () {
+                            context.read<LoginCubit>().changeSuffix();
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Password is required";
+                            } else if (value.length < 6) {
+                              return "Password must be at least 6 characters long";
+                            }
+                            return null;
+                          },
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 16),
