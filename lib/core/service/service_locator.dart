@@ -7,6 +7,9 @@ import 'package:intelli_hire/features/candidate/new%20assess/domain/usecases/get
 import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_email_enter_current_password_usecase.dart';
 import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_email_enter_new_email_usecase.dart';
 import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_email_otp_usecase.dart';
+import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_password_otp_check_usecase.dart';
+import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_password_otp_request_usecase.dart';
+import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_password_verify_usecase.dart';
 import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_personal_info_usecase.dart';
 
 // ── Organization / existing ──────────────────────────────────────────────────
@@ -196,8 +199,14 @@ class ServiceLocator {
     );
     getIt.registerLazySingleton(() => ChangeEmailEnterNewEmailUseCase(getIt()));
     getIt.registerLazySingleton(() => ChangeEmailOtpUseCase(getIt()));
+    getIt.registerLazySingleton(() => ChangePasswordOtpRequestUseCase(getIt()));
+    getIt.registerLazySingleton(() => ChangePasswordOtpCheckUseCase(getIt()));
+    getIt.registerLazySingleton(() => ChangePasswordVerifyUseCase(getIt()));
     getIt.registerFactory<CandidateProfileCubit>(
       () => CandidateProfileCubit(
+        getIt(),
+        getIt(),
+        getIt(),
         getIt(),
         getIt(),
         getIt(),

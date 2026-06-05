@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/features/candidate/profile/presentation/screen/login_and_security_screen.dart';
 import '../../../../../core/utils/app_text_style.dart';
 import '../controller/candidate_profile_cubit.dart';
-import 'change_password/candidate_login_security_screen.dart';
 import '../screen/personal_information_screen.dart';
 import 'optionfield.dart';
 
@@ -67,7 +66,15 @@ class AccountOption extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => LoginAndSecurityScreen(),
+                        // 🌟 FIX: Must wrap with BlocProvider.value so that BlocListener /
+                        // BlocSelector inside LoginAndSecurityScreen (and its child screens)
+                        // can find CandidateProfileCubit via context lookup.
+                        // Without this, those widgets search the widget tree, find nothing,
+                        // throw on every rebuild → infinite loop → Signal 3.
+                        builder: (context) => BlocProvider.value(
+                          value: cubit,
+                          child: LoginAndSecurityScreen(cubit: cubit),
+                        ),
                       ),
                     );
                   },

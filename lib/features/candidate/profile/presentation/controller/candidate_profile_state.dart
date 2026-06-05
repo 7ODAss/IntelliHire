@@ -24,8 +24,16 @@ class CandidateProfileState extends Equatable {
   final String changeEmailPasswordCheckMessage;
   final RequestState changeEmailEmailCheckState;
   final String changeEmailEmailCheckMessage;
-  final RequestState otpState;
-  final String otpMessage;
+  final RequestState changeEmailOtpState;
+  final String changeEmailOtpMessage;
+
+  final RequestState changePasswordOtpRequestState;
+  final String changePasswordOtpRequestMessage;
+  final String changePasswordOtpCheckToken;
+  final RequestState changePasswordOtpCheckState;
+  final String changePasswordOtpCheckMessage;
+  final RequestState changePasswordVerifyState;
+  final String changePasswordVerifyMessage;
 
   const CandidateProfileState({
     this.status = RequestState.initial,
@@ -51,8 +59,15 @@ class CandidateProfileState extends Equatable {
     this.changeEmailPasswordCheckMessage = '',
     this.changeEmailEmailCheckState = RequestState.initial,
     this.changeEmailEmailCheckMessage = '',
-    this.otpState = RequestState.initial,
-    this.otpMessage = '',
+    this.changeEmailOtpState = RequestState.initial,
+    this.changeEmailOtpMessage = '',
+    this.changePasswordOtpRequestState = RequestState.initial,
+    this.changePasswordOtpRequestMessage = '',
+    this.changePasswordOtpCheckToken = '',
+    this.changePasswordOtpCheckState = RequestState.initial,
+    this.changePasswordOtpCheckMessage = '',
+    this.changePasswordVerifyState = RequestState.initial,
+    this.changePasswordVerifyMessage = '',
   });
 
   CandidateProfileState copyWith({
@@ -81,8 +96,15 @@ class CandidateProfileState extends Equatable {
     String? changeEmailPasswordCheckMessage,
     RequestState? changeEmailEmailCheckState,
     String? changeEmailEmailCheckMessage,
-    RequestState? otpState,
-    String? otpMessage,
+    RequestState? changeEmailOtpState,
+    String? changeEmailOtpMessage,
+    RequestState? changePasswordOtpRequestState,
+    String? changePasswordOtpRequestMessage,
+    String? changePasswordOtpCheckToken,
+    RequestState? changePasswordOtpCheckState,
+    String? changePasswordOtpCheckMessage,
+    RequestState? changePasswordVerifyState,
+    String? changePasswordVerifyMessage,
   }) => CandidateProfileState(
     status: status ?? this.status,
     changePasswordStatus: changePasswordStatus ?? this.changePasswordStatus,
@@ -118,12 +140,26 @@ class CandidateProfileState extends Equatable {
         changeEmailEmailCheckState ?? this.changeEmailEmailCheckState,
     changeEmailEmailCheckMessage:
         changeEmailEmailCheckMessage ?? this.changeEmailEmailCheckMessage,
-    otpState: otpState ?? this.otpState,
-    otpMessage: otpMessage ?? this.otpMessage,
+    changeEmailOtpState: changeEmailOtpState ?? this.changeEmailOtpState,
+    changeEmailOtpMessage: changeEmailOtpMessage ?? this.changeEmailOtpMessage,
     changePersonalInfoState:
         changePersonalInfoState ?? this.changePersonalInfoState,
     changePersonalInfoMessage:
         changePersonalInfoMessage ?? this.changePersonalInfoMessage,
+    changePasswordOtpRequestState:
+        changePasswordOtpRequestState ?? this.changePasswordOtpRequestState,
+    changePasswordOtpRequestMessage:
+        changePasswordOtpRequestMessage ?? this.changePasswordOtpRequestMessage,
+    changePasswordOtpCheckToken:
+        changePasswordOtpCheckToken ?? this.changePasswordOtpCheckToken,
+    changePasswordOtpCheckState:
+        changePasswordOtpCheckState ?? this.changePasswordOtpCheckState,
+    changePasswordOtpCheckMessage:
+        changePasswordOtpCheckMessage ?? this.changePasswordOtpCheckMessage,
+    changePasswordVerifyState:
+        changePasswordVerifyState ?? this.changePasswordVerifyState,
+    changePasswordVerifyMessage:
+        changePasswordVerifyMessage ?? this.changePasswordVerifyMessage,
   );
 
   @override
@@ -149,7 +185,14 @@ class CandidateProfileState extends Equatable {
     changeEmailPasswordCheckMessage,
     changeEmailEmailCheckState,
     changeEmailEmailCheckMessage,
-    otpState,
-    otpMessage,
+    changeEmailOtpState,
+    changeEmailOtpMessage,
+    changePasswordOtpRequestState,
+    changePasswordOtpRequestMessage,
+    changePasswordOtpCheckToken,
+    changePasswordOtpCheckState,
+    changePasswordOtpCheckMessage,
+    changePasswordVerifyState,
+    changePasswordVerifyMessage,
   ];
 }

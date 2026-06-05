@@ -54,6 +54,12 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     phoneController = TextEditingController(text: widget.phone);
     emailController = TextEditingController(text: widget.email);
     personalInfoKey = GlobalKey<FormState>();
+    // 🌟 Reset personalInfoState when screen is opened to clear any stale success/error state from the singleton cubit.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<CandidateProfileCubit>().resetPersonalInfoState();
+      }
+    });
   }
 
   @override
@@ -70,6 +76,11 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
     return SafeArea(
       child: BlocListener<CandidateProfileCubit, CandidateProfileState>(
+        // 🌟 Added listenWhen to only trigger when changePersonalInfoState changes.
+        // This prevents the listener from reacting to other state changes (like loadProfile emissions)
+        // that inherit the 'success' value, which previously caused the snackbar to show 3 times.
+        listenWhen: (previous, current) =>
+            previous.changePersonalInfoState != current.changePersonalInfoState,
         listener: (context, state) {
           if (state.changePersonalInfoState == RequestState.success) {
             context.showSnackBar(

@@ -50,11 +50,11 @@ class _OtpStepChangeEmailState extends State<OtpStepChangeEmail> {
 
         return BlocListener<CandidateProfileCubit, CandidateProfileState>(
           listenWhen: (previous, current) =>
-              previous.otpState != current.otpState,
+              previous.changeEmailOtpState != current.changeEmailOtpState,
           listener: (context, state) {
-            if (state.otpState == RequestState.success) {
+            if (state.changeEmailOtpState == RequestState.success) {
               context.showSnackBar(
-                state.otpMessage,
+                state.changeEmailOtpMessage,
                 type: SnackBarType.success,
               );
               Navigator.push(
@@ -65,8 +65,11 @@ class _OtpStepChangeEmailState extends State<OtpStepChangeEmail> {
                 ),
               );
             }
-            if (state.otpState == RequestState.error) {
-              context.showSnackBar(state.otpMessage, type: SnackBarType.error);
+            if (state.changeEmailOtpState == RequestState.error) {
+              context.showSnackBar(
+                state.changeEmailOtpMessage,
+                type: SnackBarType.error,
+              );
             }
           },
           child: Padding(
@@ -139,7 +142,7 @@ class _OtpStepChangeEmailState extends State<OtpStepChangeEmail> {
                   RequestState
                 >(
                   selector: (state) {
-                    return state.otpState;
+                    return state.changeEmailOtpState;
                   },
                   builder: (context, state) {
                     return ButtonAction(

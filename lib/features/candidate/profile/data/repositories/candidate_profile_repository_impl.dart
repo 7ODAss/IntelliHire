@@ -5,7 +5,12 @@ import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_e
 import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_email_enter_new_email_usecase.dart';
 import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_email_otp_usecase.dart';
 import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_password_candidate_usecase.dart';
+import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_password_otp_check_usecase.dart';
+
+import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_password_otp_request_usecase.dart';
+import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_password_verify_usecase.dart';
 import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_personal_info_usecase.dart';
+import 'package:intelli_hire/features/candidate/profile/domain/usecases/delete_account_candidate_usecase.dart';
 import '../../../../../core/error/exception.dart';
 import '../../../../../core/error/failure.dart';
 import '../../domain/entities/candidate_profile.dart';
@@ -70,9 +75,14 @@ class CandidateProfileRepositoryImpl extends BaseCandidateProfileRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteAccount() async {
+  Future<Either<Failure, String>> deleteAccount(
+    DeleteAccountCandidateParams parameters,
+  ) async {
     try {
-      final result = await baseCandidateProfileDataSource.deleteAccount();
+      final result = await baseCandidateProfileDataSource.deleteAccount(
+        currentEmail: parameters.currentEmail,
+        currentPassword: parameters.currentPassword,
+      );
       return Right(result);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.serverMessage.message));
@@ -135,6 +145,54 @@ class CandidateProfileRepositoryImpl extends BaseCandidateProfileRepository {
         otp: parameters.otp,
         newEmail: parameters.newEmail,
         currentEmail: parameters.currentEmail,
+      );
+      return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> changePasswordOtpRequest(
+    ChangePasswordOtpRequestParams parameters,
+  ) async {
+    try {
+      final result = await baseCandidateProfileDataSource.changePasswordRequest(
+        currentEmail: parameters.currentEmail,
+      );
+      return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, (String, String)>> changePasswordOtpCheck(
+    ChangePasswordOtpCheckParams parameters,
+  ) async {
+    try {
+      final result = await baseCandidateProfileDataSource
+          .changePasswordOtpCheck(
+            currentEmail: parameters.currentEmail,
+            otp: parameters.otp,
+          );
+      return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> changePasswordVerify(
+    ChangePasswordVerifyParams parameters,
+  ) async {
+    try {
+      final result = await baseCandidateProfileDataSource.changePasswordVerify(
+        currentEmail: parameters.currentEmail,
+        token: parameters.token,
+        currentPassword: parameters.currentPassword,
+        newPassword: parameters.newPassword,
+        confirmPassword: parameters.confirmPassword,
       );
       return Right(result);
     } catch (e) {

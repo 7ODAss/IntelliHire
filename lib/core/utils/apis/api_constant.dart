@@ -60,6 +60,15 @@ class ApiConstant {
   static const String candidateChangeEmailConfirmOtp =
       "$baseUrl/Setting/change-email-Confirm";
 
+  static const String candidateChangePasswordOtpRequest =
+      "$baseUrl/Setting/request-password-change";
+
+  static const String candidateChangePasswordOtpCheck =
+      "$baseUrl/Setting/send-otp";
+
+  static const String candidateChangePasswordVerify =
+      "$baseUrl/Setting/confirm-password-change";
+
   //company profile
   static const String companyChangePassword =
       "$baseUrl/candidate/settings/security/change-password";

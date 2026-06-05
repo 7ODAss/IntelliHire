@@ -26,7 +26,10 @@ abstract class BaseCandidateProfileDataSource {
     File? image,
   });
   Future<void> changePassword(String currentPassword, String newPassword);
-  Future<void> deleteAccount();
+  Future<String> deleteAccount({
+    required String currentEmail,
+    required String currentPassword,
+  });
   Future<void> changeCareerDetails(String? newCvPath, String? oldCvData);
   Future<LogoutCandidateModel> logOutUserCandidateProfile();
   Future<String> changeEmailEnterCurrentPassword({
@@ -41,6 +44,19 @@ abstract class BaseCandidateProfileDataSource {
     required String otp,
     required String newEmail,
     required String currentEmail,
+  });
+
+  Future<String> changePasswordRequest({required String currentEmail});
+  Future<(String, String)> changePasswordOtpCheck({
+    required String currentEmail,
+    required String otp,
+  });
+  Future<String> changePasswordVerify({
+    required String currentEmail,
+    required String token,
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
   });
 }
 
@@ -190,15 +206,22 @@ class CandidateProfileRemoteDataSource
   }
 
   @override
-  Future<void> deleteAccount() async {
+  Future<String> deleteAccount({
+    required String currentEmail,
+    required String currentPassword,
+  }) async {
     try {
-      final response = await DioConfig.deleteData(
+      final response = await DioConfig.putData(
         path: ApiConstant.candidateDeleteAccount,
+        data: {"email": currentEmail, "currentPassword": currentPassword},
       );
       if (response.statusCode == 200) {
-        print('deleted');
+        print('account deleted');
         print('response: ${response.data}');
-        return response.data;
+        // 🌟 FIX: return the message String so the repository and cubit can use it.
+        // Previously the method returned void, so this value was silently discarded
+        // and the success Snackbar always showed an empty string.
+        return response.data['message'].toString();
       } else {
         throw ServerException(
           serverMessage: ErrorMessageModel.fromJson(response.data),
@@ -206,13 +229,30 @@ class CandidateProfileRemoteDataSource
       }
     } catch (e) {
       if (e is DioException) {
-        // 🌟 السطر ده هيجيبلك الخلاصة وكلام السيرفر بالظبط
-        print('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
-        print('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
-      } else {
-        print('🚨 خطأ غير متوقع: $e');
+        print('🚨 تفاصيل رفض السيرفر (400): \${e.response?.data}');
+        print('🚨 اللينك اللي راح للسيرفر: \${e.requestOptions.uri}');
+        // 🌟 FIX: throw ServerException (not a raw String).
+        // Previously did: throw e.response?.data['message']
+        // That threw a String which the repository's `on ServerException` could NOT catch,
+        // causing the exception to propagate uncaught → unhandled exception → UI freeze.
+        final errorData = e.response?.data;
+        if (errorData is Map<String, dynamic>) {
+          throw ServerException(
+            serverMessage: ErrorMessageModel.fromJson(errorData),
+          );
+        } else {
+          throw ServerException(
+            serverMessage: ErrorMessageModel(
+              message: errorData?.toString() ?? 'Error deleting account',
+            ),
+          );
+        }
+      } else if (e is ServerException) {
+        rethrow;
       }
-      rethrow;
+      throw ServerException(
+        serverMessage: ErrorMessageModel(message: e.toString()),
+      );
     }
   }
 
@@ -339,6 +379,108 @@ class CandidateProfileRemoteDataSource
         return response.data['message'];
       } else {
         print('دخل جوه ال else');
+        throw ServerException(
+          serverMessage: ErrorMessageModel.fromJson(
+            response.data['errors'][0]['description'],
+          ),
+        );
+      }
+    } catch (e) {
+      if (e is DioException) {
+        throw e.response?.data['errors'][0]['description'];
+      } else {
+        print('🚨 خطأ غير متوقع: $e');
+      }
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String> changePasswordRequest({required String currentEmail}) async {
+    try {
+      final response = await DioConfig.postData(
+        path: ApiConstant.candidateChangePasswordOtpRequest,
+        data: {'email': currentEmail},
+      );
+      if (response.statusCode == 200) {
+        print('OTP requested');
+        print('response: ${response.data}');
+        // 🌟 FIX: The backend returns a plain String body (not a JSON Map).
+        // Using response.data['message'] caused crash:
+        //   type 'String' is not a subtype of type 'int' of 'index'
+        // because Dart's String[] operator expects an int index, not a String key.
+        // Returning response.data directly (as String) is correct.
+        return response.data.toString();
+      } else {
+        throw ServerException(
+          serverMessage: ErrorMessageModel.fromJson(response.data),
+        );
+      }
+    } catch (e) {
+      if (e is DioException) {
+        throw e.response?.data;
+      } else {
+        print('🚨 خطأ غير متوقع: $e');
+      }
+      rethrow;
+    }
+  }
+
+  @override
+  Future<(String, String)> changePasswordOtpCheck({
+    required String currentEmail,
+    required String otp,
+  }) async {
+    try {
+      final response = await DioConfig.postData(
+        path: ApiConstant.candidateChangePasswordOtpCheck,
+        data: {'email': currentEmail, 'code': otp},
+      );
+      if (response.statusCode == 200) {
+        print('OTP verified');
+        print('response: ${response.data}');
+        final String message = response.data['message'] ?? '';
+        final String token = response.data['token'] ?? '';
+        return (message, token);
+      } else {
+        throw ServerException(
+          serverMessage: ErrorMessageModel.fromJson(response.data['message']),
+        );
+      }
+    } catch (e) {
+      if (e is DioException) {
+        throw e.response?.data['message'];
+      } else {
+        print('🚨 خطأ غير متوقع: $e');
+      }
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String> changePasswordVerify({
+    required String currentEmail,
+    required String token,
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    try {
+      final response = await DioConfig.postData(
+        path: ApiConstant.candidateChangePasswordVerify,
+        data: {
+          'email': currentEmail,
+          'token': token,
+          'currentPassword': currentPassword,
+          'newPassword': newPassword,
+          'confirmPassword': confirmPassword,
+        },
+      );
+      if (response.statusCode == 200) {
+        print('OTP verified');
+        print('response: ${response.data}');
+        return response.data['message'];
+      } else {
         throw ServerException(
           serverMessage: ErrorMessageModel.fromJson(
             response.data['errors'][0]['description'],

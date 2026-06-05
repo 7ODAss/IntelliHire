@@ -4,24 +4,22 @@ import 'package:intelli_hire/core/utils/shared/context_extension.dart';
 
 import '../../../../../../core/enums/request.dart';
 import '../../../../../../core/enums/snack_bar_type.dart';
-import '../../../../../../core/utils/app_text_style.dart';
-import '../../../../../auth/presentation/login/login_screen.dart';
 import '../../../../../auth/presentation/login/widget/button_action.dart';
 import '../../../../../auth/presentation/login/widget/field_item.dart';
 import '../../controller/candidate_profile_cubit.dart';
 import '../pop_action_menu.dart';
 
-class CandidateLoginSecurityScreen extends StatefulWidget {
-  const CandidateLoginSecurityScreen({super.key});
+class CandidateCHangePasswordStep extends StatefulWidget {
+  final CandidateProfileCubit cubit;
+  const CandidateCHangePasswordStep({super.key, required this.cubit});
 
   @override
-  State<CandidateLoginSecurityScreen> createState() =>
-      _CandidateLoginSecurityScreenState();
+  State<CandidateCHangePasswordStep> createState() =>
+      _CandidateCHangePasswordStepState();
 }
 
-class _CandidateLoginSecurityScreenState
-    extends State<CandidateLoginSecurityScreen> {
-  // Security
+class _CandidateCHangePasswordStepState
+    extends State<CandidateCHangePasswordStep> {
   late TextEditingController currentPassController;
   late TextEditingController newPassController;
   late TextEditingController confirmNewPassController;
@@ -46,61 +44,27 @@ class _CandidateLoginSecurityScreenState
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<CandidateProfileCubit>();
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<CandidateProfileCubit, CandidateProfileState>(
-          listenWhen: (previous, current) =>
-              previous.changePasswordStatus != current.changePasswordStatus,
-          listener: (context, state) {
-            if (state.changePasswordStatus == RequestState.success) {
-              context.showSnackBar(
-                type: SnackBarType.success,
-                'Password changed successfully',
-              );
-              Navigator.pop(context);
-            } else if (state.changePasswordStatus == RequestState.error) {
-              context.showSnackBar(
-                type: SnackBarType.error,
-                state.changePasswordMessage,
-              );
-            }
-          },
-        ),
+    // 🌟 Changed: Now listening to changePasswordVerifyState (new OTP-flow endpoint)
+    // instead of changePasswordStatus (the old direct-change endpoint that bypassed OTP).
+    return BlocListener<CandidateProfileCubit, CandidateProfileState>(
+      listenWhen: (previous, current) =>
+          previous.changePasswordVerifyState !=
+          current.changePasswordVerifyState,
+      listener: (context, state) {
+        if (state.changePasswordVerifyState == RequestState.success) {
+          context.showSnackBar(
+            type: SnackBarType.success,
+            'Password changed successfully',
+          );
+          Navigator.popUntil(context, (route) => route.isFirst);
+        } else if (state.changePasswordVerifyState == RequestState.error) {
+          context.showSnackBar(
+            type: SnackBarType.error,
+            state.changePasswordVerifyMessage,
+          );
+        }
+      },
 
-        BlocListener<CandidateProfileCubit, CandidateProfileState>(
-          listenWhen: (previous, current) =>
-              previous.deleteAccountStatus != current.deleteAccountStatus,
-          listener: (context, state) {
-            if (state.deleteAccountStatus == RequestState.success) {
-              context.showSnackBar(
-                type: SnackBarType.success,
-                'Account deleted successfully',
-              );
-            } else if (state.deleteAccountStatus == RequestState.error) {
-              context.showSnackBar(
-                type: SnackBarType.error,
-                state.deleteAccountMessage,
-              );
-            }
-          },
-        ),
-
-        BlocListener<CandidateProfileCubit, CandidateProfileState>(
-          listenWhen: (previous, current) =>
-              previous.userProfileCandidateLogOutState !=
-              current.userProfileCandidateLogOutState,
-          listener: (context, state) {
-            if (state.userProfileCandidateLogOutState == RequestState.success) {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                (route) => false,
-              );
-            }
-          },
-        ),
-      ],
       child: SafeArea(
         child: Scaffold(
           body: SingleChildScrollView(
@@ -119,7 +83,7 @@ class _CandidateLoginSecurityScreenState
                       hintText: 'Enter current password',
                       type: TextInputType.visiblePassword,
                       prefixIcon: Icons.lock_outlined,
-                      prefixIconColor: Color(0xFFB4ADAE),
+                      prefixIconColor: const Color(0xFFB4ADAE),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Password is required";
@@ -134,7 +98,7 @@ class _CandidateLoginSecurityScreenState
                       hintText: 'Enter new password',
                       type: TextInputType.visiblePassword,
                       prefixIcon: Icons.lock_outlined,
-                      prefixIconColor: Color(0xFFB4ADAE),
+                      prefixIconColor: const Color(0xFFB4ADAE),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Password is required";
@@ -149,30 +113,60 @@ class _CandidateLoginSecurityScreenState
                     FieldItem(
                       controller: confirmNewPassController,
                       title: 'Confirm New Password',
-                      hintText: 'Enter new password',
+                      hintText: 'Confirm new password',
                       type: TextInputType.visiblePassword,
                       prefixIcon: Icons.lock_outlined,
-                      prefixIconColor: Color(0xFFB4ADAE),
+                      prefixIconColor: const Color(0xFFB4ADAE),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Password is required";
                         }
-                        if (value == currentPassController.text) {
-                          return "New password can't match current password";
+                        if (value != newPassController.text) {
+                          return "Passwords do not match";
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 48),
-                    ButtonAction(
-                      title: 'Update Password',
-                      onPressed: () {
-                        if (securityInfoKey.currentState!.validate()) {
-                          cubit.changePassword(
-                            currentPassController.text,
-                            newPassController.text,
-                          );
-                        }
+                    // 🌟 Changed: Now selecting changePasswordVerifyState for the loading indicator,
+                    // matching the new verifyNewPassword call below.
+                    BlocSelector<
+                      CandidateProfileCubit,
+                      CandidateProfileState,
+                      RequestState
+                    >(
+                      selector: (state) => state.changePasswordVerifyState,
+                      builder: (context, state) {
+                        return ButtonAction(
+                          isLoading: state == RequestState.loading,
+                          title: 'Update Password',
+                          onPressed: () {
+                            if (securityInfoKey.currentState!.validate()) {
+                              final email =
+                                  widget
+                                      .cubit
+                                      .state
+                                      .candidateProfileModel
+                                      ?.email ??
+                                  '';
+                              // 🌟 Changed: calling verifyNewPassword() with the token that was
+                              // returned from the OTP check step and stored in
+                              // state.changePasswordOtpCheckToken.
+                              // Previously called changePassword(currentPass, newPass) which
+                              // bypassed the OTP flow entirely and hit a different endpoint.
+                              widget.cubit.verifyNewPassword(
+                                email: email,
+                                token: widget
+                                    .cubit
+                                    .state
+                                    .changePasswordOtpCheckToken,
+                                currentPassword: currentPassController.text,
+                                newPassword: newPassController.text,
+                                confirmPassword: confirmNewPassController.text,
+                              );
+                            }
+                          },
+                        );
                       },
                     ),
                     const SizedBox(height: 24),

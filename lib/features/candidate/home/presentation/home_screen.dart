@@ -108,7 +108,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     slivers: [
                       SliverToBoxAdapter(
                         child: RepaintBoundary(
-                          child: Header(performance: performance),
+                          child:
+                              BlocSelector<
+                                HomeCubitCandidate,
+                                HomeState,
+                                TrainingPerformance
+                              >(
+                                selector: (state) =>
+                                    state.homeSummary?.trainingPerformance ??
+                                    _emptyPerformance,
+                                builder: (context, performance) {
+                                  return Header(performance: performance);
+                                },
+                              ),
                         ),
                       ),
                       SliverToBoxAdapter(

@@ -20,7 +20,7 @@ class CandidateProfileModel extends CandidateProfile {
       phoneNumber: data['phoneNumber'] as String? ?? '',
       photo: data['photo'] as String? ?? '',
       currentRole: data['currentRole'] as String? ?? '',
-      experienceYears: data['experienceYears'] as double,
+      experienceYears: data['experienceYears'] as double? ?? 0,
       cvData: data['cvData'] as String? ?? '',
       cvFileName: data['cvFileName'] as String? ?? '',
     );

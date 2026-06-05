@@ -5,15 +5,12 @@ import 'package:intelli_hire/core/utils/app_font.dart';
 import '../../../../candidate/profile/presentation/controller/candidate_profile_cubit.dart';
 
 class DeleteAccountConfirmDialog extends StatelessWidget {
-  const DeleteAccountConfirmDialog({
-    super.key,
-  });
+  const DeleteAccountConfirmDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       backgroundColor: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -29,7 +26,7 @@ class DeleteAccountConfirmDialog extends StatelessWidget {
                 size: 30,
               ),
             ),
-            const SizedBox(height: 16,),
+            const SizedBox(height: 16),
             Text(
               "Delete Account?",
               style: TextStyle(
@@ -89,7 +86,7 @@ class DeleteAccountConfirmDialog extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      context.read<CandidateProfileCubit>().deleteAccount();
+                      //context.read<CandidateProfileCubit>().deleteAccount();
                     },
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
