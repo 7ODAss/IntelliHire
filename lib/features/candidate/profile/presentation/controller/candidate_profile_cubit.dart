@@ -233,9 +233,10 @@ class CandidateProfileCubit extends Cubit<CandidateProfileState> {
           changeCareerDetailsMessage: l.message,
         ),
       ),
-      (r) {
+      (r) async{
+        await Future.delayed(const Duration(seconds: 4));
+        await loadProfile();
         emit(state.copyWith(changeCareerDetailsStatus: RequestState.success));
-        loadProfile();
       },
     );
   }

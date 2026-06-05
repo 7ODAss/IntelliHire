@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/company/process/sign_up_information_company.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/company/process/sign_up_link_company.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/company/process/sign_up_location_company.dart';
+import 'package:intelli_hire/features/auth/presentation/login/login_screen.dart';
 
 import '../../../../../core/enums/request.dart';
 import '../../../controller/sign_up_cubit/sign_up_cubit.dart';
@@ -43,7 +44,15 @@ class SignUpProcess extends StatelessWidget {
                       if (currentScreen > 0) {
                         cubit.previousStep();
                       } else {
-                        Navigator.pop(context);
+                        if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                        } else {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (_) => const LoginScreen()),
+                            (route) => false,
+                          );
+                        }
                       }
                     },
                   ),

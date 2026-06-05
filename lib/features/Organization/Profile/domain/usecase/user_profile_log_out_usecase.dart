@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:equatable/equatable.dart';
 import 'package:intelli_hire/features/Organization/Profile/domain/entity/logout.dart';
 import '../../../../../core/error/failure.dart';
 import '../../../../../core/usecase/base_usecase.dart';

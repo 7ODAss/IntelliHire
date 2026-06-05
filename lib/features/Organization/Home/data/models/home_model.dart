@@ -1,4 +1,4 @@
-import '../../domain/entities/home_entity.dart';
+import 'package:intelli_hire/features/Organization/Home/domain/entities/home_entity.dart';
 
 class DashboardJobModel extends DashboardJobEntity {
   DashboardJobModel({

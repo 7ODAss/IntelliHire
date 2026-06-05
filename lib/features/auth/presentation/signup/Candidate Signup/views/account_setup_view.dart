@@ -3,6 +3,7 @@ import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signu
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/Account%20Setup/account_setup_header.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/Account%20Setup/phone_number.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/Account%20Setup/profile_photo.dart';
+import 'package:intelli_hire/features/auth/presentation/login/login_screen.dart';
 
 class AccountSetupView extends StatefulWidget {
   const AccountSetupView({super.key});
@@ -30,7 +31,15 @@ class _AccountSetupViewState extends State<AccountSetupView> {
     if (activeStep > 0) {
       setState(() => activeStep--);
     } else {
-      Navigator.pop(context);
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          (route) => false,
+        );
+      }
     }
   }
 
@@ -45,7 +54,7 @@ class _AccountSetupViewState extends State<AccountSetupView> {
             onPressed: previousStep,
           ),
           Expanded(
-            child: _buildCurrentStep(), // ✅ بيبني الصفحة الحالية بس
+            child: _buildCurrentStep(), 
           ),
         ],
       ),

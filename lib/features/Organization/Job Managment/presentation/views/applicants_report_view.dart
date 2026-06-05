@@ -76,6 +76,21 @@ class CandidateReportView extends StatelessWidget {
             String email = "";
             String phone = "";
             double displayScore = applicant.aiScore.toDouble();
+            
+            final cached = ApplicantModel.sessionCache[applicant.sessionId];
+            if (cached != null && cached['score'] != null) {
+              final rawScore = cached['score'];
+              if (rawScore is num) {
+                displayScore = rawScore.toDouble();
+              } else if (rawScore is String) {
+                displayScore = double.tryParse(rawScore.replaceAll(RegExp(r'[^\d.]'), '').trim()) ?? displayScore;
+              }
+            }
+
+            String? photoUrl = applicant.photo;
+            if (cached != null && cached['photo'] != null) {
+              photoUrl = cached['photo']?.toString();
+            }
 
             ReportEntity currentReport = ReportEntity(
               sessionId: applicant.sessionId,
@@ -88,7 +103,9 @@ class CandidateReportView extends StatelessWidget {
             if (state is ApplicantPreviewLoaded) {
               email = state.reportData.email ?? "";
               phone = state.reportData.phone ?? "";
-              displayScore = state.reportData.accuracyPercent ?? displayScore;
+              if (state.reportData.photo != null && state.reportData.photo!.isNotEmpty) {
+                photoUrl = state.reportData.photo;
+              }
 
               currentReport = ReportEntity(
                 sessionId: applicant.sessionId,
@@ -99,6 +116,7 @@ class CandidateReportView extends StatelessWidget {
                 accuracyPercent: state.reportData.accuracyPercent,
                 strengthPoints: state.reportData.strengthPoints,
                 weaknessesPoints: state.reportData.weaknessesPoints,
+                photo: state.reportData.photo,
               );
             }
 
@@ -132,7 +150,12 @@ class CandidateReportView extends StatelessWidget {
                   Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      CustomAvatar(name: applicant.name, height: 96, width: 96),
+                      CustomAvatar(
+                        name: applicant.name,
+                        height: 96,
+                        width: 96,
+                        photoUrl: photoUrl,
+                      ),
                       Positioned(
                         top: -12,
                         right: -18,

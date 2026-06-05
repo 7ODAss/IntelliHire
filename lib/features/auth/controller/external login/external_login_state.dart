@@ -9,11 +9,12 @@ class ExternalLoginLoading extends ExternalLoginState {
 
 class ExternalLoginSuccess extends ExternalLoginState {
   final String token;
-  final bool isProfileComplete; 
-  ExternalLoginSuccess(this.token, this.isProfileComplete);
+  final bool isProfileComplete;
+  final String userType; 
+  ExternalLoginSuccess(this.token, this.isProfileComplete, this.userType);
 }
 
 class ExternalLoginFailure extends ExternalLoginState {
-  final String errorMsg;
-  ExternalLoginFailure(this.errorMsg);
+  final String error;
+  ExternalLoginFailure(this.error);
 }

@@ -5,6 +5,7 @@ import 'package:intelli_hire/core/service/service_locator.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
 import 'package:intelli_hire/features/Organization/Home/presentation/controller/review%20session%20cubit/cubit/review_session_cubit.dart';
+import 'package:intelli_hire/features/Organization/Home/presentation/controller/home%20cubit/home_cubit_cubit.dart';
 import 'package:intelli_hire/features/Organization/Home/presentation/views/review_session_view.dart';
 
 class TopCanddidateCard extends StatelessWidget {
@@ -98,7 +99,7 @@ class TopCanddidateCard extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             const Text(
-              "Scored +90% (Top Talent)",
+              "Scored +85% (Top Talent)",
               style: TextStyle(
                 color: Color(0XFFB9C2FD),
                 fontSize: 14,
@@ -139,7 +140,11 @@ class TopCanddidateCard extends StatelessWidget {
                               );
                             },
                           ),
-                        );
+                        ).then((_) {
+                          if (context.mounted) {
+                            context.read<HomeOrganizationCubit>().fetchDashboard(showLoading: false);
+                          }
+                        });
                       },
                 child: const Text(
                   "Start Unified Review >",

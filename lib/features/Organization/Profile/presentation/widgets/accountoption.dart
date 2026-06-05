@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/utils/app_text_style.dart';
+import '../controller/profile_cubit.dart';
 import '../screen/about_company.dart';
-import '../screen/company_login_security_screen.dart';
 import '../screen/account_details_screen.dart';
 import 'optionfield.dart';
 
@@ -30,9 +31,13 @@ class AccountOption extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AccountDetailsScreen(),
+                        builder: (context) => const AccountDetailsScreen(),
                       ),
-                    );
+                    ).then((_) {
+                      if (context.mounted) {
+                        context.read<ProfileCubit>().getCompanyAccountDetails();
+                      }
+                    });
                   },
                 ),
                 Padding(
@@ -44,8 +49,16 @@ class AccountOption extends StatelessWidget {
                   categoryName: 'About Company',
                   options: ['About company , Location , Web'],
                   fun: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => AboutCompany(),));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AboutCompany(),
+                      ),
+                    ).then((_) {
+                      if (context.mounted) {
+                        context.read<ProfileCubit>().getCompanyAccountDetails();
+                      }
+                    });
                   },
                 ),
               ],

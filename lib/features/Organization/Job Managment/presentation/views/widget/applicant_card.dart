@@ -39,40 +39,53 @@ class ApplicantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cached = ApplicantModel.sessionCache[applicant.sessionId];
+    final displayPhoto = cached?['photo']?.toString() ?? applicant.photo;
+    
+    int displayScore = applicant.aiScore;
+    if (cached != null && cached['score'] != null) {
+      final rawScore = cached['score'];
+      if (rawScore is num) {
+        displayScore = rawScore.toInt();
+      } else if (rawScore is String) {
+        displayScore = double.tryParse(rawScore.replaceAll(RegExp(r'[^\d.]'), '').trim())?.toInt() ?? displayScore;
+      }
+    }
+
     final statusColors = getStatusColors(applicant.status);
 
-    Color scoreBgColor = applicant.aiScore > 80
+    Color scoreBgColor = displayScore > 80
         ? const Color(0xFF4ADE80).withValues(alpha: 0.2)
-        : (applicant.aiScore > 50
+        : (displayScore > 50
               ? const Color(0xFFFEF08A).withValues(alpha: 0.2)
               : const Color(0xFFFECACA).withValues(alpha: 0.2));
-    Color scoreTextColor = applicant.aiScore > 80
+    Color scoreTextColor = displayScore > 80
         ? const Color(0xFF15803D)
-        : (applicant.aiScore > 50
+        : (displayScore > 50
               ? const Color(0xFFCA8A04)
               : const Color(0xFFDC2626));
 
     return GestureDetector(
-      // 🔴 3. خلينا الدالة async عشان نستنى الشاشة تقفل
       onTap: () async {
         // 1. جلب بيانات التقرير
         context.read<ApplicantsCubit>().fetchApplicantPreview(
           applicant.sessionId,
         );
 
-        // 2. الانتقال للشاشة بالاسم الجديد (مع إضافة await)
         await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (newContext) => BlocProvider.value(
               value: context.read<ApplicantsCubit>(),
               child: CandidateReportView(
-                applicant: applicant,
+                applicant: applicant.copyWith(
+                  aiScore: displayScore,
+                  photo: displayPhoto,
+                ),
               ),
             ),
           ),
         ).then((value) {
-          // 🔴 4. أول ما نرجع من التقرير (الشاشة تقفل)، بننادي الكيوبت يحدث اللستة فوراً
           context.read<ApplicantsCubit>().fetchApplicantsForJob(jobId);
         });
       },
@@ -95,7 +108,12 @@ class ApplicantCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CustomAvatar(name: applicant.name, width: 48, height: 48),
+            CustomAvatar(
+              name: applicant.name,
+              width: 48,
+              height: 48,
+              photoUrl: displayPhoto,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -128,7 +146,7 @@ class ApplicantCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          "AI Score : ${applicant.aiScore} %",
+                          "AI Score : $displayScore %",
                           style: TextStyle(
                             color: scoreTextColor,
                             fontSize: 9,

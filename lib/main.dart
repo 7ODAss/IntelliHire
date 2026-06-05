@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:intelli_hire/core/helpers/cache_helper.dart';
 import 'package:intelli_hire/core/utils/apis/dio_config.dart';
 import 'package:intelli_hire/features/auth/presentation/login/login_screen.dart';
+import 'package:intelli_hire/features/splash/presentation/view/splash_view.dart';
 import 'core/helpers/deep_link_helper.dart';
 import 'core/service/service_locator.dart';
 import 'core/utils/apis/api_constant.dart';
 import 'features/Organization/bottom _navigation/presentation/custom_bottom_nav_bar_wrapper.dart';
 import 'features/candidate/bottom _navigation/presentation/custom_bottom_nav_bar_wrapper_candidate.dart';
+import 'features/auth/controller/external login/external_login_cubit.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,7 +45,7 @@ void main() async {
       widget = const CustomBottomNavBarWrapperCandidate();
     }
   } else {
-    widget = LoginScreen();
+    widget = const SplashView();
   }
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -69,12 +74,17 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: ApiConstant.navigatorKey,
-      debugShowCheckedModeBanner: false,
-      home: widget.startWidget,
-      theme: ThemeData.light().copyWith(
-        scaffoldBackgroundColor: const Color(0xffF8FAFC),
+
+    return BlocProvider(
+      create: (context) => ExternalLoginCubit()..initDeepLinkListener(),
+      child: MaterialApp(
+        navigatorKey: ApiConstant.navigatorKey,
+        debugShowCheckedModeBanner: false,
+        home: widget.startWidget,
+        theme: ThemeData.light().copyWith(
+          scaffoldBackgroundColor: const Color(0xffF8FAFC),
+        ),
+
       ),
     );
   }

@@ -4,7 +4,7 @@ import 'package:intelli_hire/core/enums/request.dart';
 import 'package:intelli_hire/core/service/service_locator.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
-import 'package:intelli_hire/features/candidate/notification/domain/entities/notification_item.dart';
+import '../domain/entities/notification_item.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'controller/notifications_cubit.dart';
 
@@ -25,7 +25,7 @@ class _NotificationsView extends StatelessWidget {
 
   static final _dummyList = List.generate(
     4,
-    (i) => NotificationItem(
+        (i) => NotificationItem(
       id: 'dummy_$i',
       title: 'New Applicant',
       body: 'Someone applied for Backend Engineer',
@@ -92,8 +92,8 @@ class _NotificationsView extends StatelessWidget {
           }
 
           final isLoading = state.status != RequestState.success;
-          final notifications =
-              isLoading ? _dummyList : state.notifications;
+          final List<NotificationItem> notifications =
+          isLoading ? _dummyList : state.notifications;
 
           if (!isLoading && notifications.isEmpty) {
             return _buildEmpty();

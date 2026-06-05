@@ -1,19 +1,70 @@
-import 'package:intelli_hire/features/Organization/Notification/domain/Repos/notfication_repo.dart';
+import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
+import 'package:intelli_hire/core/error/exception.dart';
+import 'package:intelli_hire/core/error/failure.dart';
+import 'package:intelli_hire/features/Organization/Notification/data/DataSources/notification_remote_data_source.dart';
 import 'package:intelli_hire/features/Organization/Notification/domain/Entities/notification_entity.dart';
-import '../DataSources/notification_remote_data_source.dart';
+import 'package:intelli_hire/features/Organization/Notification/domain/Repos/notfication_repo.dart';
 
-class NotificationRepositoryImpl implements NotificationRepository {
+class NotificationRepositoryImpl implements BaseNotificationRepository {
   final NotificationRemoteDataSourceOrganization remoteDataSource;
-  NotificationRepositoryImpl(this.remoteDataSource);
+
+  NotificationRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<List<NotificationEntity>> getNotifications() async {
-    final models = await remoteDataSource.getNotifications();
-    return models.map((model) => model as NotificationEntity).toList();
+  Future<Either<Failure, List<NotificationEntity>>> getNotifications() async {
+    try {
+      final result = await remoteDataSource.getNotifications();
+      final entities = result.map((model) => NotificationEntity(
+        id: model.id,
+        title: model.title,
+        description: model.description,
+        time: model.time,
+        isRead: model.isRead,
+      )).toList();
+
+      return Right(entities);
+    } on ServerException catch (failure) {
+      return Left(ServerFailure(failure.errorMessageModel.statusMessage));
+    } on DioException catch (e) {
+      // 🌟 التعديل هنا: إحنا ماسكين إيرور Dio بس مش هنعمل حاجة، هنسيبه للـ Interceptor
+      if (e.response?.statusCode == 401) {
+        // هنرجع Failure عادية عشان الـ Cubit ميكراشش، والـ Interceptor هيكمل شغله ويعمل Logout
+        return Left(ServerFailure("انتهت الجلسة، جاري تسجيل الخروج..."));
+      }
+      return Left(ServerFailure("خطأ في الاتصال بالسيرفر."));
+    } catch (e) {
+      return Left(ServerFailure("حدث خطأ غير متوقع."));
+    }
   }
 
   @override
-  Future<void> markAsRead(String notificationId) async {
-    await remoteDataSource.markAsRead(notificationId);
+  Future<Either<Failure, void>> markAllAsRead() async {
+    try {
+      await remoteDataSource.markAllAsRead();
+      return const Right(null);
+    } on ServerException catch (failure) {
+      return Left(ServerFailure(failure.errorMessageModel.statusMessage));
+    } on DioException catch (e) {
+      return Left(ServerFailure(e.message ?? 'خطأ في الاتصال'));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteNotification(String id) async {
+    try {
+      await remoteDataSource.deleteNotification(id);
+      return const Right(null);
+    } on ServerException catch (failure) {
+      return Left(ServerFailure(failure.errorMessageModel.statusMessage));
+    } on DioException catch (e) {
+      print("🚨 DioException in deleteNotification: Status: ${e.response?.statusCode}, Path: ${e.requestOptions.path}, Data: ${e.response?.data}, Message: ${e.message}");
+      return Left(ServerFailure(e.message ?? 'خطأ في الاتصال'));
+    } catch (e) {
+      print("🚨 Unexpected error in deleteNotification: $e");
+      return Left(ServerFailure(e.toString()));
+    }
   }
 }

@@ -17,12 +17,10 @@ class ReportButton extends StatelessWidget {
   final VoidCallback? onPressed;
 
   @override
- @override
   Widget build(BuildContext context) {
     return OutlinedButton(
       onPressed: onPressed ?? () {},
       style: OutlinedButton.styleFrom(
-        // قللنا البادينج شوية عشان ندي مساحة للنص
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8), 
         side: const BorderSide(
           color: Color(0xff475569),
@@ -35,7 +33,6 @@ class ReportButton extends StatelessWidget {
         minimumSize: Size.zero,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
-      // ضفنا FittedBox هنا عشان يصغر المحتوى تلقائي لو الشاشة ضيقة
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Row(
@@ -68,6 +65,5 @@ class ReportButton extends StatelessWidget {
         ),
       ),
     );
-  
   }
 }

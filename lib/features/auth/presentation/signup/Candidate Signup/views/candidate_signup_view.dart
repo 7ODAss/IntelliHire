@@ -16,8 +16,10 @@ import 'package:intelli_hire/core/service/service_locator.dart';
 import 'package:intelli_hire/core/service/api_service.dart';
 import 'package:intelli_hire/features/auth/controller/profile%20setup%20cubit/profile_setup_cubit.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/account_setup_view.dart';
-// 👈 أضف استيراد الصفحة الرئيسية هنا
-import 'package:intelli_hire/features/Organization/bottom%20_navigation/presentation/custom_bottom_nav_bar_wrapper.dart';
+import 'package:intelli_hire/features/Organization/bottom%20_navigation/presentation/custom_bottom_nav_bar_wrapper.dart'; 
+import 'package:intelli_hire/features/candidate/bottom%20_navigation/presentation/custom_bottom_nav_bar_wrapper_candidate.dart';
+import 'package:intelli_hire/features/auth/controller/sign_up_cubit/sign_up_cubit.dart';
+import 'package:intelli_hire/features/auth/presentation/signup/company/sign_up_process.dart';
 
 class CandidateSignUpView extends StatefulWidget {
   const CandidateSignUpView({super.key});
@@ -51,33 +53,57 @@ class _CandidateSignUpState extends State<CandidateSignUpView> {
       child: BlocListener<ExternalLoginCubit, ExternalLoginState>(
         listener: (context, state) {
           if (state is ExternalLoginSuccess) {
-            // ✅ التحقق من حالة البروفايل قبل التوجيه
+            final bool isCompany = state.userType == 'Company' || state.userType == 'company';
+            // ✅ التحقق من حالة البروفايل ونوع الحساب قبل التوجيه
             if (state.isProfileComplete) {
-              // 🏠 لو البروفايل كامل -> الصفحة الرئيسية
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const CustomBottomNavBarWrapper(),
-                ),
-                    (route) => false,
-              );
-            } else {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => BlocProvider(
-                    create: (context) =>
-                        ProfileSetupCubit(ApiService(), userToken: state.token),
-                    child: const AccountSetupView(),
+              // 🏠 لو البروفايل كامل -> الصفحة الرئيسية (توجيه حسب النوع)
+              if (isCompany) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CustomBottomNavBarWrapper(),
                   ),
-                ),
-                    (route) => false,
-              );
+                  (route) => false,
+                );
+              } else {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CustomBottomNavBarWrapperCandidate(),
+                  ),
+                  (route) => false,
+                );
+              }
+            } else {
+              if (isCompany) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider(
+                      create: (context) => SignUpCubit(),
+                      child: const SignUpProcess(),
+                    ),
+                  ),
+                  (route) => false,
+                );
+              } else {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider(
+                      create: (context) =>
+                          ProfileSetupCubit(ApiService(), userToken: state.token),
+                      child: const AccountSetupView(),
+                    ),
+                  ),
+                  (route) => false,
+                );
+              }
             }
           } else if (state is ExternalLoginFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                  content: Text(state.errorMsg), backgroundColor: Colors.red),
+                  content: Text(state.error), backgroundColor: Colors.red),
             );
           }
         },
@@ -153,12 +179,10 @@ class _CandidateSignUpState extends State<CandidateSignUpView> {
                           },
                         ),
                         const SizedBox(height: 24),
-                        BlocConsumer<CandidateRegisterCubit,
-                            CandidateRegisterState>(
+                        BlocConsumer<CandidateRegisterCubit, CandidateRegisterState>(
                           listener: (context, state) {
                             if (state is CandidateRegisterSuccess) {
-                              final cubit =
-                              context.read<CandidateRegisterCubit>();
+                              final cubit = context.read<CandidateRegisterCubit>();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -185,22 +209,20 @@ class _CandidateSignUpState extends State<CandidateSignUpView> {
                               onPressed: state is CandidateRegisterLoading
                                   ? null
                                   : () {
-                                final isValid =
-                                _formKey.currentState!.validate();
-                                if (!isValid) {
-                                  return;
-                                }
+                                      final isValid = _formKey.currentState!.validate();
+                                      if (!isValid) {
+                                        return;
+                                      }
 
-                                final cubit = context
-                                    .read<CandidateRegisterCubit>();
-                                cubit.saveFirstStep(
-                                  name: _nameController.text,
-                                  email: _emailController.text,
-                                  password: _passwordController.text,
-                                );
+                                      final cubit = context.read<CandidateRegisterCubit>();
+                                      cubit.saveFirstStep(
+                                        name: _nameController.text,
+                                        email: _emailController.text,
+                                        password: _passwordController.text,
+                                      );
 
-                                cubit.registerCandidate();
-                              },
+                                      cubit.registerCandidate();
+                                    },
                               title: state is CandidateRegisterLoading
                                   ? "Creating Account..."
                                   : "Create Account",
@@ -210,7 +232,7 @@ class _CandidateSignUpState extends State<CandidateSignUpView> {
                         const SizedBox(height: 24),
                         const OrDvider(),
                         const SizedBox(height: 24),
-                        const SocialButtons(type: 0,),
+                        const SocialButtons(type: "0",), 
                         const SizedBox(height: 24),
                         Footer(
                           onPressed: () {

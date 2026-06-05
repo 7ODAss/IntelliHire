@@ -34,13 +34,12 @@ class _SignUpLocationCompanyState extends State<SignUpLocationCompany> {
 
   @override
   void dispose() {
-    super.dispose();
     countryController.dispose();
     govController.dispose();
     addressController.dispose();
-    locationFormKey.currentState?.dispose();
     searchCountryController.dispose();
     searchGovController.dispose();
+    super.dispose();
   }
 
   @override

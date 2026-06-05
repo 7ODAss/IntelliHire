@@ -10,6 +10,7 @@ class ReportModel extends ReportEntity {
     super.accuracyPercent,
     super.strengthPoints,
     super.weaknessesPoints,
+    super.photo,
   });
 
   factory ReportModel.fromJson(Map<String, dynamic> json) {
@@ -22,6 +23,7 @@ class ReportModel extends ReportEntity {
       accuracyPercent: (json['accuracyPercent'] as num?)?.toDouble(),
       strengthPoints: json['strengthPoints']?.toString(),
       weaknessesPoints: json['weaknessesPoints']?.toString(),
+      photo: json['photo']?.toString() ?? json['photoUrl']?.toString(),
     );
   }
 }

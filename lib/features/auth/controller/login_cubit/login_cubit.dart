@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:intelli_hire/core/enums/request.dart';
 import 'package:intelli_hire/core/helpers/cache_helper.dart';
@@ -50,7 +49,7 @@ class LoginCubit extends Cubit<LoginState> {
           //print(value.data);
           loginModel = LoginModel.fromJson(value.data);
 
-          if (loginModel?.token != null) {
+          if (loginModel != null && loginModel!.isSuccess && loginModel!.token.isNotEmpty) {
             await CacheHelper.saveData(key: 'token', value: loginModel!.token);
             await CacheHelper.saveData(
               key: 'refreshToken',
@@ -64,15 +63,22 @@ class LoginCubit extends Cubit<LoginState> {
               key: 'userType',
               value: loginModel!.userType,
             );
-          }
 
-          emit(
-            state.copyWith(
-              loginState: RequestState.success,
-              loginModel: loginModel,
-              loginMessage: loginModel!.message,
-            ),
-          );
+            emit(
+              state.copyWith(
+                loginState: RequestState.success,
+                loginModel: loginModel,
+                loginMessage: loginModel!.message,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                loginState: RequestState.error,
+                loginMessage: loginModel?.message ?? 'Login failed. Please try again.',
+              ),
+            );
+          }
         })
         .catchError((error) {
           String message = 'Login failed. Please try again.';
@@ -82,6 +88,7 @@ class LoginCubit extends Cubit<LoginState> {
                 error.type == DioExceptionType.receiveTimeout ||
                 error.type == DioExceptionType.sendTimeout) {
               message = 'Connection timed out. Please check your internet.';
+              
             } else if (error.type == DioExceptionType.connectionError) {
               message = 'No internet connection or server is unreachable.';
             } else if (error.response?.data != null) {

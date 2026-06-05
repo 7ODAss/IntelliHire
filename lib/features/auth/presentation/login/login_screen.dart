@@ -5,12 +5,14 @@ import 'package:intelli_hire/features/auth/presentation/login/widget/login_page.
 
 import '../../../../core/utils/app_text_style.dart';
 import '../../../../core/utils/shared/auth_layout.dart';
+import '../../controller/external login/external_login_cubit.dart';
 import '../../controller/login_cubit/login_cubit.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  /// Pass 'Company' or 'Individual' (default) to control social login type.
+  final String userType;
+  const LoginScreen({super.key, this.userType = 'Individual'});
 
-  // lib/features/auth/presentation/login/login_screen.dart
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,8 +27,11 @@ class LoginScreen extends StatelessWidget {
             Text('Step into the future of hiring', style: AppTextStyle.loginSubTitleStyle),
           ],
         ),
-        bodyContent: BlocProvider(
-          create: (context) => LoginCubit(),
+        bodyContent: MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => LoginCubit()),
+            BlocProvider(create: (_) => ExternalLoginCubit()..initDeepLinkListener()),
+          ],
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [LogInPage(), const SizedBox(height: 100)],

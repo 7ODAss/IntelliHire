@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/utils/app_text_style.dart';
-import '../../../../auth/presentation/login/widget/button_action.dart';
-import '../../../../auth/presentation/login/widget/field_item.dart';
 import '../controller/profile_cubit.dart';
 import '../widgets/pop_action_menu.dart';
+import '../widgets2/change_password/company_login_security_screen.dart';
+import '../widgets2/delete_account_screen.dart';
 
 class CompanyLoginSecurityScreen extends StatelessWidget {
   const CompanyLoginSecurityScreen({super.key});
@@ -15,90 +14,171 @@ class CompanyLoginSecurityScreen extends StatelessWidget {
     final cubit = context.read<ProfileCubit>();
     return SafeArea(
       child: Scaffold(
+        backgroundColor: const Color(0xFFF8FAFC),
         body: Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: cubit.securityInfoKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                PopActionMenu(title: 'Login & Security',),
-                const SizedBox(height: 32),
-                FieldItem(
-                  controller: cubit.currentPassController,
-                  title: 'Current Password',
-                  hintText: 'Enter current password',
-                  type: TextInputType.text,
-                  prefixIcon: Icons.lock_outlined,
-                  prefixIconColor: Color(0xFFB4ADAE),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Password is required";
-                    }
-                    // if (!value.contains('gmail')) { //check if current password in like he write
-                    //   return "Don\'t your current password";
-                    // }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                FieldItem(
-                  controller: cubit.newPassController,
-                  title: 'New Password',
-                  hintText: 'Enter new password',
-                  type: TextInputType.visiblePassword,
-                  prefixIcon: Icons.lock_outlined,
-                  prefixIconColor: Color(0xFFB4ADAE),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Phone number is required";
-                    }
-                    if (value != cubit.currentPassController.toString()) {
-                      return "New password don't match current password";
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 48),
-                ButtonAction(
-                  title: 'Update Password',
-                  onPressed: () {
-                    if (cubit.securityInfoKey.currentState!.validate()) {
-                      // cubit.updateProfile();
-                    }
-                  },
-                ),
-                const SizedBox(height: 24),
-                const Divider(color: Color(0xFFD6D6D6)),
-                const SizedBox(height: 48),
-                Text('Account Management', style: AppTextStyle.fieldTitleStyle.copyWith(fontSize: 16)),
-                Text(
-                  'Deleting your account is a permanent action and cannot be undone.',
-                  style: AppTextStyle.fieldTitleStyle.copyWith(
-                    color: Color(0xFF475569),
-                  ),
-                ),
-                ListTile(
-                  contentPadding: EdgeInsetsGeometry.zero,
-                  horizontalTitleGap: 0,
-                  minLeadingWidth: 0,
-                  onTap: (){
-                    cubit.showDiscardDialog(context);
-                  } , // delete account function in cubit
-                  title: Text(
-                    'Delete Account',
-                    style: AppTextStyle.fieldTitleStyle.copyWith(
-                      color: Color(0xFFDC2626),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const PopActionMenu(title: 'Login & Security'),
+              const SizedBox(height: 32),
+              
+              // Change Password Card
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider.value(
+                        value: cubit,
+                        child: const CompanyChangePasswordScreen(),
+                      ),
                     ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.03),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  leading: Icon(
-                    Icons.delete_outline_outlined,
-                    size: 25,
-                    color: Color(0xFFDC2626),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF1F5F9),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.lock_outlined,
+                          color: Color(0xFF64748B),
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Change Password',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF0F172A),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'Update your account password',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFF64748B),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.chevron_right_outlined,
+                        color: Color(0xFF94A3B8),
+                        size: 24,
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              
+              const SizedBox(height: 32),
+              Text(
+                'Account Management',
+                style: AppTextStyle.fieldTitleStyle.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF0F172A),
+                ),
+              ),
+              const SizedBox(height: 16),
+              
+              // Delete Account Card
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider.value(
+                        value: cubit,
+                        child: const DeleteAccountScreen(),
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.03),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFEF2F2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.delete_outline_outlined,
+                          color: Color(0xFFEF4444),
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Delete Account',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFFEF4444),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'This action cannot be undone',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFFFCA5A5),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

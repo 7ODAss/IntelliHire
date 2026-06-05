@@ -142,7 +142,7 @@ class _ApplicantsScreenState extends State<ApplicantsScreen> {
                     return Skeletonizer(
                       enabled: isLoading,
                       child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        padding: const EdgeInsets.only(left: 24, right: 24, bottom: 100),
                         itemCount: itemCount,
                         itemBuilder: (context, index) {
                           if (isLoading) {
@@ -168,6 +168,7 @@ class _ApplicantsScreenState extends State<ApplicantsScreen> {
                           final applicantEntity =
                               state.filteredApplicants[index];
 
+                          final cached = ApplicantModel.sessionCache[applicantEntity.sessionId];
                           final applicantModel = ApplicantModel.fromJson({
                             "sessionId": applicantEntity.sessionId,
                             "name": applicantEntity.fullName,
@@ -176,7 +177,7 @@ class _ApplicantsScreenState extends State<ApplicantsScreen> {
                                     applicantEntity.currentRole!.isNotEmpty)
                                 ? applicantEntity.currentRole
                                 : "Candidate",
-                            "aiScore": (applicantEntity.overallScore ?? 0)
+                            "aiScore": cached?['score'] ?? (applicantEntity.overallScore ?? 0)
                                 .round()
                                 .toInt(),
                             "status": applicantEntity.status ?? "Pending",
@@ -186,6 +187,7 @@ class _ApplicantsScreenState extends State<ApplicantsScreen> {
                                 (applicantEntity.overallScore ?? 0),
                             "strengthPoints": "",
                             "weaknessPoints": "",
+                            "photo": cached?['photo'],
                           });
 
                           return ApplicantCard(

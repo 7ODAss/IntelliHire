@@ -10,8 +10,18 @@ class BasicApplicantModel extends BasicApplicantEntity {
   });
 
   factory BasicApplicantModel.fromJson(Map<String, dynamic> json) {
-    // 1. تحويل الـ status من رقم لـ نص يفهمه الـ UI
-    int statusCode = json['status'] ?? 0;
+    final rawStatus = json['status'];
+    int statusCode = 0;
+    if (rawStatus is int) {
+      statusCode = rawStatus;
+    } else if (rawStatus != null) {
+      final strStatus = rawStatus.toString().trim().toLowerCase();
+      if (strStatus == '1' || strStatus == 'accepted') {
+        statusCode = 1;
+      } else if (strStatus == '2' || strStatus == 'rejected') {
+        statusCode = 2;
+      }
+    }
     String mappedStatus = "Pending";
 
     if (statusCode == 0) {

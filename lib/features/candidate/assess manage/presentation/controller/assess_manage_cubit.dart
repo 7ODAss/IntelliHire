@@ -19,6 +19,7 @@ class AssessManageCubit extends Cubit<AssessManageState> {
   Future<void> loadAssessmentHistory() async {
     emit(state.copyWith(historyStatus: RequestState.loading));
     final result = await fetchHistoryUseCase(const NoParameters());
+    if (isClosed) return;
     result.fold(
       (failure) => emit(state.copyWith(
         historyStatus: RequestState.error,

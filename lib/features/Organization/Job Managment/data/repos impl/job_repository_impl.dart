@@ -34,8 +34,12 @@ class JobRepositoryImpl implements JobRepo {
       return const Right(null);
     } on DioException catch (e) {
       String errorMessage = 'Failed to delete job.';
-      if (e.response?.data is Map) {
-        errorMessage = e.response?.data['message'] ?? errorMessage;
+      if (e.response?.statusCode == 405) {
+        errorMessage = 'Method Not Allowed (Status 405): The server is blocking the delete method.';
+      } else if (e.response?.data is Map) {
+        errorMessage = e.response?.data['message'] ?? e.response?.data['error'] ?? errorMessage;
+      } else if (e.response?.data != null && e.response!.data.toString().isNotEmpty) {
+        errorMessage = e.response!.data.toString();
       }
       return Left(errorMessage);
     } catch (e) {

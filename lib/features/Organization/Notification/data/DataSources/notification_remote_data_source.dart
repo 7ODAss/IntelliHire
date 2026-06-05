@@ -3,7 +3,8 @@ import '../Models/notification_model.dart';
 
 abstract class NotificationRemoteDataSourceOrganization {
   Future<List<NotificationModel>> getNotifications();
-  Future<void> markAsRead(String notificationId); 
+  Future<void> markAllAsRead(); 
+  Future<void> deleteNotification(String notificationId); 
 }
 
 class NotificationRemoteDataSourceImplOrganization implements NotificationRemoteDataSourceOrganization {
@@ -13,16 +14,36 @@ class NotificationRemoteDataSourceImplOrganization implements NotificationRemote
 
   @override
   Future<List<NotificationModel>> getNotifications() async {
-    // 🔴 التعديل هنا: بنكلم الـ API الحقيقي بدل الداتا الوهمية
-    final response = await apiService.get(endPoint: 'api/notifications');
+    print("📡 [API] Sending GET request to: GetNotifications");
     
-    // بنحول الداتا اللي راجعة للـ Models
-    List<dynamic> data = response.data;
+    final response = await apiService.get(endPoint: 'GetNotifications');
+    print("📥 [API] Response received successfully!");
+    
+    List<dynamic> data = [];
+    if (response.data is List) {
+      data = response.data;
+    } else if (response.data is Map && response.data.containsKey('data')) {
+      data = response.data['data'];
+    } else {
+      data = response.data ?? response;
+    }
+    
     return data.map((json) => NotificationModel.fromJson(json)).toList();
   }
 
   @override
-  Future<void> markAsRead(String notificationId) async {
-    await apiService.patch(endPoint: 'api/notifications/$notificationId/read');
+  Future<void> markAllAsRead() async {
+    print("📡 [API] Sending PUT request to: MarkAllAsRead");
+    
+    await apiService.put(endPoint: 'MarkAllAsRead');
+  }
+
+  @override
+  Future<void> deleteNotification(String notificationId) async {
+    print("📡 [API] Sending PUT request to: MarkAsDeleted/$notificationId");
+    
+    // 🌟 التعديل الأهم: غيرنا apiService.delete إلى apiService.put
+    // 🌟 وغيرنا اسم المسار لـ MarkAsDeleted
+    await apiService.put(endPoint: 'MarkAsDeleted/$notificationId');
   }
 }

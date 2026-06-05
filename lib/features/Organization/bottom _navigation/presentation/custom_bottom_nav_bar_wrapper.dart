@@ -33,8 +33,6 @@ class CustomBottomNavBarWrapper extends StatelessWidget {
           providers: [
             // التحكم في الـ Navigation
             BlocProvider(create: (context) => BottomNavCubit()),
-
-            // إدارة الوظائف (يبدأ بجلب البيانات فوراً)
             BlocProvider(
               create: (context) => getIt<JobManagementCubit>()..fetchJobs(),
             ),
@@ -47,7 +45,8 @@ class CustomBottomNavBarWrapper extends StatelessWidget {
 
             // 🟢 الإشعارات: يتم تمرير التوكن المجلوب من الـ StorageService هنا
             BlocProvider(
-              create: (context) => getIt<NotificationCubit>()..initRealTimeNotifications(token),
+              create: (context) =>
+                  getIt<NotificationCubit>()..initRealTimeNotifications(),
             ),
             BlocProvider(create: (context) => getIt<ProfileCubit>()),
           ],

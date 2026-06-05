@@ -64,7 +64,12 @@ class SkillsView extends StatelessWidget {
                                 }
 
                                 if (typedSkill.isNotEmpty) {
-                                  if (cubit.addedSkills.contains(typedSkill)) {
+                                  var clean = typedSkill;
+                                  while (clean.endsWith(',') || clean.endsWith(' ')) {
+                                    clean = clean.substring(0, clean.length - 1).trim();
+                                  }
+                                  final formatted = '$clean,';
+                                  if (cubit.addedSkills.contains(formatted)) {
                                     return 'This skill is already added!';
                                   }
                                   return 'Please press (+) to add skill';
@@ -84,7 +89,12 @@ class SkillsView extends StatelessWidget {
                                     .trim();
 
                                 if (typedSkill.isNotEmpty) {
-                                  if (cubit.addedSkills.contains(typedSkill)) {
+                                  var clean = typedSkill;
+                                  while (clean.endsWith(',') || clean.endsWith(' ')) {
+                                    clean = clean.substring(0, clean.length - 1).trim();
+                                  }
+                                  final formatted = '$clean,';
+                                  if (cubit.addedSkills.contains(formatted)) {
                                     cubit.skillsKey.currentState?.validate();
                                   } else {
                                     cubit.addSkill();
@@ -139,7 +149,7 @@ class SkillsView extends StatelessWidget {
                         onPressed: cubit.previousStep,
                         text: 'Back',
                         textColor: AppColor.darkBlue,
-                        bgColor: Colors.white,
+                        bgColor: Colors.transparent,
                         borderColor: const Color(0xffD6D6D6),
                       ),
 

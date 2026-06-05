@@ -4,16 +4,18 @@ import 'package:intelli_hire/core/utils/app_font.dart';
 
 class PostJobStepper extends StatelessWidget {
   const PostJobStepper({super.key, required this.screenNumber});
+
   final int screenNumber;
+
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(3, (index) {
+      children: List.generate(4, (index) {
         return Row(
           children: [
             AnimatedContainer(
-              duration: Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
               width: 20,
               height: 20,
@@ -29,12 +31,12 @@ class PostJobStepper extends StatelessWidget {
                 ),
               ),
               child: AnimatedDefaultTextStyle(
-                duration: Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 style: TextStyle(
                   color: (screenNumber >= index)
                       ? Colors.white
-                      : Color(0xff475569),
+                      : const Color(0xff475569),
                   fontSize: 8,
                   fontFamily: AppFont.interRegular,
                   fontWeight: FontWeight.w400,
@@ -42,13 +44,13 @@ class PostJobStepper extends StatelessWidget {
                 child: Text('${index + 1}'),
               ),
             ),
-            if (index != 2)
+            if (index != 3)
               AnimatedContainer(
-                duration: Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 width: 50,
                 height: 1,
-                color: Color(0xffEAEDFE),
+                color: const Color(0xffEAEDFE),
               ),
           ],
         );

@@ -1,4 +1,4 @@
-import 'package:intelli_hire/features/Organization/Job%20Managment/domain/entities/job_entity.dart';
+import '../../domain/entities/job_entity.dart';
 
 class JobItemModel extends JobItemEntity {
   JobItemModel({
@@ -13,86 +13,91 @@ class JobItemModel extends JobItemEntity {
     super.careerLevel,
     super.experienceYears,
     super.requiredSkills,
+    super.category,
+    super.subCategory,
+    super.startedAt,
+    super.endedAt,
+    super.cvCount,
+    super.codingCount,
+    super.behavioralCount,
+    super.technicalCount,
   });
 
   factory JobItemModel.fromJson(Map<String, dynamic> json) {
+    print("JobItemModel.fromJson raw JSON map for job '${json['title']}': $json");
+
+    // 🌟 1. تأمين قراءة المهارات (من requiredSkills أو skillsAndTools)
+    List<String> parsedSkills = [];
+    final skillsData = json['requiredSkills'] ?? json['skillsAndTools'];
+    if (skillsData != null) {
+      if (skillsData is String) {
+        parsedSkills = skillsData.toString().split(',').map((e) => e.trim()).toList();
+      } else if (skillsData is List) {
+        parsedSkills = List<String>.from(skillsData);
+      }
+    }
+
+    String expStr = (json['experienceYears'] ?? '').toString();
+    String expNumOnly = expStr.replaceAll(RegExp(r'[^0-9]'), ''); 
+    int? expParsed = int.tryParse(expNumOnly);
+
+    int parseApplicantsCount(Map<String, dynamic> json) {
+      if (json['applicantsCount'] != null) {
+        return int.tryParse(json['applicantsCount'].toString()) ?? 0;
+      }
+      if (json['applicants'] != null) {
+        if (json['applicants'] is List) {
+          return (json['applicants'] as List).length;
+        }
+        return int.tryParse(json['applicants'].toString()) ?? 0;
+      }
+      if (json['users'] != null && json['users'] is List) {
+        return (json['users'] as List).length;
+      }
+      if (json['candidatesCount'] != null) {
+        return int.tryParse(json['candidatesCount'].toString()) ?? 0;
+      }
+      if (json['totalApplicants'] != null) {
+        return int.tryParse(json['totalApplicants'].toString()) ?? 0;
+      }
+      if (json['candidates'] != null) {
+        if (json['candidates'] is List) {
+          return (json['candidates'] as List).length;
+        }
+        return int.tryParse(json['candidates'].toString()) ?? 0;
+      }
+      return 0;
+    }
+
     return JobItemModel(
       id: json['id']?.toString() ?? '',
-      title: json['title'] ?? 'Untitled',
-      type: json['type'] ?? 'Full Time',
-
-      // 🔴 مسكنا الـ Location (locations)
-      location: json['locations'] ?? json['location'],
-
-      postedAt: _formatDate(
-        json['postedAt'] ?? json['startDateTime'] ?? json['createdAt'],
-      ),
-      applicantsCount: json['applicantsCount'] ?? json['applicants'] ?? 0,
-      description: json['description'],
-
-      // 🔴 مسكنا الـ Requirements (jobrequirements)
-      requirements: json['jobrequirements'] ?? json['requirements'] ?? '',
-
-      careerLevel: json['careerLevel'] ?? json['level'],
-
-      experienceYears: _parseExperience(
-        json['experienceYears'] ?? json['experience'],
-      ),
-
-      // 🔴 مسكنا الـ Skills (skillsAndTools)
-      requiredSkills: _parseSkills(
-        json['skillsAndTools'] ?? json['requiredSkills'],
-      ),
+      title: json['title']?.toString() ?? '',
+      type: json['type']?.toString() ?? '',
+      // دعمنا locations و location
+      location: json['location']?.toString() ?? json['locations']?.toString(),
+      postedAt: json['postedAt']?.toString() ?? '',
+      applicantsCount: parseApplicantsCount(json),
+      description: json['description']?.toString(),
+      
+      requirements: json['requirements']?.toString() ?? json['jobrequirements']?.toString(),
+      careerLevel: json['careerLevel']?.toString(),
+      
+      experienceYears: expParsed,
+      
+      requiredSkills: parsedSkills, 
+          
+      category: json['category']?.toString(),
+      
+      subCategory: json['subCategory']?.toString() ?? json['subCtegory']?.toString(),
+      
+      startedAt: json['startedAt']?.toString() ?? json['startDateTime']?.toString(),
+      endedAt: json['endedAt']?.toString() ?? json['endDateTime']?.toString(),
+      
+      cvCount: int.tryParse(json['cvCount']?.toString() ?? json['questionCount']?.toString() ?? json['questionsCount']?.toString() ?? '0'),
+      codingCount: int.tryParse(json['codingCount']?.toString() ?? '0'),
+      behavioralCount: int.tryParse(json['behavioralCount']?.toString() ?? '0'),
+      technicalCount: int.tryParse(json['technicalCount']?.toString() ?? '0'),
     );
-  }
-
-  static int? _parseExperience(dynamic value) {
-    if (value == null) return null;
-    if (value is int) return value;
-    if (value is String) {
-      final match = RegExp(r'(\d+)').firstMatch(value);
-      return match != null ? int.tryParse(match.group(0)!) : null;
-    }
-    return null;
-  }
-
-  static List<String> _parseSkills(dynamic value) {
-    if (value == null) return [];
-    // لو راجعة لستة جاهزة
-    if (value is List) return value.map((e) => e.toString()).toList();
-    // لو راجعة نص مفصول بفاصلة
-    if (value is String && value.isNotEmpty) {
-      return value
-          .split(',')
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
-          .toList();
-    }
-    return [];
-  }
-
-  static String _formatDate(String? isoDate) {
-    if (isoDate == null) return "Recently";
-    try {
-      DateTime date = DateTime.parse(isoDate);
-      List<String> months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-      return "Posted ${months[date.month - 1]} ${date.day}, ${date.year}";
-    } catch (e) {
-      return "Recently";
-    }
   }
 }
 
@@ -107,11 +112,11 @@ class JobManagementModel extends JobManagementEntity {
     return JobManagementModel(
       activeJobs: json['activeJobs'] ?? 0,
       totalApplicants: json['totalApplicants'] ?? 0,
-      jobs:
-          (json['jobs'] as List?)
-              ?.map((job) => JobItemModel.fromJson(job))
-              .toList() ??
-          [],
+      jobs: json['jobs'] != null
+          ? List<JobItemModel>.from(
+              (json['jobs'] as List).map((x) => JobItemModel.fromJson(x)),
+            )
+          : [],
     );
   }
 }

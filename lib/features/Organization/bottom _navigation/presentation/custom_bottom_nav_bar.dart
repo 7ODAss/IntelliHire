@@ -10,15 +10,11 @@ import 'package:intelli_hire/features/Organization/Post%20Job/presentation/contr
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/post_job_view.dart';
 import 'package:intelli_hire/features/Organization/bottom%20_navigation/controller/bottom_nav_cubit.dart';
 import 'package:intelli_hire/features/Organization/bottom%20_navigation/presentation/widget/nav_item.dart';
-
-import '../../Profile/presentation/profile_view.dart';
+import 'package:intelli_hire/features/Organization/Notification/presentation/controller/NotificationCubit/notification_cubit.dart';
+import 'package:intelli_hire/features/Organization/Notification/presentation/controller/NotificationCubit/notification_state.dart';
 
 class CustomBottomNavBar extends StatefulWidget {
   const CustomBottomNavBar({super.key});
-
-  static CustomBottomNavBarState? of(BuildContext context) {
-    return context.findAncestorStateOfType<CustomBottomNavBarState>();
-  }
 
   @override
   State<CustomBottomNavBar> createState() => CustomBottomNavBarState();
@@ -42,13 +38,12 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<BottomNavCubit, BottomNavState>(
-      builder: (context, state) {
+      builder: (context, navState) {
         return Scaffold(
           extendBody: true,
           resizeToAvoidBottomInset: false,
-
           body: IndexedStack(
-            index: state.index,
+            index: navState.index,
             children: List.generate(rootScreens.length, (index) {
               return Navigator(
                 key: navigatorKeys[index],
@@ -58,44 +53,21 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
               );
             }),
           ),
-
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: state.index != 3
+          floatingActionButton: navState.index != 3
               ? SizedBox(
                   width: 60,
                   height: 60,
                   child: FloatingActionButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (newContext) => MultiBlocProvider(
-                            providers: [
-                              BlocProvider.value(
-                                value: context.read<PostJobCubit>(),
-                              ),
-                              BlocProvider.value(
-                                value: context.read<JobManagementCubit>(),
-                              ),
-                              // 🔴 ضفنا ده هنا عشان الـ PostJobView تعرف تنادي دالة الـ changeIndex(0)
-                              BlocProvider.value(
-                                value: context.read<BottomNavCubit>(),
-                              ),
-                            ],
-                            child: const PostJobView(),
-                          ),
-                        ),
-                      );
-                    },
+                    onPressed: () => _goToPostJob(context),
                     backgroundColor: AppColor.primary,
                     shape: const CircleBorder(),
                     child: const Icon(Icons.add, size: 36, color: Colors.white),
                   ),
                 )
               : null,
-
-          bottomNavigationBar: state.index != 3
+          bottomNavigationBar: navState.index != 3
               ? BottomAppBar(
                   shape: const CircularNotchedRectangle(),
                   notchMargin: 10,
@@ -109,30 +81,79 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
                           NavItem(
                             iconPath: "assets/image/icon svg/home.svg",
                             height: 26,
-                            onPressed: () => _onNavItemTapped(0, state.index),
-                            isActive: state.index == 0,
+                            onPressed: () =>
+                                _onNavItemTapped(0, navState.index),
+                            isActive: navState.index == 0,
                           ),
                           const SizedBox(width: 32),
                           NavItem(
                             iconPath: "assets/image/icon svg/suitcase.svg",
                             height: 22,
-                            onPressed: () => _onNavItemTapped(1, state.index),
-                            isActive: state.index == 1,
+                            onPressed: () =>
+                                _onNavItemTapped(1, navState.index),
+                            isActive: navState.index == 1,
                           ),
                         ],
                       ),
                       Row(
                         children: [
-                          NavItem(
-                            iconPath: "assets/image/icon svg/bell.svg",
-                            onPressed: () => _onNavItemTapped(2, state.index),
-                            isActive: state.index == 2,
+                          // 🌟 الجرس مع الـ Badge
+                          BlocBuilder<NotificationCubit, NotificationState>(
+                            builder: (context, notifState) {
+                              int unreadCount = 0;
+                              if (notifState is NotificationLoaded) {
+                                unreadCount = notifState.notifications
+                                    .where((n) => n.isRead == false)
+                                    .length;
+                              }
+
+                              return Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  NavItem(
+                                    iconPath: "assets/image/icon svg/bell.svg",
+                                    onPressed: () {
+                                      // 🌟 بنفتح الصفحة بس من غير ما نبعت أمر الـ markAllAsRead
+                                      _onNavItemTapped(2, navState.index);
+                                    },
+                                    isActive: navState.index == 2,
+                                  ),
+                                  // 🌟 النقطة بتختفي لوحدها طول ما إحنا جوة صفحة الإشعارات
+                                  if (unreadCount > 0 && navState.index != 2)
+                                    Positioned(
+                                      right: 0,
+                                      top: -5,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: const BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        constraints: const BoxConstraints(
+                                          minWidth: 18,
+                                          minHeight: 18,
+                                        ),
+                                        child: Text(
+                                          '$unreadCount',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              );
+                            },
                           ),
                           const SizedBox(width: 32),
                           NavItem(
                             iconPath: "assets/image/icon svg/profile.svg",
-                            isActive: state.index == 3,
-                            onPressed: () => _onNavItemTapped(3, state.index),
+                            isActive: navState.index == 3,
+                            onPressed: () =>
+                                _onNavItemTapped(3, navState.index),
                           ),
                         ],
                       ),
@@ -151,7 +172,26 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
         (route) => route.isFirst,
       );
     } else {
+      if (currentIndex == 2) {
+        context.read<NotificationCubit>().markAllAsRead();
+      }
       context.read<BottomNavCubit>().changeIndex(tappedIndex);
     }
+  }
+
+  void _goToPostJob(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (newContext) => MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: context.read<PostJobCubit>()),
+            BlocProvider.value(value: context.read<JobManagementCubit>()),
+            BlocProvider.value(value: context.read<BottomNavCubit>()),
+          ],
+          child: const PostJobView(),
+        ),
+      ),
+    );
   }
 }

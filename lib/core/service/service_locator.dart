@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:intelli_hire/features/candidate/Notification/domain/Repos/candidate_notfication_repo.dart';
 import 'package:intelli_hire/features/candidate/home/data/datasources/home_remote_datasource.dart';
 import 'package:intelli_hire/features/candidate/home/domain/repositories/base_home_repository.dart';
 import 'package:intelli_hire/features/candidate/home/domain/usecases/get_home_summary_usecase.dart';
@@ -25,6 +26,16 @@ import '../../features/Organization/Profile/data/datasource/user_profile_datasou
 import '../../features/Organization/Profile/data/repo/user_profile_repo.dart';
 import '../../features/Organization/Profile/domain/repo/base_user_profile_repo.dart';
 import '../../features/Organization/Profile/domain/usecase/user_profile_log_out_usecase.dart';
+import '../../features/Organization/Profile/domain/usecase/update_company_info_usecase.dart';
+import '../../features/Organization/Profile/domain/usecase/update_company_about_usecase.dart';
+import '../../features/Organization/Profile/domain/usecase/get_company_account_usecase.dart';
+import '../../features/Organization/Profile/domain/usecase/change_email_password_request_usecase.dart';
+import '../../features/Organization/Profile/domain/usecase/change_email_request_usecase.dart';
+import '../../features/Organization/Profile/domain/usecase/change_email_confirm_usecase.dart';
+import '../../features/Organization/Profile/domain/usecase/request_password_change_usecase.dart';
+import '../../features/Organization/Profile/domain/usecase/send_otp_usecase.dart';
+import '../../features/Organization/Profile/domain/usecase/confirm_password_change_usecase.dart';
+import '../../features/Organization/Profile/domain/usecase/delete_company_account_usecase.dart';
 import '../../features/Organization/Profile/presentation/controller/profile_cubit.dart';
 
 // ── Candidate: Assess Manage ─────────────────────────────────────────────────
@@ -50,9 +61,17 @@ import '../../features/candidate/new assess/domain/usecases/submit_interview_use
 import '../../features/candidate/new assess/presentation/controller/assessment_session_cubit.dart';
 // ── Candidate: Notifications ─────────────────────────────────────────────────
 
+// ── Candidate: Notifications (الـ Imports الجديدة مع Aliases لمنع التعارض) ───
+import '../../features/candidate/Notification/data/DataSources/candidate_notification_remote_data_source.dart';
+import '../../features/candidate/Notification/data/repos_impl/candidate_notification_repository_impl.dart';
+import '../../features/candidate/Notification/domain/Usecases/get_notifications_usecase.dart' as cand_get;
+import '../../features/candidate/Notification/domain/Usecases/delete_notification_usecase.dart' as cand_delete;
+import '../../features/candidate/Notification/domain/Usecases/mark_notification_as_read_usecase.dart' as cand_read;
+import '../../features/candidate/Notification/presentation/controller/NotificationCubit/CandidateNotificationCubit.dart';
+
 // ── Candidate: Profile ───────────────────────────────────────────────────────
-import '../../features/candidate/notification/data/datasources/notification_remote_datasource.dart';
-import '../../features/candidate/notification/data/repositories/notification_repository_impl.dart';
+import '../../features/candidate/Notification/data/datasources/notification_remote_datasource.dart';
+import '../../features/candidate/Notification/data/repositories/notification_repository_impl.dart';
 import '../../features/candidate/profile/data/datasources/candidate_profile_remote_datasource.dart';
 import '../../features/candidate/profile/data/repositories/candidate_profile_repository_impl.dart';
 import '../../features/candidate/profile/domain/repositories/base_candidate_profile_repository.dart';
@@ -60,6 +79,7 @@ import '../../features/candidate/profile/domain/usecases/change_career_details_u
 import '../../features/candidate/profile/domain/usecases/change_password_candidate_usecase.dart';
 import '../../features/candidate/profile/domain/usecases/delete_account_candidate_usecase.dart';
 import '../../features/candidate/profile/domain/usecases/fetch_candidate_profile_usecases.dart';
+import '../../features/candidate/profile/domain/usecases/profile_usecases.dart' hide FetchCandidateProfileUseCase;
 import '../../features/candidate/profile/domain/usecases/log_out_user_candidate_profile_usecase.dart';
 import '../../features/candidate/profile/presentation/controller/candidate_profile_cubit.dart';
 
@@ -85,10 +105,12 @@ import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/
 import 'package:intelli_hire/features/Organization/Job%20Managment/presentation/controller/job_management_cubit/job_management_cubit.dart';
 
 // ================= Notification Imports =================
+// ================= Organization Notification Imports =================
 import 'package:intelli_hire/features/Organization/Notification/data/DataSources/notification_remote_data_source.dart';
 import 'package:intelli_hire/features/Organization/Notification/data/repos_impl/notification_repository_impl.dart';
 import 'package:intelli_hire/features/Organization/Notification/domain/Repos/notfication_repo.dart';
 import 'package:intelli_hire/features/Organization/Notification/domain/Usecases/get_notifications_usecase.dart';
+import 'package:intelli_hire/features/Organization/Notification/domain/Usecases/delete_notification_usecase.dart';
 import 'package:intelli_hire/features/Organization/Notification/domain/Usecases/mark_notification_as_read_usecase.dart';
 import 'package:intelli_hire/features/Organization/Notification/presentation/controller/NotificationCubit/notification_cubit.dart';
 
@@ -108,25 +130,47 @@ class ServiceLocator {
     // ────────────────────────────────────────────────────────────────────────
     // Organization (existing)
     // ────────────────────────────────────────────────────────────────────────
-    getIt.registerFactory(() => ProfileCubit(getIt()));
+    getIt.registerFactory(() => ProfileCubit(
+      getIt(),
+      getIt(),
+      getIt(),
+      getIt(),
+      getIt(),
+      getIt(),
+      getIt(),
+      getIt(),
+      getIt(),
+      getIt(),
+      getIt(),
+    ));
     getIt.registerLazySingleton<BaseUserProfileDataSource>(
-      () => UserProfileDataSource(),
+          () => UserProfileDataSource(),
     );
     getIt.registerLazySingleton<BaseUserProfileRepo>(
-      () => UserProfileRepo(getIt()),
+          () => UserProfileRepo(getIt()),
     );
     getIt.registerLazySingleton(() => LogOutUserProfileUseCase(getIt()));
+    getIt.registerLazySingleton(() => UpdateCompanyInfoUseCase(getIt()));
+    getIt.registerLazySingleton(() => UpdateCompanyAboutUseCase(getIt()));
+    getIt.registerLazySingleton(() => GetCompanyAccountUseCase(getIt()));
+    getIt.registerLazySingleton(() => ChangeEmailPasswordRequestUseCase(getIt()));
+    getIt.registerLazySingleton(() => ChangeEmailRequestUseCase(getIt()));
+    getIt.registerLazySingleton(() => ChangeEmailConfirmUseCase(getIt()));
+    getIt.registerLazySingleton(() => RequestPasswordChangeUseCase(getIt()));
+    getIt.registerLazySingleton(() => SendOtpUseCase(getIt()));
+    getIt.registerLazySingleton(() => ConfirmPasswordChangeUseCase(getIt()));
+    getIt.registerLazySingleton(() => DeleteCompanyAccountUseCase(getIt()));
 
     // ────────────────────────────────────────────────────────────────────────
     // Candidate: Assess Manage
     // ────────────────────────────────────────────────────────────────────────
     // DataSource
     getIt.registerLazySingleton<BaseAssessManageDataSource>(
-      () => AssessManageRemoteDataSource(),
+          () => AssessManageRemoteDataSource(),
     );
     // Repository
     getIt.registerLazySingleton<BaseAssessManageRepository>(
-      () => AssessManageRepositoryImpl(getIt()),
+          () => AssessManageRepositoryImpl(getIt()),
     );
     // UseCases
     getIt.registerLazySingleton(() => FetchAssessmentHistoryUseCase(getIt()));
@@ -139,11 +183,11 @@ class ServiceLocator {
     // ────────────────────────────────────────────────────────────────────────
     // DataSource
     getIt.registerLazySingleton<BaseNewAssessDataSource>(
-      () => NewAssessRemoteDataSource(),
+          () => NewAssessRemoteDataSource(),
     );
     // Repository
     getIt.registerLazySingleton<BaseNewAssessRepository>(
-      () => NewAssessRepositoryImpl(getIt()),
+          () => NewAssessRepositoryImpl(getIt()),
     );
     // UseCases
     getIt.registerLazySingleton(() => FetchAssessmentQuestionsUseCase(getIt()));
@@ -153,7 +197,7 @@ class ServiceLocator {
     getIt.registerLazySingleton(() => GetCandidateCvUseCase(getIt()));
     // Cubit (factory — new instance per assessment session)
     getIt.registerFactory(
-      () => AssessmentSessionCubit(getIt(), getIt(), getIt(), getIt(), getIt()),
+          () => AssessmentSessionCubit(getIt(), getIt(), getIt(), getIt(), getIt()),
     );
 
     // ────────────────────────────────────────────────────────────────────────
@@ -164,27 +208,27 @@ class ServiceLocator {
     // Candidate: Home
     // ────────────────────────────────────────────────────────────────────────
     getIt.registerLazySingleton<BaseHomeDataSource>(
-      () => HomeRemoteDataSource(),
+          () => HomeRemoteDataSource(),
     );
     getIt.registerLazySingleton<BaseHomeRepository>(
-      () => HomeRepositoryImpl(getIt()),
+          () => HomeRepositoryImpl(getIt()),
     );
     getIt.registerLazySingleton(() => GetHomeSummaryUseCase(getIt()));
     getIt.registerLazySingleton(() => GetNextWeekUseCase(getIt()));
     getIt.registerLazySingleton(() => GetPrevWeekUseCase(getIt()));
     getIt.registerLazySingleton(() => ResetWeekUseCase(getIt()));
     getIt.registerLazySingleton<HomeCubitCandidate>(
-      () => HomeCubitCandidate(getIt(), getIt(), getIt(), getIt()),
+          () => HomeCubitCandidate(getIt(), getIt(), getIt(), getIt()),
     );
 
     // ────────────────────────────────────────────────────────────────────────
     // Candidate: Profile
     // ────────────────────────────────────────────────────────────────────────
     getIt.registerLazySingleton<BaseCandidateProfileDataSource>(
-      () => CandidateProfileRemoteDataSource(),
+          () => CandidateProfileRemoteDataSource(),
     );
     getIt.registerLazySingleton<BaseCandidateProfileRepository>(
-      () => CandidateProfileRepositoryImpl(getIt()),
+          () => CandidateProfileRepositoryImpl(getIt()),
     );
     getIt.registerLazySingleton(() => FetchCandidateProfileUseCase(getIt()));
     getIt.registerLazySingleton(() => ChangePersonalInfoUsecase(getIt()));
@@ -192,10 +236,10 @@ class ServiceLocator {
     getIt.registerLazySingleton(() => DeleteAccountCandidateUseCase(getIt()));
     getIt.registerLazySingleton(() => ChangeCareerDetailsUseCase(getIt()));
     getIt.registerLazySingleton(
-      () => LogOutUserCandidateProfileUseCase(getIt()),
+          () => LogOutUserCandidateProfileUseCase(getIt()),
     );
     getIt.registerLazySingleton(
-      () => ChangeEmailEnterCurrentPasswordUseCase(getIt()),
+          () => ChangeEmailEnterCurrentPasswordUseCase(getIt()),
     );
     getIt.registerLazySingleton(() => ChangeEmailEnterNewEmailUseCase(getIt()));
     getIt.registerLazySingleton(() => ChangeEmailOtpUseCase(getIt()));
@@ -203,7 +247,7 @@ class ServiceLocator {
     getIt.registerLazySingleton(() => ChangePasswordOtpCheckUseCase(getIt()));
     getIt.registerLazySingleton(() => ChangePasswordVerifyUseCase(getIt()));
     getIt.registerFactory<CandidateProfileCubit>(
-      () => CandidateProfileCubit(
+          () => CandidateProfileCubit(
         getIt(),
         getIt(),
         getIt(),
@@ -219,7 +263,7 @@ class ServiceLocator {
       ),
     );
 
-    ////////////////////       OMAR     //////////////////////////////////////////////////
+    ////////////////////       OMAR    //////////////////////////////////////////////////
     // 0. Core Services
     if (!getIt.isRegistered<ApiService>()) {
       getIt.registerLazySingleton<ApiService>(() => ApiService());
@@ -227,7 +271,7 @@ class ServiceLocator {
 
     if (!getIt.isRegistered<NotificationHubService>()) {
       getIt.registerLazySingleton<NotificationHubService>(
-        () => NotificationHubService(),
+            () => NotificationHubService(),
       );
     }
 
@@ -235,20 +279,13 @@ class ServiceLocator {
 
     // ================= 1. Home Dashboard =================
     getIt.registerLazySingleton<HomeRemoteDataSourceOrganization>(
-      //edit this HomeRemoteDataSourceOrganization
-      () => HomeRemoteDataSourceImpl(getIt()),
+          () => HomeRemoteDataSourceImpl(getIt()),
     );
-    getIt.registerLazySingleton<HomeRepoOrganization>(
-      () => HomeRepositoryImplOrganization(getIt()),
-    ); //edit this HomeRepositoryImplOrganization
+    getIt.registerLazySingleton<HomeRepoOrganization>(() => HomeRepositoryImplOrganization(getIt()));
     getIt.registerLazySingleton<GetDashboardUseCase>(
-      () => GetDashboardUseCase(getIt()),
+          () => GetDashboardUseCase(getIt()),
     );
-
-    // 🟢 تم التغيير من registerFactory إلى registerLazySingleton لضمان تحديث الواجهة من أي مكان
-    getIt.registerLazySingleton<HomeOrganizationCubit>(
-      () => HomeOrganizationCubit(getIt()),
-    ); //edit this
+    getIt.registerLazySingleton<HomeOrganizationCubit>(() => HomeOrganizationCubit(getIt()));
 
     // ================= 2. Review Session & Decisions =================
     getIt.registerLazySingleton(() => SubmitDecisionUseCase(getIt()));
@@ -257,15 +294,14 @@ class ServiceLocator {
 
     // ================= 3. Job Management & Applicants =================
     getIt.registerLazySingleton<JobRemoteDataSource>(
-      () => JobRemoteDataSourceImpl(getIt()),
+          () => JobRemoteDataSourceImpl(getIt()),
     );
     getIt.registerLazySingleton<ApplicantsRemoteDataSource>(
-      () => ApplicantsRemoteDataSourceImpl(getIt()),
+          () => ApplicantsRemoteDataSourceImpl(getIt()),
     );
-
     getIt.registerLazySingleton<JobRepo>(() => JobRepositoryImpl(getIt()));
     getIt.registerLazySingleton<ApplicantsRepo>(
-      () => ApplicantsRepositoryImpl(getIt()),
+          () => ApplicantsRepositoryImpl(getIt()),
     );
 
     getIt.registerLazySingleton(() => GetJobsUseCase(getIt()));
@@ -275,16 +311,15 @@ class ServiceLocator {
     getIt.registerLazySingleton(() => UpdateJobUseCase(getIt<JobRepo>()));
     getIt.registerLazySingleton(() => GetJobDetailsUseCase(getIt<JobRepo>()));
 
-    // 🟢 يفضل أيضاً جعل JobManagementCubit سينجلتون لو كنت عايز التغييرات تسمع فيه من شاشات تانية
-    getIt.registerLazySingleton<JobManagementCubit>(
-      () => JobManagementCubit(
+    getIt.registerFactory<JobManagementCubit>(
+          () => JobManagementCubit(
         getIt<GetJobsUseCase>(),
         getIt<DeleteJobUseCase>(),
       ),
     );
 
     getIt.registerFactory(
-      () => ApplicantsCubit(
+          () => ApplicantsCubit(
         getJobApplicantsUseCase: getIt(),
         getApplicantPreviewUseCase: getIt(),
         submitDecisionUseCase: getIt(),
@@ -293,47 +328,85 @@ class ServiceLocator {
 
     // ================= 4. Post Job =================
     getIt.registerLazySingleton<PostJobRemoteDataSource>(
-      () => PostJobRemoteDataSourceImpl(getIt()),
+          () => PostJobRemoteDataSourceImpl(getIt()),
     );
     getIt.registerLazySingleton<PostJobRepo>(
-      () => PostJobRepositoryImpl(getIt()),
+          () => PostJobRepositoryImpl(getIt()),
     );
 
     getIt.registerLazySingleton(() => PostJobUseCase(getIt()));
     getIt.registerLazySingleton(() => GetCompanyLocationsUseCase(getIt()));
 
-    getIt.registerFactory(
-      () => PostJobCubit(
-        postJobUseCase: getIt<PostJobUseCase>(),
-        updateJobUseCase: getIt<UpdateJobUseCase>(),
-        getJobDetailsUseCase: getIt<GetJobDetailsUseCase>(),
-        getCompanyLocationsUseCase: getIt<GetCompanyLocationsUseCase>(),
-      ),
-    );
+    getIt.registerFactory(() => PostJobCubit(
+      postJobUseCase: getIt<PostJobUseCase>(),
+      updateJobUseCase: getIt<UpdateJobUseCase>(),
+      getJobDetailsUseCase: getIt<GetJobDetailsUseCase>(),
+      getCompanyLocationsUseCase: getIt<GetCompanyLocationsUseCase>(),
+    ));
 
-    // ================= 5. Notifications =================
+    // ================= 5. Organization Notifications =================
     getIt.registerLazySingleton<NotificationRemoteDataSourceOrganization>(
-      () => NotificationRemoteDataSourceImplOrganization(getIt()),
+          () => NotificationRemoteDataSourceImplOrganization(getIt()),
     );
 
-    getIt.registerLazySingleton<NotificationRepository>(
-      () => NotificationRepositoryImpl(
-        getIt<NotificationRemoteDataSourceOrganization>(),
-      ),
+    getIt.registerLazySingleton<BaseNotificationRepository>(
+          () => NotificationRepositoryImpl(remoteDataSource: getIt<NotificationRemoteDataSourceOrganization>()),
     );
 
     getIt.registerLazySingleton(
-      () => GetNotificationsUseCase(getIt<NotificationRepository>()),
+          () => GetNotificationsUseCase(getIt<BaseNotificationRepository>()),
     );
+
     getIt.registerLazySingleton(
-      () => MarkNotificationAsReadUseCase(getIt<NotificationRepository>()),
+          () => MarkAllNotificationsAsReadUseCase(getIt<BaseNotificationRepository>()),
+    );
+
+    getIt.registerLazySingleton(
+          () => DeleteNotificationUseCase(getIt<BaseNotificationRepository>()),
     );
 
     getIt.registerFactory(
-      () => NotificationCubit(
+          () => NotificationCubit(
         getNotificationsUseCase: getIt<GetNotificationsUseCase>(),
-        markAsReadUseCase: getIt<MarkNotificationAsReadUseCase>(),
+        markAllAsReadUseCase: getIt<MarkAllNotificationsAsReadUseCase>(),
+        deleteNotificationUseCase: getIt<DeleteNotificationUseCase>(),
         hubService: getIt<NotificationHubService>(),
+      ),
+    );
+
+    // ================= 6. Candidate Notifications =================
+
+    // ================= 6. Candidate Notifications =================
+
+    getIt.registerLazySingleton(
+          () => CandidateNotificationRemoteDataSource(getIt()),
+    );
+
+    // 2. Repository (🌟 التعديل هنا: حددنا النوع الصريح اللي الـ UseCase بيطلبه)
+    getIt.registerLazySingleton<CandidateNotficationRepo>(
+          () => CandidateNotificationRepositoryImpl(remoteDataSource: getIt()),
+    );
+
+    // 3. UseCases
+    getIt.registerLazySingleton(
+          () => cand_get.GetNotificationsUseCase(getIt()),
+    );
+
+    getIt.registerLazySingleton(
+          () => cand_read.MarkAllNotificationsAsReadUseCase(getIt()),
+    );
+
+    getIt.registerLazySingleton(
+          () => cand_delete.DeleteNotificationUseCase(getIt()),
+    );
+
+    // 4. Cubit
+    getIt.registerFactory(
+          () => CandidateNotificationcubit(
+        getNotificationsUseCase: getIt(),
+        markAllAsReadUseCase: getIt(),
+        deleteNotificationUseCase: getIt(),
+        hubService: getIt(),
       ),
     );
   }

@@ -26,11 +26,13 @@ class UploadCvCandidate extends StatelessWidget {
 
         if (state.cvUploadStatus == RequestState.initial) {
           return UploadCvIdleState(onPressed: cubit.pickCv, isDisabled: false);
+          return UploadCvIdleState(onPressed: cubit.pickCv);
         }
 
         if (state.cvUploadStatus == RequestState.loading) {
           final fileName =
               state.selectedCvFile?.path.split('/').last ?? 'Uploading...';
+
           return UploadCvUploadingState(
             progress: state.cvUploadProgress,
             fileName: fileName,
@@ -47,6 +49,7 @@ class UploadCvCandidate extends StatelessWidget {
             onClear: cubit.clearCv,
             onPressed: cubit.pickCv,
             isDisabled: false,
+
           );
         }
 
@@ -54,6 +57,7 @@ class UploadCvCandidate extends StatelessWidget {
           return Column(
             children: [
               UploadCvIdleState(onPressed: cubit.pickCv, isDisabled: false),
+              UploadCvIdleState(onPressed: cubit.pickCv),
               const SizedBox(height: 12),
               Text(
                 state.cvErrorMessage,
@@ -63,6 +67,7 @@ class UploadCvCandidate extends StatelessWidget {
           );
         }
         return UploadCvIdleState(onPressed: cubit.pickCv, isDisabled: false);
+        return UploadCvIdleState(onPressed: cubit.pickCv);
       },
     );
   }

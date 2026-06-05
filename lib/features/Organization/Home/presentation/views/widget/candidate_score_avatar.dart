@@ -10,12 +10,30 @@ class CandidateScoreAvatar extends StatelessWidget {
   final ApplicantModel applicant;
   @override
   Widget build(BuildContext context) {
+    final cached = ApplicantModel.sessionCache[applicant.sessionId];
+    final displayPhoto = cached?['photo']?.toString() ?? applicant.photo;
+    
+    int displayScore = applicant.aiScore;
+    if (cached != null && cached['score'] != null) {
+      final rawScore = cached['score'];
+      if (rawScore is num) {
+        displayScore = rawScore.toInt();
+      } else if (rawScore is String) {
+        displayScore = double.tryParse(rawScore.replaceAll(RegExp(r'[^\d.]'), '').trim())?.toInt() ?? displayScore;
+      }
+    }
+
     return Column(
       children: [
         Stack(
           clipBehavior: Clip.none,
           children: [
-            CustomAvatar(name: applicant.name, height: 96, width: 96),
+            CustomAvatar(
+              name: applicant.name,
+              height: 96,
+              width: 96,
+              photoUrl: displayPhoto,
+            ),
             Positioned(
               top: -12,
               right: -18,
@@ -25,20 +43,20 @@ class CandidateScoreAvatar extends StatelessWidget {
                   color: Colors.white,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: applicant.aiScore > 80
+                    color: displayScore > 80
                         ? const Color(0xFF15803D)
-                        : (applicant.aiScore > 50
+                        : (displayScore > 50
                               ? const Color(0xFFCA8A04)
                               : const Color(0xFFDC2626)),
                     width: 2,
                   ),
                 ),
                 child: Text(
-                  "${applicant.aiScore}%",
+                  "$displayScore%",
                   style: AppTextStyle.textstyle12.copyWith(
-                    color: applicant.aiScore > 80
+                    color: displayScore > 80
                         ? const Color(0xFF15803D)
-                        : (applicant.aiScore > 50
+                        : (displayScore > 50
                               ? const Color(0xFFCA8A04)
                               : const Color(0xFFDC2626)),
                   ),

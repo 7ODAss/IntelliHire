@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
+import 'package:intelli_hire/core/utils/app_text_style.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/controller/post_job_cubit.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/controller/post_job_state.dart';
 import 'package:intelli_hire/features/Organization/Post%20Job/presentation/widget/custom_dropdown_menu.dart';
@@ -45,6 +47,7 @@ class BasicInformationView extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
+
                       PostJobTextField(
                         title: 'Job Title',
                         hint: 'e.g. Junior React Developer',
@@ -57,71 +60,279 @@ class BasicInformationView extends StatelessWidget {
                         },
                       ),
                       const SizedBox(height: 12),
+
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
-                            child: CustomDropdownMenu(
-                              title: "Career Level",
-                              hint: "Junior",
-                              items: const [
-                                'Junior',
-                                'Mid-Level',
-                                'Senior',
-                                'Team Lead',
-                              ],
-                              value: cubit.selectedCareerLevel,
-                              onChanged: (val) => cubit.updateCareerLevel(val),
+                            child: FormField<String>(
+                              validator: (_) {
+                                if (cubit.selectedCareerLevel == null ||
+                                    cubit.selectedCareerLevel!.isEmpty) {
+                                  return 'Required';
+                                }
+                                return null;
+                              },
+                              builder: (field) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CustomDropdownMenu(
+                                      title: "Career Level",
+                                      hint: "Junior",
+                                      items: const [
+                                        "Intern",
+                                        'Junior',
+                                        'Mid-Level',
+                                        'Senior',
+                                        'Team Lead',
+                                      ],
+                                      value: cubit.selectedCareerLevel,
+                                      onChanged: (val) {
+                                        cubit.updateCareerLevel(val);
+                                        field.didChange(val);
+                                      },
+                                    ),
+                                    if (field.hasError)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 4,
+                                          left: 8,
+                                        ),
+                                        child: Text(
+                                          field.errorText!,
+                                          style: const TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                );
+                              },
                             ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
-                            child: CustomDropdownMenu(
-                              title: "Experience",
-                              hint: '0 to 1 Years',
-                              items: const [
-                                "0 to 1 Years",
-                                "1 to 3 Years",
-                                "3 to 5 Years",
-                                "+5 Years",
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Experience (Years)",
+                                  style: AppTextStyle.textstyle14.copyWith(
+                                    color: AppColor.darkBlue,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                TextFormField(
+                                  controller: cubit.expController,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                  decoration: InputDecoration(
+                                    hintText: 'e.g. 2',
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey.shade400,
+                                      fontSize: 14,
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 15,
+                                    ),
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                        color: Color(0xffD6D6D6),
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                        color: AppColor.primary,
+                                      ),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.trim().isEmpty) {
+                                      return 'Required';
+                                    }
+                                    return null;
+                                  },
+                                ),
                               ],
-                              value: cubit.selectedExperience,
-                              onChanged: (val) => cubit.updateExperience(val),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 12),
-                      const Text('Job Type'),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          PostJobChoiceChip(
-                            label: 'Full Time',
-                            isSelected: cubit.selectedJobType == 0,
-                            onTap: () => cubit.updateJobType(0),
-                          ),
-                          PostJobChoiceChip(
-                            label: 'Part Time',
-                            isSelected: cubit.selectedJobType == 1,
-                            onTap: () => cubit.updateJobType(1),
-                          ),
-                          PostJobChoiceChip(
-                            label: 'Remote',
-                            isSelected: cubit.selectedJobType == 2,
-                            onTap: () => cubit.updateJobType(2),
-                          ),
-                        ],
+
+                      FormField<String>(
+                        validator: (_) {
+                          if (cubit.selectedCategoryLabel == null ||
+                              cubit.selectedCategoryLabel!.isEmpty) {
+                            return 'Please select a category';
+                          }
+                          return null;
+                        },
+                        builder: (field) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomDropdownMenu(
+                                title: "Category",
+                                hint: "Select Category",
+                                items: cubit.jobCategories
+                                    .map((c) => c['label']!)
+                                    .toList(),
+                                value: cubit.selectedCategoryLabel,
+                                onChanged: (val) {
+                                  cubit.updateCategory(val);
+                                  field.didChange(val);
+                                },
+                              ),
+                              if (field.hasError)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 4,
+                                    left: 8,
+                                  ),
+                                  child: Text(
+                                    field.errorText!,
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(height: 12),
-                      // 🔴 التعديل النهائي لمكان الوظيفة
-                      CustomDropdownMenu(
-                        title: "Location",
-                        hint: 'No location', // الـ Default اللي طلبته
-                        items: cubit
-                            .availableLocations, // اللستة اللي جاية من السيرفر فقط
-                        value: cubit.selectedLocation,
-                        onChanged: (val) => cubit.updateLocation(val),
+
+                      FormField<String>(
+                        validator: (_) {
+                          if (cubit.selectedSubCategoryLabel == null ||
+                              cubit.selectedSubCategoryLabel!.isEmpty) {
+                            return 'Please select a subcategory';
+                          }
+                          return null;
+                        },
+                        builder: (field) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomDropdownMenu(
+                                title: "Subcategory",
+                                hint: 'Select Subcategory',
+                                items: cubit.getAvailableSubCategoryLabels(),
+                                value: cubit.selectedSubCategoryLabel,
+                                onChanged: (val) {
+                                  cubit.updateSubCategory(val);
+                                  field.didChange(val);
+                                },
+                              ),
+                              if (field.hasError)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 4,
+                                    left: 8,
+                                  ),
+                                  child: Text(
+                                    field.errorText!,
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 12),
+
+                      FormField<int>(
+                        validator: (_) {
+                          if (cubit.selectedJobType == -1) {
+                            return 'Please select a job type';
+                          }
+                          return null;
+                        },
+                        builder: (field) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Job Type",
+                                style: AppTextStyle.textstyle14.copyWith(
+                                  color: AppColor.darkBlue,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  PostJobChoiceChip(
+                                    label: 'Full Time',
+                                    isSelected: cubit.selectedJobType == 0,
+                                    onTap: () {
+                                      cubit.updateJobType(0);
+                                      field.didChange(0);
+                                    },
+                                  ),
+                                  PostJobChoiceChip(
+                                    label: 'Part Time',
+                                    isSelected: cubit.selectedJobType == 1,
+                                    onTap: () {
+                                      cubit.updateJobType(1);
+                                      field.didChange(1);
+                                    },
+                                  ),
+                                  PostJobChoiceChip(
+                                    label: 'Remote',
+                                    isSelected: cubit.selectedJobType == 2,
+                                    onTap: () {
+                                      cubit.updateJobType(2);
+                                      field.didChange(2);
+                                    },
+                                  ),
+                                ],
+                              ),
+                              // إظهار نص الخطأ لو موجود
+                              if (field.hasError)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 8,
+                                    left: 8,
+                                  ),
+                                  child: Text(
+                                    field.errorText!,
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -142,7 +353,8 @@ class BasicInformationView extends StatelessWidget {
                       PostJobButton(
                         flex: 2,
                         onPressed: () {
-                          if (cubit.validateBasicInfo()) {
+                          if (cubit.basicInfoKey.currentState!.validate() &&
+                              cubit.validateBasicInfo()) {
                             cubit.nextStep();
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(

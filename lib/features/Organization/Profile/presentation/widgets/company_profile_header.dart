@@ -7,7 +7,14 @@ import '../../../../../core/utils/shared/get_initials.dart';
 class CompanyProfileHeader extends StatelessWidget {
   final String name;
   final String email;
-  const CompanyProfileHeader({super.key, required this.name, required this.email});
+  final String? imageUrl;
+
+  const CompanyProfileHeader({
+    super.key,
+    required this.name,
+    required this.email,
+    this.imageUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,16 +32,24 @@ class CompanyProfileHeader extends StatelessWidget {
                   color: AppColor.iconProfileBorderColor,
                   width: 1.5,
                 ),
-                borderRadius: BorderRadius.all(Radius.circular(150)),
+                shape: BoxShape.circle,
+                image: (imageUrl != null && imageUrl!.isNotEmpty)
+                    ? DecorationImage(
+                        image: NetworkImage(imageUrl!),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
               ),
-              child: Center(
-                child: Text(
-                  GetInitials.getInitials(name),
-                  style: AppTextStyle.iconNamePostScreen,
-                ),
-              ),
+              child: (imageUrl == null || imageUrl!.isEmpty)
+                  ? Center(
+                      child: Text(
+                        GetInitials.getInitials(name),
+                        style: AppTextStyle.iconNamePostScreen,
+                      ),
+                    )
+                  : null,
             ),
-            const SizedBox(width: 16),
+            const SizedBox(height: 16),
             Text(
               name,
               style: AppTextStyle.accountNamePostScreen,
