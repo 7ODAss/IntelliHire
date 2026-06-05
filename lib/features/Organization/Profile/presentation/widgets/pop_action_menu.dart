@@ -20,7 +20,7 @@ class PopActionMenu extends StatelessWidget {
             : CustomPopButton(onTap: fun),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 90),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
               title!,
               textAlign: TextAlign.center,

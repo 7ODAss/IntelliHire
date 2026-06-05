@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intelli_hire/core/models/applicant_model.dart';
 import 'package:intelli_hire/core/service/service_locator.dart';
 import 'package:intelli_hire/features/Organization/Home/domain/usecases/get_top_talent_usecase.dart';
 import 'package:intelli_hire/features/Organization/Home/domain/usecases/submit_decision_usecase.dart';
@@ -18,7 +19,7 @@ class ReviewSessionCubit extends Cubit<ReviewSessionState> {
 
     result.fold((failure) => emit(ReviewSessionError(failure)), (candidates) {
       final pendingCandidates = candidates
-          .where((a) => a.status == "Pending")
+          .where((a) => a.status == "Pending" && !ApplicantModel.processedSessionIds.contains(a.sessionId))
           .toList();
 
       if (pendingCandidates.isEmpty) {
@@ -36,10 +37,11 @@ class ReviewSessionCubit extends Cubit<ReviewSessionState> {
 
     final result = await submitDecisionUseCase.execute(sessionId, status);
 
-    result.fold((failure) => emit(ReviewDecisionError(failure)), (success) {
+    result.fold((failure) => emit(ReviewDecisionError(failure)), (success) async {
+      await ApplicantModel.markSessionAsProcessed(sessionId);
       emit(ReviewDecisionSuccess());
 
-      getIt<HomeOrganizationCubit>().fetchDashboard();
+      getIt<HomeOrganizationCubit>().fetchDashboard(showLoading: false);
     });
   }
 }

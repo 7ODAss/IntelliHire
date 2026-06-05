@@ -16,14 +16,18 @@ class JobManagementCubit extends Cubit<JobManagementState> {
   ) : super(JobManagementInitial());
 
   Future<void> fetchJobs() async {
+    if (isClosed) return;
     emit(JobManagementLoading());
     final result = await getJobsUseCase.execute();
     
+    if (isClosed) return;
     result.fold(
-      (error) => emit(JobManagementError(error)),
+      (error) {
+        if (!isClosed) emit(JobManagementError(error));
+      },
       (data) {
         originalData = data;
-        emit(JobManagementLoaded(data));
+        if (!isClosed) emit(JobManagementLoaded(data));
       }
     );
   }
@@ -32,7 +36,7 @@ class JobManagementCubit extends Cubit<JobManagementState> {
     if (originalData == null) return;
 
     if (query.isEmpty) {
-      emit(JobManagementLoaded(originalData!));
+      if (!isClosed) emit(JobManagementLoaded(originalData!));
       return;
     }
     
@@ -40,23 +44,30 @@ class JobManagementCubit extends Cubit<JobManagementState> {
       return job.title.toLowerCase().contains(query.toLowerCase());
     }).toList();
 
-    emit(JobManagementLoaded(
-      JobManagementEntity(
-        activeJobs: filteredJobs.length,
-        totalApplicants: originalData!.totalApplicants,
-        jobs: filteredJobs,
-      ),
-    ));
+    if (!isClosed) {
+      emit(JobManagementLoaded(
+        JobManagementEntity(
+          activeJobs: filteredJobs.length,
+          totalApplicants: originalData!.totalApplicants,
+          jobs: filteredJobs,
+        ),
+      ));
+    }
   }
 
   Future<void> deleteJob(String jobId) async {
     final result = await deleteJobUseCase.execute(jobId);
     
+    if (isClosed) return;
     result.fold(
-      (error) => emit(JobManagementError(error)), 
+      (error) {
+        if (!isClosed) emit(JobManagementError(error));
+      }, 
       (_) {
-        emit(JobDeletedSuccess()); 
-        fetchJobs(); 
+        if (!isClosed) {
+          emit(JobDeletedSuccess()); 
+          fetchJobs(); 
+        }
       }
     );
   }

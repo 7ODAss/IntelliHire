@@ -17,14 +17,16 @@ class PopActionMenu extends StatelessWidget {
 
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 90),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
               title!,
+              textAlign: TextAlign.center,
               style: AppTextStyle.titlePostScreen,
               overflow: TextOverflow.ellipsis,
             ),
           ),
         ),
+        const SizedBox(width: 40),
       ],
     );
   }

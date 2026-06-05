@@ -311,7 +311,7 @@ class ServiceLocator {
     getIt.registerLazySingleton(() => UpdateJobUseCase(getIt<JobRepo>()));
     getIt.registerLazySingleton(() => GetJobDetailsUseCase(getIt<JobRepo>()));
 
-    getIt.registerLazySingleton<JobManagementCubit>(
+    getIt.registerFactory<JobManagementCubit>(
           () => JobManagementCubit(
         getIt<GetJobsUseCase>(),
         getIt<DeleteJobUseCase>(),

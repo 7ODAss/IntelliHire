@@ -21,17 +21,30 @@ class CompanyPhotoPicker extends StatefulWidget {
 
 class _ProfilePhotoPickerState extends State<CompanyPhotoPicker> {
   File? _image;
+  bool _isPicking = false;
 
   Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (_isPicking) return;
+    setState(() {
+      _isPicking = true;
+    });
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-      // 🌟 هنا بننده على الـ Callback ونبعتله الصورة لبرة
-      widget.onImageSelected(_image!);
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+        // 🌟 هنا بننده على الـ Callback ونبعتله الصورة لبرة
+        widget.onImageSelected(_image!);
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isPicking = false;
+        });
+      }
     }
   }
 
