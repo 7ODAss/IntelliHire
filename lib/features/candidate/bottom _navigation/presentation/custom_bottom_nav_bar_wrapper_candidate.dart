@@ -25,9 +25,11 @@ class CustomBottomNavBarWrapperCandidate extends StatelessWidget {
             BlocProvider(
               create: (context) => BottomNavCandidateCubit(),
             ),
-            BlocProvider(
-              create: (context) => getIt<CandidateNotificationcubit>(),
-              lazy: false,
+            // BlocProvider.value — never calls .close() on the cubit.
+            // CandidateNotificationcubit is a lazySingleton that owns the
+            // single SignalR connection; closing it would kill the hub.
+            BlocProvider.value(
+              value: getIt<CandidateNotificationcubit>(),
             ),
           ],
           child: const CustomBottomNavBar(),

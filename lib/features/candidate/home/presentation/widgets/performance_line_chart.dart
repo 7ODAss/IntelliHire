@@ -38,6 +38,10 @@ class _PerformanceLineChartState extends State<PerformanceLineChart> {
           // 🌟 الطريقة الجديدة لتخصيص لون الخلفية
           getTooltipColor: (touchedSpot) => Colors.white,
 
+          // ✅ Constrain tooltip inside the card — prevents overflow at edges
+          fitInsideHorizontally: true,
+          fitInsideVertically: true,
+
           // 🌟 الطريقة الجديدة للـ Padding والحواف الدائرية
           tooltipPadding: const EdgeInsets.all(8),
           tooltipBorder: BorderSide(color: Colors.white),

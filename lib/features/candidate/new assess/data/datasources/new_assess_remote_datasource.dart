@@ -110,7 +110,7 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
       $cvJson
 
       TASK:
-      CRITICAL: Generate EXACTLY 2 professional, unique assessment questions.
+      CRITICAL: Generate EXACTLY 10 professional, unique assessment questions.
 
       STRICT PERSONALIZATION & VARIETY RULES:
       1. Contextualize: Use the candidate's actual projects as the basis.

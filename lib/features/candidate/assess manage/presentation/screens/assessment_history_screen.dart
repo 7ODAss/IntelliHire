@@ -49,53 +49,88 @@ class AssessmentHistoryScreen extends StatelessWidget {
       body: BlocBuilder<AssessManageCubit, AssessManageState>(
         buildWhen: (prev, curr) => prev.historyStatus != curr.historyStatus,
         builder: (context, state) {
+          // ── Error state: pull-to-refresh still works via CustomScrollView ──
           if (state.historyStatus == RequestState.error) {
-            return CandidateErrorWidget(
-              message: state.errorMessage,
-              onRetry: () =>
-                  context.read<AssessManageCubit>().loadAssessmentHistory(),
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<AssessManageCubit>().loadAssessmentHistory();
+              },
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: CandidateErrorWidget(
+                      message: state.errorMessage,
+                      onRetry: () =>
+                          context.read<AssessManageCubit>().loadAssessmentHistory(),
+                    ),
+                  ),
+                ],
+              ),
             );
           }
 
           final isLoading = state.historyStatus != RequestState.success;
           final assessments = isLoading ? _dummyList : state.assessments;
 
+          // ── Empty state: pull-to-refresh still works via CustomScrollView ──
           if (!isLoading && assessments.isEmpty) {
-            return const EmptyAssessmentWidget();
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<AssessManageCubit>().loadAssessmentHistory();
+              },
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  const SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: EmptyAssessmentWidget(),
+                  ),
+                ],
+              ),
+            );
           }
 
-          return Skeletonizer(
-            enabled: isLoading,
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: assessments.length,
-              itemBuilder: (context, index) {
-                return AssessmentCard(
-                  assessment: assessments[index],
-                  onTap: () {
-                    if (!isLoading) {
-                      context.read<AssessManageCubit>().loadPerformanceReport(
-                        assessments[index].sessionId,
-                      );
+          // ── Normal / loading state ──
+          return RefreshIndicator(
+            onRefresh: () async {
+              context.read<AssessManageCubit>().loadAssessmentHistory();
+            },
+            child: Skeletonizer(
+              enabled: isLoading,
+              child: ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(16),
+                itemCount: assessments.length,
+                itemBuilder: (context, index) {
+                  return AssessmentCard(
+                    assessment: assessments[index],
+                    onTap: () {
+                      if (!isLoading) {
+                        context.read<AssessManageCubit>().loadPerformanceReport(
+                          assessments[index].sessionId,
+                        );
 
-                      final String userJobTitle =
-                          getIt<AssessmentSessionCubit>().state.cv?.jobTitle ??
-                          assessments[index].title;
+                        final String userJobTitle =
+                            getIt<AssessmentSessionCubit>().state.cv?.jobTitle ??
+                            assessments[index].title;
 
-                      Navigator.of(context, rootNavigator: true).push(
-                        MaterialPageRoute(
-                          builder: (_) => BlocProvider.value(
-                            value: context.read<AssessManageCubit>(),
-                            child: PerformanceReportFromCubitScreen(
-                              jobTitle: userJobTitle,
+                        Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(
+                            builder: (_) => BlocProvider.value(
+                              value: context.read<AssessManageCubit>(),
+                              child: PerformanceReportFromCubitScreen(
+                                jobTitle: userJobTitle,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    }
-                  },
-                );
-              },
+                        );
+                      }
+                    },
+                  );
+                },
+              ),
             ),
           );
         },

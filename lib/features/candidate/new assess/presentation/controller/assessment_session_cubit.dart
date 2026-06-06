@@ -47,7 +47,7 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
     return super.close();
   }
 
-  final int _totalAssessmentMinutes = 3;
+  final int _totalAssessmentMinutes = 10;
 
   // 🌟 دالة بداية الامتحان والتايمر
   void startAssessmentTimer() {

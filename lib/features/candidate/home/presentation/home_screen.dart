@@ -74,19 +74,29 @@ class _HomeScreenState extends State<HomeScreen> {
             return previous.homeSummaryStatus != current.homeSummaryStatus;
           },
           builder: (context, state) {
+            // Shared refresh callback — the _isLoadingHome guard inside the
+            // cubit safely prevents duplicate in-flight requests.
+            Future<void> onRefresh() async {
+              await context.read<HomeCubitCandidate>().loadHomeData();
+            }
+
             switch (state.homeSummaryStatus) {
               case RequestState.error:
-                return CustomScrollView(
-                  slivers: [
-                    SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: CandidateErrorWidget(
-                        message: state.homeSummaryMessage,
-                        onRetry: () =>
-                            context.read<HomeCubitCandidate>().loadHomeData(),
+                return RefreshIndicator(
+                  onRefresh: onRefresh,
+                  child: CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: CandidateErrorWidget(
+                          message: state.homeSummaryMessage,
+                          onRetry: () =>
+                              context.read<HomeCubitCandidate>().loadHomeData(),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
 
               case RequestState.initial:
@@ -102,51 +112,55 @@ class _HomeScreenState extends State<HomeScreen> {
                 final interviews =
                     state.homeSummary?.interviewSummary ?? _emptyInterviews;
 
-                return Skeletonizer(
-                  enabled: isLoading,
-                  child: CustomScrollView(
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: RepaintBoundary(
-                          child:
-                              BlocSelector<
-                                HomeCubitCandidate,
-                                HomeState,
-                                TrainingPerformance
-                              >(
-                                selector: (state) =>
-                                    state.homeSummary?.trainingPerformance ??
-                                    _emptyPerformance,
-                                builder: (context, performance) {
-                                  return Header(performance: performance);
-                                },
-                              ),
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: RepaintBoundary(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
-                            child: (performance.totalExams != 0)
-                                ? TrainingPerformanceCard(
-                                    performance: performance,
-                                    cubit: context.read<HomeCubitCandidate>(),
-                                  )
-                                : const EmptyScreen(),
+                return RefreshIndicator(
+                  onRefresh: onRefresh,
+                  child: Skeletonizer(
+                    enabled: isLoading,
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: RepaintBoundary(
+                            child:
+                                BlocSelector<
+                                  HomeCubitCandidate,
+                                  HomeState,
+                                  TrainingPerformance
+                                >(
+                                  selector: (state) =>
+                                      state.homeSummary?.trainingPerformance ??
+                                      _emptyPerformance,
+                                  builder: (context, performance) {
+                                    return Header(performance: performance);
+                                  },
+                                ),
                           ),
                         ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: RepaintBoundary(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
-                            child: InterviewsSummarySection(
-                              interviews: interviews,
+                        SliverToBoxAdapter(
+                          child: RepaintBoundary(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+                              child: (performance.totalExams != 0)
+                                  ? TrainingPerformanceCard(
+                                      performance: performance,
+                                      cubit: context.read<HomeCubitCandidate>(),
+                                    )
+                                  : const EmptyScreen(),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                        SliverToBoxAdapter(
+                          child: RepaintBoundary(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
+                              child: InterviewsSummarySection(
+                                interviews: interviews,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
             }

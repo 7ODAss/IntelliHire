@@ -400,8 +400,11 @@ class ServiceLocator {
           () => cand_delete.DeleteNotificationUseCase(getIt()),
     );
 
-    // 4. Cubit
-    getIt.registerFactory(
+    // 4. Cubit — lazySingleton so there is always exactly ONE instance and ONE
+    //    SignalR connection. registerFactory caused a new cubit (and a second
+    //    hub.initHub call) every time the BlocProvider rebuilt, leading to the
+    //    concurrent connect/disconnect race that crashed the app on startup.
+    getIt.registerLazySingleton(
           () => CandidateNotificationcubit(
         getNotificationsUseCase: getIt(),
         markAllAsReadUseCase: getIt(),

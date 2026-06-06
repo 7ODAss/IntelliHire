@@ -43,22 +43,34 @@ class ProfileScreenCandidate extends StatelessWidget {
             switch (state.status) {
               case RequestState.error:
                 return Scaffold(
-                  body: Column(
-                    children: [
-                      PopActionMenu(
-                        title: 'Account Profile',
-                        fun: context
-                            .read<BottomNavCandidateCubit>()
-                            .goBackToPrevious,
-                      ),
-                      Center(
-                        child: CandidateErrorWidget(
-                          message: state.candidateProfileMessage,
-                          onRetry: () => cubit
-                              .loadProfile(), // 🌟 زرار الـ Retry يعيد طلب داتا البروفايل
+                  body: RefreshIndicator(
+                    onRefresh: () async => cubit.loadProfile(),
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: Column(
+                            children: [
+                              PopActionMenu(
+                                title: 'Account Profile',
+                                fun: context
+                                    .read<BottomNavCandidateCubit>()
+                                    .goBackToPrevious,
+                              ),
+                              Expanded(
+                                child: Center(
+                                  child: CandidateErrorWidget(
+                                    message: state.candidateProfileMessage,
+                                    onRetry: () => cubit.loadProfile(),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
 
@@ -69,120 +81,132 @@ class ProfileScreenCandidate extends StatelessWidget {
                 final hasPhoto = photoUrl != null && photoUrl.trim().isNotEmpty;
 
                 return Scaffold(
-                  body: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          PopActionMenu(
-                            title: 'Account Profile',
-                            fun: context
-                                .read<BottomNavCandidateCubit>()
-                                .goBackToPrevious,
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              const Spacer(),
-                              Column(
-                                children: [
-                                  Container(
-                                    height: 120,
-                                    width: 120,
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: BoxDecoration(
-                                      color: AppColor.iconProfileColor,
-                                      border: Border.all(
-                                        color: AppColor.iconProfileBorderColor,
-                                        width: 1.5,
+                  body: RefreshIndicator(
+                    onRefresh: () async => cubit.loadProfile(),
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            PopActionMenu(
+                              title: 'Account Profile',
+                              fun: context
+                                  .read<BottomNavCandidateCubit>()
+                                  .goBackToPrevious,
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              children: [
+                                const Spacer(),
+                                Column(
+                                  children: [
+                                    Container(
+                                      height: 120,
+                                      width: 120,
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: BoxDecoration(
+                                        color: AppColor.iconProfileColor,
+                                        border: Border.all(
+                                          color:
+                                              AppColor.iconProfileBorderColor,
+                                          width: 1.5,
+                                        ),
+                                        shape: BoxShape.circle,
                                       ),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: hasPhoto
-                                        ? CachedNetworkImage(
-                                            imageUrl: photoUrl,
-                                            fit: BoxFit.cover,
-                                            placeholder: (context, url) =>
-                                                const Center(
-                                                  child: SizedBox(
-                                                    width: 24,
-                                                    height: 24,
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                          strokeWidth: 2,
-                                                        ),
-                                                  ),
-                                                ),
-                                            errorWidget:
-                                                (context, url, error) => Center(
-                                                  child: Text(
-                                                    GetInitials.getInitials(
-                                                      state
-                                                              .candidateProfileModel
-                                                              ?.fullName ??
-                                                          name,
+                                      child: hasPhoto
+                                          ? CachedNetworkImage(
+                                              imageUrl: photoUrl,
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) =>
+                                                  const Center(
+                                                    child: SizedBox(
+                                                      width: 24,
+                                                      height: 24,
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                            strokeWidth: 2,
+                                                          ),
                                                     ),
-                                                    style: AppTextStyle
-                                                        .iconNamePostScreen,
                                                   ),
+                                              errorWidget:
+                                                  (
+                                                    context,
+                                                    url,
+                                                    error,
+                                                  ) => Center(
+                                                    child: Text(
+                                                      GetInitials.getInitials(
+                                                        state
+                                                                .candidateProfileModel
+                                                                ?.fullName ??
+                                                            name,
+                                                      ),
+                                                      style: AppTextStyle
+                                                          .iconNamePostScreen,
+                                                    ),
+                                                  ),
+                                            )
+                                          : Center(
+                                              child: Text(
+                                                GetInitials.getInitials(
+                                                  state
+                                                          .candidateProfileModel
+                                                          ?.fullName ??
+                                                      name,
                                                 ),
-                                          )
-                                        : Center(
-                                            child: Text(
-                                              GetInitials.getInitials(
-                                                state
-                                                        .candidateProfileModel
-                                                        ?.fullName ??
-                                                    name,
+                                                style: AppTextStyle
+                                                    .iconNamePostScreen,
                                               ),
-                                              style: AppTextStyle
-                                                  .iconNamePostScreen,
                                             ),
-                                          ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    state.candidateProfileModel?.fullName ??
-                                        name,
-                                    style: AppTextStyle.accountNamePostScreen,
-                                  ),
-                                  Text(
-                                    state.candidateProfileModel?.email ?? email,
-                                    style:
-                                        AppTextStyle.accountSubNamePostScreen,
-                                  ),
-                                ],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      state.candidateProfileModel?.fullName ??
+                                          name,
+                                      style: AppTextStyle.accountNamePostScreen,
+                                    ),
+                                    Text(
+                                      state.candidateProfileModel?.email ??
+                                          email,
+                                      style:
+                                          AppTextStyle.accountSubNamePostScreen,
+                                    ),
+                                  ],
+                                ),
+                                const Spacer(),
+                              ],
+                            ),
+                            const SizedBox(height: 32),
+
+                            AccountOption(cubit: cubit),
+
+                            const SizedBox(height: 24),
+                            CareerOption(cubit: cubit),
+                            const SizedBox(height: 48),
+                            BlocListener<
+                              CandidateProfileCubit,
+                              CandidateProfileState
+                            >(
+                              listener: (context, state) {
+                                if (state.userProfileCandidateLogOutState ==
+                                    RequestState.success) {
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const LoginScreen(),
+                                    ),
+                                    (route) => false,
+                                  );
+                                }
+                              },
+                              child: CustomLogOutButton(
+                                onPressed: cubit.logout,
                               ),
-                              const Spacer(),
-                            ],
-                          ),
-                          const SizedBox(height: 32),
-
-                          AccountOption(cubit: cubit),
-
-                          const SizedBox(height: 24),
-                          CareerOption(cubit: cubit),
-                          const SizedBox(height: 48),
-                          BlocListener<
-                            CandidateProfileCubit,
-                            CandidateProfileState
-                          >(
-                            listener: (context, state) {
-                              if (state.userProfileCandidateLogOutState ==
-                                  RequestState.success) {
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const LoginScreen(),
-                                  ),
-                                  (route) => false,
-                                );
-                              }
-                            },
-                            child: CustomLogOutButton(onPressed: cubit.logout),
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

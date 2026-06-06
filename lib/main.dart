@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +19,32 @@ import 'features/auth/controller/external login/external_login_cubit.dart';
 
 
 void main() async {
+  await runZonedGuarded(_appMain, (error, stack) {
+    // Catches all unhandled exceptions thrown inside Futures, Streams,
+    // and callbacks (including SignalR) that escape the default zone.
+    debugPrint('🔥 [UNHANDLED ZONE ERROR] $error');
+    debugPrint('$stack');
+  });
+}
+
+Future<void> _appMain() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Catches synchronous Flutter framework errors (widget build exceptions, etc.)
+  FlutterError.onError = (FlutterErrorDetails details) {
+    debugPrint('🔥 [FLUTTER ERROR] ${details.exceptionAsString()}');
+    debugPrint('${details.stack}');
+    // Still pass to the default handler so red-screen shows in debug mode.
+    FlutterError.presentError(details);
+  };
+
+  // Catches platform-channel and async errors not covered by FlutterError.
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint('🔥 [PLATFORM ERROR] $error');
+    debugPrint('$stack');
+    return true; // returning true suppresses the default crash dialog
+  };
+
   CacheHelper.init();
   DioConfig.init();
   //await CacheHelper.clearData();

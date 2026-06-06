@@ -159,7 +159,10 @@ class TrainingPerformanceCard extends StatelessWidget {
                 final maxVal = activity.isEmpty
                     ? 0
                     : activity.reduce((a, b) => a > b ? a : b);
-                final scores = performance.dailyAverageScores;
+                // ✅ Read scores from weekActivity state when available,
+                // falling back to the initial performance data.
+                final scores =
+                    state?.dailyAverageScores ?? performance.dailyAverageScores;
                 return Skeleton.replace(
                   replacement: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -185,26 +188,6 @@ class TrainingPerformanceCard extends StatelessWidget {
                       weekDays:
                           cubit.weekDays, // باصينا أيام الأسبوع من الكيوبت
                       examsTakenList: activity, // عدد الامتحانات اليومية
-                      /* examsTakenList: [
-                        2,
-                        3,
-                        1,
-                        4,
-                        5,
-                        2,
-                        3,
-                      ], // باصينا عدد الامتحانات اليومية من الكيو 
-                      */
-                      /* scores: [
-                        50,
-                        75.2,
-                        60.7,
-                        85.9,
-                        90,
-                        70,
-                        80,
-                      ], // باصينا الدرجات من الكيوبت
-                       */
                     ),
                   ),
                 );
