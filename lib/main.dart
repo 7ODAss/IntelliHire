@@ -17,7 +17,6 @@ import 'features/Organization/bottom _navigation/presentation/custom_bottom_nav_
 import 'features/candidate/bottom _navigation/presentation/custom_bottom_nav_bar_wrapper_candidate.dart';
 import 'features/auth/controller/external login/external_login_cubit.dart';
 
-
 void main() async {
   await runZonedGuarded(_appMain, (error, stack) {
     // Catches all unhandled exceptions thrown inside Futures, Streams,
@@ -73,7 +72,7 @@ Future<void> _appMain() async {
       widget = const CustomBottomNavBarWrapperCandidate();
     }
   } else {
-    widget = const SplashView();
+    widget = const LoginScreen();
   }
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -102,7 +101,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-
     return BlocProvider(
       create: (context) => ExternalLoginCubit()..initDeepLinkListener(),
       child: MaterialApp(
@@ -112,7 +110,6 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData.light().copyWith(
           scaffoldBackgroundColor: const Color(0xffF8FAFC),
         ),
-
       ),
     );
   }

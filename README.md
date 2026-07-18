@@ -2,13 +2,13 @@
 
 # 🧠 IntelliHire
 
-**AI-Powered Intelligent Hiring & Interview Assessment Platform**
+### An AI-powered recruitment platform connecting companies and candidates through automated interview assessments, real-time insights, and intelligent talent evaluation.
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
 [![Bloc](https://img.shields.io/badge/State-Cubit%2FBloc-1F8EF1?style=for-the-badge)](https://bloclibrary.dev)
 [![Groq AI](https://img.shields.io/badge/AI-Groq%20%7C%20Whisper-FF4B4B?style=for-the-badge)](https://groq.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![SignalR](https://img.shields.io/badge/Real--Time-SignalR-512BD4?style=for-the-badge)](https://dotnet.microsoft.com/apps/aspnet/signalr)
 
 _A production-ready Flutter mobile application that bridges the gap between employers and candidates using AI-generated interviews, voice assessment, and real-time notifications._
 
@@ -173,20 +173,39 @@ IntelliHire integrates **Groq** as its AI backbone for two core capabilities:
 
 ## 📸 Screenshots
 
-> **TODO:** Add screenshots of the following screens to a `/screenshots` directory and update the paths below.
+<div align="center">
 
-| Screen                      | Preview                              |
-| --------------------------- | ------------------------------------ |
-| Login / OAuth               | `screenshots/login.png`              |
-| Candidate Home Dashboard    | `screenshots/candidate_home.png`     |
-| New Assessment – CV Preview | `screenshots/new_assessment.png`     |
-| Interview Question Screen   | `screenshots/interview_question.png` |
-| AI Performance Report       | `screenshots/performance_report.png` |
-| Assessment History          | `screenshots/assessment_history.png` |
-| Organization Dashboard      | `screenshots/org_home.png`           |
-| Post a Job Wizard           | `screenshots/post_job.png`           |
-| Applicant Report View       | `screenshots/applicant_report.png`   |
-| Notifications               | `screenshots/notifications.png`      |
+### 🧑‍💼 Candidate — Home Dashboard & Assessment Session
+
+![home & session](assets/mochups/home_&_session.png)
+
+> *Personalised home with training performance chart · Live AI audio interview · MCQ question with timer*
+
+---
+
+### 📊 Candidate — Performance Report & Assessment History
+
+![report & history](assets/mochups/report_&_history.png)
+
+> *Assessment history with AI performance labels · Detailed score report · Per-question transcript vs ideal AI answer*
+
+---
+
+### 🏢 Company — HR Dashboard & Unified Review Session
+
+![home & applications](assets/mochups/home_&_applications.png)
+
+> *HR dashboard with Top Talent action card · Unified review session with AI scores · Strength & Weakness analysis per candidate*
+
+---
+
+### 🗂 Company — Job Management & Applicant List
+
+![home & jobs](assets/mochups/home_&_jobs.png)
+
+> *Job management with search · Company overview dashboard · Filtered applicant list with color-coded status badges*
+
+</div>
 
 ---
 

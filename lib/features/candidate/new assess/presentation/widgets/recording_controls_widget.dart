@@ -32,7 +32,8 @@ class _RecordingControlsWidgetState extends State<RecordingControlsWidget> {
 
   @override
   void dispose() {
-    _recorder.dispose(); // was: _recorder.dispose — getter, not a call, so it was a no-op
+    _recorder
+        .dispose(); // was: _recorder.dispose — getter, not a call, so it was a no-op
     _timer?.cancel();
     _playerCompleteSub?.cancel(); // cancel any in-flight playback subscription
     _player.dispose();
@@ -166,7 +167,6 @@ class _RecordingControlsWidgetState extends State<RecordingControlsWidget> {
                       isAnimating: rs == RecordingState.recording,
                       color: const Color(0xFF134CC7),
                     ),
-
                   ],
                 ),
               ),
@@ -183,8 +183,7 @@ class _RecordingControlsWidgetState extends State<RecordingControlsWidget> {
                     label: 'Tap to Record',
                     onTap: () => _startRecording(context),
                   ),
-                ]
-                else if (rs == RecordingState.recording) ...[
+                ] else if (rs == RecordingState.recording) ...[
                   // Delete (enabled when recording: cancel)
                   SmallCircleButton(
                     icon: Icons.delete_outline_rounded,
@@ -202,8 +201,7 @@ class _RecordingControlsWidgetState extends State<RecordingControlsWidget> {
                     label: 'Stop',
                     onTap: () => _stopRecording(context),
                   ),
-                ]
-                else if (rs == RecordingState.recorded) ...[
+                ] else if (rs == RecordingState.recorded) ...[
                   // Delete
                   SmallCircleButton(
                     icon: Icons.delete_outline_rounded,
@@ -225,8 +223,7 @@ class _RecordingControlsWidgetState extends State<RecordingControlsWidget> {
                     color: const Color(0xFF64748B),
                     onTap: () => _startRecording(context),
                   ),
-                ]
-                else if (rs == RecordingState.playing) ...[
+                ] else if (rs == RecordingState.playing) ...[
                   // Stop playback
                   BigCircleButton(
                     color: const Color(0xFF134CC7),
@@ -243,5 +240,3 @@ class _RecordingControlsWidgetState extends State<RecordingControlsWidget> {
     );
   }
 }
-
-
