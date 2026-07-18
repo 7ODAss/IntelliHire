@@ -33,7 +33,6 @@ _A production-ready Flutter mobile application that bridges the gap between empl
   - [Build & Run](#build--run)
 - [Folder Structure](#-folder-structure)
 - [Contributing](#-contributing)
-- [License](#-license)
 
 ---
 
