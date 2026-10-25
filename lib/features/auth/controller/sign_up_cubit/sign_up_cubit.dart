@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/helpers/cache_helper.dart';
 
 import '../../../../core/enums/request.dart';
@@ -12,8 +13,6 @@ import '../../models/sign_up_company_model.dart';
 part 'sign_up_state.dart';
 
 class SignUpCubit extends Cubit<SignUpState> {
-
-
   //Company Information
   final List<String> industries = [
     'Software Engineering & Development',
@@ -113,11 +112,13 @@ class SignUpCubit extends Cubit<SignUpState> {
     required String companyName,
     required String industry,
   }) {
-    emit(state.copyWith(
-      workPhone: phoneNumber,
-      companyName: companyName,
-      industry: industry,
-    ));
+    emit(
+      state.copyWith(
+        workPhone: phoneNumber,
+        companyName: companyName,
+        industry: industry,
+      ),
+    );
   }
 
   void completeLocationCompany({
@@ -125,17 +126,13 @@ class SignUpCubit extends Cubit<SignUpState> {
     required String gov,
     required String address,
   }) {
-    emit(state.copyWith(
-      country: country,
-      gov: gov,
-      address: address,
-    ));
+    emit(state.copyWith(country: country, gov: gov, address: address));
   }
-
 
   void setCountryName(String country) {
     emit(state.copyWith(country: country));
   }
+
   void setGovernorateName(String governorate) {
     emit(state.copyWith(gov: governorate));
   }
@@ -254,7 +251,7 @@ class SignUpCubit extends Cubit<SignUpState> {
           );
         })
         .catchError((error) {
-          print('Sign Up Error: $error');
+          debugPrint('Sign Up Error: $error');
           String message = 'Login failed. Please try again.';
 
           if (error is DioException && error.response != null) {
@@ -281,7 +278,9 @@ class SignUpCubit extends Cubit<SignUpState> {
   }) async {
     emit(state.copyWith(completeSignUpState: RequestState.loading));
     MultipartFile? logoFile;
-    if (companyLogo != null && companyLogo.isNotEmpty && companyLogo != 'skipped') {
+    if (companyLogo != null &&
+        companyLogo.isNotEmpty &&
+        companyLogo != 'skipped') {
       logoFile = await MultipartFile.fromFile(
         companyLogo,
         filename: companyLogo.split('/').last, // بياخد اسم الملف الحقيقي
@@ -302,7 +301,7 @@ class SignUpCubit extends Cubit<SignUpState> {
 
     DioConfig.postData(path: ApiConstant.companyComplete, formData: formData)
         .then((value) async {
-          print('Complete SignUp Success: ${value.data}');
+          debugPrint('Complete SignUp Success: ${value.data}');
           emit(
             state.copyWith(
               completeSignUpState: RequestState.success,
@@ -342,7 +341,7 @@ class SignUpCubit extends Cubit<SignUpState> {
           queryParameters: {'userId': userId, 'token': token},
         )
         .then((value) async {
-          print('Confirm Email Success: ${value.data}');
+          debugPrint('Confirm Email Success: ${value.data}');
 
           String token = value.data['token'];
           String refreshToken = value.data['refreshToken'];
@@ -362,7 +361,7 @@ class SignUpCubit extends Cubit<SignUpState> {
           );
         })
         .catchError((error) {
-          print('Confirm Email Error: $error');
+          debugPrint('Confirm Email Error: $error');
           emit(
             state.copyWith(
               confirmEmailState: RequestState.error,

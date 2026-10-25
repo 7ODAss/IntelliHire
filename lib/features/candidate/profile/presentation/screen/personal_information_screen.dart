@@ -7,13 +7,11 @@ import 'package:intelli_hire/core/enums/request.dart';
 import 'package:intelli_hire/core/enums/snack_bar_type.dart';
 import 'package:intelli_hire/core/utils/app_text_style.dart';
 import 'package:intelli_hire/core/utils/shared/context_extension.dart';
-import 'package:intelli_hire/features/candidate/bottom%20_navigation/controller/bottom_nav_candidate_cubit.dart'; // تأكد من الـ import ده
 import 'package:intelli_hire/features/auth/presentation/login/widget/button_action.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/field_item.dart';
 import 'package:intelli_hire/features/candidate/profile/presentation/widgets/candidate_photo_picker.dart';
 import 'package:intelli_hire/features/candidate/profile/presentation/widgets/change_email/change_email_steps.dart';
 
-import '../../../../../core/service/service_locator.dart';
 import '../../../../../core/utils/shared/egyptian_phone_formatter.dart';
 import '../../../../../core/utils/shared/get_initials.dart';
 import '../controller/candidate_profile_cubit.dart';

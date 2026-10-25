@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:intelli_hire/features/candidate/home/domain/entities/home_summary.dart';
 import 'package:intelli_hire/features/candidate/home/domain/usecases/get_home_summary_usecase.dart';
 import 'package:intelli_hire/features/candidate/home/domain/usecases/get_next_week_usecase.dart';
@@ -27,15 +28,8 @@ class HomeCubitCandidate extends Cubit<HomeState> {
 
   List<String> weekDays = ['S', 'S', 'M', 'T', 'W', 'T', 'F'];
 
-  // Guard: prevents two concurrent loadHomeData() calls.
   bool _isLoadingHome = false;
 
-  // Deferred-refresh flag.
-  // Set to true by newassess after assessment submission so that HomeCubit
-  // knows it must refresh — WITHOUT triggering the HTTP fetch (and the heavy
-  // HomeScreen rebuild) while HomeScreen is buried under the newassess route.
-  // HomeScreen checks and clears this flag in didChangeDependencies, which
-  // only fires when the screen is actually visible/active again.
   bool needsRefresh = false;
 
   ({String month, int year, int weekNum}) weekLabel() {
@@ -79,7 +73,6 @@ class HomeCubitCandidate extends Cubit<HomeState> {
   void updateHomeHeaderName(String newName) {
     if (isClosed) return;
     if (state.homeSummary != null) {
-      // 🌟 بنعمل copyWith للموديل الحالي وبنعدل الـ firstName بس بنظافة
       final updatedPerformance = state.homeSummary!.trainingPerformance
           .copyWith(firstName: newName);
 
@@ -90,38 +83,27 @@ class HomeCubitCandidate extends Cubit<HomeState> {
       emit(
         state.copyWith(
           homeSummary: updatedSummary,
-          homeSummaryStatus:
-              RequestState.success, // عشان يجبر الـ buildWhen يشتغل
+          homeSummaryStatus: RequestState.success,
         ),
       );
     }
   }
 
-  /// Clears any stale state left over from a previous session.
-  /// Must be called before [loadHomeData] when re-entering HomeScreen
-  /// so the singleton cubit never carries a closed/error/loading status
-  /// from one assessment run into the next.
-  /// Uses a fresh HomeState() constructor (not copyWith) because copyWith
-  /// cannot reset nullable fields back to null via the ?? fallback pattern.
   void reset() {
-    _isLoadingHome = false; // allow the next loadHomeData() call through
+    _isLoadingHome = false;
     needsRefresh = false;
-    emit(const HomeState()); // all fields back to their default initial values
+    emit(const HomeState());
   }
 
-  /// Called by newassess after a successful submission.
-  /// Marks the cubit as needing a refresh WITHOUT triggering loadHomeData().
-  /// The actual fetch is deferred until HomeScreen becomes visible again.
   void markNeedsRefresh() {
     needsRefresh = true;
   }
 
   Future<void> loadHomeData() async {
-    // Prevent duplicate in-flight requests. If assessment_session_cubit calls
-    // loadHomeData() fire-and-forget while HomeScreen.initState already has one
-    // running, we skip the duplicate. The first one will emit the fresh result.
     if (_isLoadingHome) {
-      print('⚠️ loadHomeData() already in flight — skipping duplicate call.');
+      debugPrint(
+        '⚠️ loadHomeData() already in flight — skipping duplicate call.',
+      );
       return;
     }
     _isLoadingHome = true;
@@ -154,7 +136,7 @@ class HomeCubitCandidate extends Cubit<HomeState> {
         );
       },
     );
-    print('home model: ${state.homeSummary}');
+    debugPrint('home model: ${state.homeSummary}');
   }
 
   Future<void> getNextWeek() async {
@@ -184,7 +166,7 @@ class HomeCubitCandidate extends Cubit<HomeState> {
         );
       },
     );
-    print('home model: ${state.homeSummary}');
+    debugPrint('home model: ${state.homeSummary}');
   }
 
   Future<void> getPrevWeek() async {
@@ -214,7 +196,7 @@ class HomeCubitCandidate extends Cubit<HomeState> {
         );
       },
     );
-    print('home model: ${state.homeSummary}');
+    debugPrint('home model: ${state.homeSummary}');
   }
 
   void resetWeek() async {
@@ -244,6 +226,6 @@ class HomeCubitCandidate extends Cubit<HomeState> {
         );
       },
     );
-    print('home model: ${state.homeSummary}');
+    debugPrint('home model: ${state.homeSummary}');
   }
 }

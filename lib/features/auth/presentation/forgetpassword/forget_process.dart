@@ -20,7 +20,7 @@ class ForgetProcess extends StatelessWidget {
 }
 
 class _ForgetProcess extends StatelessWidget {
-  const _ForgetProcess({super.key});
+  const _ForgetProcess();
 
   @override
   Widget build(BuildContext context) {

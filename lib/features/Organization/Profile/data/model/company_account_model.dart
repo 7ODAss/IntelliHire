@@ -33,22 +33,16 @@ class CompanyAccountModel {
       locations: [
         CompanyLocationModel(
           country: json['country']?.toString() ?? '',
-          governorate: (json['governmentId'] ?? json['government'] ?? json['governorate'])?.toString() ?? '',
+          governorate:
+              (json['governmentId'] ??
+                      json['government'] ??
+                      json['governorate'])
+                  ?.toString() ??
+              '',
           address: (json['city'] ?? json['address'])?.toString() ?? '',
-        )
+        ),
       ],
     );
-  }
-
-  static List<CompanyLocationModel> _parseLocations(dynamic locationsJson) {
-    if (locationsJson is List) {
-      return locationsJson
-          .map((e) => CompanyLocationModel.fromJson(e as Map<String, dynamic>))
-          .toList();
-    } else if (locationsJson is Map) {
-      return [CompanyLocationModel.fromJson(locationsJson as Map<String, dynamic>)];
-    }
-    return [];
   }
 
   Map<String, dynamic> toJson() {
@@ -75,16 +69,13 @@ class CompanyLocationModel extends CompanyLocation {
   factory CompanyLocationModel.fromJson(Map<String, dynamic> json) {
     return CompanyLocationModel(
       country: json['country']?.toString() ?? '',
-      governorate: (json['government'] ?? json['governorate'])?.toString() ?? '',
+      governorate:
+          (json['government'] ?? json['governorate'])?.toString() ?? '',
       address: (json['city'] ?? json['address'])?.toString() ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'country': country,
-      'government': governorate,
-      'city': address,
-    };
+    return {'country': country, 'government': governorate, 'city': address};
   }
 }

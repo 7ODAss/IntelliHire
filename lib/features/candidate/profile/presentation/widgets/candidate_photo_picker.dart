@@ -34,7 +34,7 @@ class _CandidatePhotoPickerState extends State<CandidatePhotoPicker> {
 
       widget.onImageSelected(_image!);
     }
-    print('image: $_image');
+    debugPrint('image: $_image');
   }
 
   DecorationImage? _getDecorationImage() {

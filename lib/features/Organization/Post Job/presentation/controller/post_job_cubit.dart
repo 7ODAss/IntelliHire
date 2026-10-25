@@ -164,7 +164,8 @@ class PostJobCubit extends Cubit<PostJobState> {
 
   List<String> getAvailableSubCategoryLabels() {
     if (selectedCategoryValue == null ||
-        !jobSubCategories.containsKey(selectedCategoryValue)) return [];
+        !jobSubCategories.containsKey(selectedCategoryValue))
+      return [];
     return jobSubCategories[selectedCategoryValue]!
         .map((sub) => sub['label']!)
         .toList();
@@ -205,7 +206,8 @@ class PostJobCubit extends Cubit<PostJobState> {
 
   bool validateBasicInfo() {
     bool isFormValid = basicInfoKey.currentState?.validate() ?? false;
-    bool areDropdownsValid = selectedCategoryValue != null && selectedSubCategoryValue != null;
+    bool areDropdownsValid =
+        selectedCategoryValue != null && selectedSubCategoryValue != null;
     return isFormValid && areDropdownsValid;
   }
 
@@ -214,7 +216,10 @@ class PostJobCubit extends Cubit<PostJobState> {
 
   bool processAndValidateInterviewDetails(BuildContext context) {
     if (selectedStartDate == null || selectedEndDate == null) {
-      _showError(context, 'Please select both Start and End dates for the interview.');
+      _showError(
+        context,
+        'Please select both Start and End dates for the interview.',
+      );
       return false;
     }
 
@@ -296,16 +301,18 @@ class PostJobCubit extends Cubit<PostJobState> {
       "careerLevel": selectedCareerLevel ?? "Junior",
       "experienceYears": expYears,
       "type": jobTypeText,
-      "requiredSkills": addedSkills.map((s) {
-        var temp = s;
-        while (temp.endsWith(',') || temp.endsWith(' ')) {
-          temp = temp.substring(0, temp.length - 1).trim();
-        }
-        return temp;
-      }).join(", "),
+      "requiredSkills": addedSkills
+          .map((s) {
+            var temp = s;
+            while (temp.endsWith(',') || temp.endsWith(' ')) {
+              temp = temp.substring(0, temp.length - 1).trim();
+            }
+            return temp;
+          })
+          .join(", "),
       "description": descController.text.trim(),
       "requirements": reqController.text.trim(),
-      "cvCount": int.parse(cvCountCtrl.text), 
+      "cvCount": int.parse(cvCountCtrl.text),
       "codingCount": int.parse(codingCtrl.text),
       "behavioralCount": int.parse(behavioralCtrl.text),
       "technicalCount": int.parse(technicalCtrl.text),
@@ -325,7 +332,7 @@ class PostJobCubit extends Cubit<PostJobState> {
   }
 
   // Edit part
-   
+
   Future<void> fetchAndLoadJobForEdit(String jobId) async {
     emit(PostJobLoading());
     final result = await getJobDetailsUseCase.execute(jobId);
@@ -349,26 +356,33 @@ class PostJobCubit extends Cubit<PostJobState> {
 
     selectedCategoryValue = job.category;
     selectedSubCategoryValue = job.subCategory;
-    
+
     if (selectedCategoryValue != null && selectedCategoryValue!.isNotEmpty) {
       try {
         final catMatch = jobCategories.firstWhere(
           (cat) => cat['value'] == selectedCategoryValue,
-          orElse: () => {"label": selectedCategoryValue!, "value": selectedCategoryValue!}, 
+          orElse: () => {
+            "label": selectedCategoryValue!,
+            "value": selectedCategoryValue!,
+          },
         );
         selectedCategoryLabel = catMatch['label'];
 
-        if (selectedSubCategoryValue != null && jobSubCategories.containsKey(selectedCategoryValue)) {
+        if (selectedSubCategoryValue != null &&
+            jobSubCategories.containsKey(selectedCategoryValue)) {
           final subMatch = jobSubCategories[selectedCategoryValue]!.firstWhere(
             (sub) => sub['value'] == selectedSubCategoryValue,
-            orElse: () => {"label": selectedSubCategoryValue!, "value": selectedSubCategoryValue!},
+            orElse: () => {
+              "label": selectedSubCategoryValue!,
+              "value": selectedSubCategoryValue!,
+            },
           );
           selectedSubCategoryLabel = subMatch['label'];
         } else {
-          selectedSubCategoryLabel = selectedSubCategoryValue; 
+          selectedSubCategoryLabel = selectedSubCategoryValue;
         }
       } catch (e) {
-        print('Category Mapping Error in Edit: $e');
+        debugPrint('Category Mapping Error in Edit: $e');
       }
     }
 
@@ -380,7 +394,7 @@ class PostJobCubit extends Cubit<PostJobState> {
         selectedEndDate = DateTime.parse(job.endedAt!);
       }
     } catch (e) {
-      print('Date Parsing Error in Edit: $e');
+      debugPrint('Date Parsing Error in Edit: $e');
     }
 
     cvCountCtrl.text = (job.cvCount ?? 0).toString();

@@ -41,7 +41,7 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
     emit(state.copyWith(checkEmailState: RequestState.loading));
     DioConfig.postData(path: ApiConstant.checkEmail, data: {'email': email})
         .then((value) {
-          print('check email response: ${value.data}');
+          debugPrint('check email response: ${value.data}');
           emit(
             state.copyWith(
               checkEmailState: RequestState.success,
@@ -66,7 +66,7 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
           data: {'email': emailController.text, 'code': code},
         )
         .then((value) {
-          print('verify code response: ${value.data}');
+          debugPrint('verify code response: ${value.data}');
           token = value.data['token']['data'];
           emit(
             state.copyWith(
@@ -102,7 +102,7 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
           },
         )
         .then((value) {
-          print('reset password response: ${value.data}');
+          debugPrint('reset password response: ${value.data}');
           emit(
             state.copyWith(
               resetPasswordState: RequestState.success,
@@ -114,7 +114,8 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
           emit(
             state.copyWith(
               resetPasswordState: RequestState.error,
-              resetPasswordMessage: '${error.data['message']}\n${error.data['errors']['description']}',
+              resetPasswordMessage:
+                  '${error.data['message']}\n${error.data['errors']['description']}',
             ),
           );
         });

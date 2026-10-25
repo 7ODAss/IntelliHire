@@ -41,6 +41,8 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
     const ProfileScreenCandidate(),
   ];
 
+  final Set<int> _visitedTabs = {0};
+
   Future<bool> showAgain() async {
     String? showVal = await CacheHelper.getData(key: 'do_not_show');
     return showVal == 'true';
@@ -56,6 +58,9 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
           body: IndexedStack(
             index: state.index,
             children: List.generate(rootScreens.length, (index) {
+              if (!_visitedTabs.contains(index)) {
+                return const SizedBox.shrink();
+              }
               return Navigator(
                 key: navigatorKeys[index],
                 onGenerateRoute: (settings) {
@@ -119,7 +124,10 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
                       ),
                       Row(
                         children: [
-                          BlocBuilder<CandidateNotificationcubit, Candidatenotificationstate>(
+                          BlocBuilder<
+                            CandidateNotificationcubit,
+                            Candidatenotificationstate
+                          >(
                             builder: (context, notifState) {
                               int unreadCount = 0;
                               if (notifState is CandidateNotificationLoaded) {
@@ -188,11 +196,13 @@ class CustomBottomNavBarState extends State<CustomBottomNavBar> {
 
   void _onNavItemTapped(int tappedIndex, int currentIndex) {
     if (currentIndex == tappedIndex) {
-      navigatorKeys[tappedIndex].currentState!.popUntil(
+      navigatorKeys[tappedIndex].currentState?.popUntil(
         (route) => route.isFirst,
       );
     } else {
-      // 🌟 السحر كله هنا: أول ما تخرج من صفحة الإشعارات (index 2) لأي صفحة تانية، علمهم كمقروء!
+      if (!_visitedTabs.contains(tappedIndex)) {
+        setState(() => _visitedTabs.add(tappedIndex));
+      }
       if (currentIndex == 2) {
         context.read<CandidateNotificationcubit>().markAllAsRead();
       }

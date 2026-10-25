@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:liquid_glass_easy/liquid_glass_easy.dart';
-
+import 'package:intelli_hire/features/candidate/home/presentation/widgets/glass_stat_box_obstruction_content.dart';
 import '../../domain/entities/training_performance.dart';
-import 'glass_stat_box_obstruction_content.dart';
 
 class LiquidGlassCard extends StatelessWidget {
   final TrainingPerformance performance;
@@ -19,38 +17,38 @@ class LiquidGlassCard extends StatelessWidget {
 
           return SizedBox(
             height: 90,
-            child: LiquidGlassView(
-              backgroundWidget: Container(
-                color: const Color(0xFF0F172A),
-                width: double.infinity,
-                height: 100,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                LiquidGlass(
+                // الكارد الأول (Total Exams)
+                Container(
                   width: boxWidth,
                   height: 90,
-                  distortion: 0.0,
-                  chromaticAberration: 0.0,
-                  magnification: 1.0,
-                  blur: LiquidGlassBlur(sigmaX: 12, sigmaY: 12),
-                  shape: RoundedRectangleShape(cornerRadius: 14),
-                  position: const LiquidGlassAlignPosition(alignment: Alignment.centerLeft),
-                  color: Colors.white.withOpacity(0.09),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.09),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.15),
+                      width: 1,
+                    ),
+                  ),
                   child: GlassStatBoxObstructionContent(
                     label: 'Total Exams',
                     value: '${performance.totalExams}',
                   ),
                 ),
-                LiquidGlass(
+                // الكارد الثاني (Average Score)
+                Container(
                   width: boxWidth,
                   height: 90,
-                  distortion: 0.0,
-                  chromaticAberration: 0.0,
-                  magnification: 1.0,
-                  blur: LiquidGlassBlur(sigmaX: 12, sigmaY: 12),
-                  shape: RoundedRectangleShape(cornerRadius: 14),
-                  position: const LiquidGlassAlignPosition(alignment: Alignment.centerRight),
-                  color: Colors.white.withOpacity(0.09),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.09),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.15),
+                      width: 1,
+                    ),
+                  ),
                   child: GlassStatBoxObstructionContent(
                     label: 'Average Score',
                     value: performance.averageScore.toString(),

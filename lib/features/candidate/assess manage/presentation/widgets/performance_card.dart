@@ -14,7 +14,7 @@ class PerformanceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24,vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       decoration: BoxDecoration(
         color: const Color(0xFF1A2436),
         borderRadius: BorderRadius.circular(20),
@@ -26,7 +26,6 @@ class PerformanceCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 🌟 1. الـ Expanded الصح مكانه هنا (عشان يمنع تداخل النص مع الدايرة بالعرض)
               Skeleton.keep(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,7 +56,6 @@ class PerformanceCard extends StatelessWidget {
                 ),
               ),
 
-
               Container(
                 width: 80,
                 height: 80,
@@ -77,9 +75,7 @@ class PerformanceCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: SvgPicture.asset(
-                  'assets/images/candidate/arrow.svg',
-                ),
+                child: SvgPicture.asset('assets/images/candidate/arrow.svg'),
               ),
             ],
           ),
@@ -88,20 +84,19 @@ class PerformanceCard extends StatelessWidget {
           const Divider(color: Color(0xFFB4ADAE), thickness: 1.5),
           const SizedBox(height: 12),
 
-          // 🌟 2. شيلنا الـ Expanded اللي هنا خالص، ورجعناه Column عادي جداً
           Row(
             children: [
               StatItem(label: "Questions", value: "${report.questionsCount}"),
               const Spacer(),
-              StatItem(label: "Accuracy", value: '${report.accuracy.toInt()}%')
+              StatItem(label: "Accuracy", value: '${report.accuracy.toInt()}%'),
             ],
           ),
           const SizedBox(height: 8),
           Row(
             children: [
-              StatItem(label:' Total Time', value:  '${report.totalTime}m'),
+              StatItem(label: ' Total Time', value: '${report.totalTime}m'),
               const Spacer(),
-              StatItem(label:' Avg. Reply', value: '${report.avgReply}s'),
+              StatItem(label: ' Avg. Reply', value: '${report.avgReply}s'),
             ],
           ),
         ],

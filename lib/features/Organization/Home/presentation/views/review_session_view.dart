@@ -42,7 +42,9 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
   void dispose() {
     _pageController.dispose();
     if (_localApplicants != null) {
-      getIt<HomeOrganizationCubit>().updateTopTalentCount(_localApplicants!.length);
+      getIt<HomeOrganizationCubit>().updateTopTalentCount(
+        _localApplicants!.length,
+      );
     }
     super.dispose();
   }
@@ -85,7 +87,9 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
         });
 
         // Update the count outside immediately
-        getIt<HomeOrganizationCubit>().updateTopTalentCount(_localApplicants!.length);
+        getIt<HomeOrganizationCubit>().updateTopTalentCount(
+          _localApplicants!.length,
+        );
       });
     } else {
       // We are on the last candidate in the list (but total > 1)
@@ -106,7 +110,9 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
         });
 
         // Update the count outside immediately
-        getIt<HomeOrganizationCubit>().updateTopTalentCount(_localApplicants!.length);
+        getIt<HomeOrganizationCubit>().updateTopTalentCount(
+          _localApplicants!.length,
+        );
       });
     }
   }
@@ -119,13 +125,14 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
     final suffix = fileType == 'cv' ? 'CV' : 'Report';
     try {
       final endpoint = "api/Employer/$sessionId/download/$fileType";
-      
-      final directory = await getApplicationDocumentsDirectory();
-      final savePath = "${directory.path}/${applicantName.replaceAll(' ', '_')}_$suffix.pdf";
 
-      print("--- [DOWNLOAD REQUEST] Start ---");
-      print("Endpoint: $endpoint");
-      print("Save Path: $savePath");
+      final directory = await getApplicationDocumentsDirectory();
+      final savePath =
+          "${directory.path}/${applicantName.replaceAll(' ', '_')}_$suffix.pdf";
+
+      debugPrint("--- [DOWNLOAD REQUEST] Start ---");
+      debugPrint("Endpoint: $endpoint");
+      debugPrint("Save Path: $savePath");
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -134,12 +141,9 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
         ),
       );
 
-      await ApiService().download(
-        endPoint: endpoint,
-        savePath: savePath,
-      );
+      await ApiService().download(endPoint: endpoint, savePath: savePath);
 
-      print("--- [DOWNLOAD RESPONSE] Success ---");
+      debugPrint("--- [DOWNLOAD RESPONSE] Success ---");
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -150,29 +154,28 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
 
       await OpenFilex.open(savePath);
     } catch (e) {
-      print("--- [DOWNLOAD ERROR] Failed ---");
-      print("Error: $e");
+      debugPrint("--- [DOWNLOAD ERROR] Failed ---");
+      debugPrint("Error: $e");
       if (!mounted) return;
 
       String message = "Failed to download $suffix.";
       if (e is DioException) {
         final statusCode = e.response?.statusCode;
         if (statusCode == 500) {
-          message = "Failed to download $suffix: Candidate may not have a $suffix uploaded.";
+          message =
+              "Failed to download $suffix: Candidate may not have a $suffix uploaded.";
         } else if (statusCode == 404) {
           message = "Failed to download $suffix: File not found on the server.";
         } else {
           message = "Failed to download $suffix: Server error ($statusCode)";
         }
       } else {
-        message = "Failed to download $suffix: ${e.toString().split('\n').first}";
+        message =
+            "Failed to download $suffix: ${e.toString().split('\n').first}";
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text(message), backgroundColor: Colors.red),
       );
     }
   }
@@ -221,7 +224,9 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
                   state is ReviewSessionLoading ||
                   state is ReviewSessionInitial;
 
-              if (!isLoading && _localApplicants == null && state is ReviewSessionLoaded) {
+              if (!isLoading &&
+                  _localApplicants == null &&
+                  state is ReviewSessionLoaded) {
                 _localApplicants = List.from(state.applicants);
               }
 
@@ -273,9 +278,7 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
                           const SizedBox(height: 20),
                           ProgressBar(
                             currentIndex: currentIndex,
-                            total: isLoading
-                                ? 5
-                                : totalCandidates, 
+                            total: isLoading ? 5 : totalCandidates,
                           ),
                         ],
                       ),
@@ -355,13 +358,16 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
                                   report: ReportEntity(
                                     sessionId: applicant.sessionId,
                                     fullName: applicant.name,
-                                    accuracyPercent:
-                                        applicant.accuracyPercent,
+                                    accuracyPercent: applicant.accuracyPercent,
                                     averageResponseTime: applicant
                                         .averageResponseTime
                                         .toString(),
-                                    strengthPoints: applicant.strengths.join(' | '),
-                                    weaknessesPoints: applicant.weaknesses.join(' | '),
+                                    strengthPoints: applicant.strengths.join(
+                                      ' | ',
+                                    ),
+                                    weaknessesPoints: applicant.weaknesses.join(
+                                      ' | ',
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(height: 24),
@@ -373,9 +379,7 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
                                             ? null
                                             : () {
                                                 context
-                                                    .read<
-                                                      ReviewSessionCubit
-                                                    >()
+                                                    .read<ReviewSessionCubit>()
                                                     .submitDecision(
                                                       applicant.sessionId,
                                                       2, // 🔴 رفض
@@ -389,8 +393,9 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
                                             color: Colors.red,
                                           ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
                                           ),
                                         ),
                                         child: const Text(
@@ -410,9 +415,7 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
                                             ? null
                                             : () {
                                                 context
-                                                    .read<
-                                                      ReviewSessionCubit
-                                                    >()
+                                                    .read<ReviewSessionCubit>()
                                                     .submitDecision(
                                                       applicant.sessionId,
                                                       1, // 🟢 قبول
@@ -426,8 +429,9 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
                                             0xFF1967D2,
                                           ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
                                           ),
                                           elevation: 0,
                                         ),

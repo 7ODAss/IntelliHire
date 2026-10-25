@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:app_links/app_links.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/helpers/cache_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,7 +15,7 @@ class ExternalLoginCubit extends Cubit<ExternalLoginState> {
 
   void initDeepLinkListener() {
     _linkSubscription = _appLinks.uriLinkStream.listen((uri) async {
-      print("🔗🔗 Received External Login Link: $uri");
+      debugPrint("🔗🔗 Received External Login Link: $uri");
 
       if (uri.scheme == 'intellihire' &&
           uri.host == 'external-login-callback') {

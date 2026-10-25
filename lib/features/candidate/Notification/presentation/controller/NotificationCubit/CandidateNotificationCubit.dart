@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/service/notification_hub_service.dart';
 import 'package:intelli_hire/features/candidate/Notification/data/Models/candidate_notification_model.dart';
@@ -39,7 +40,8 @@ class CandidateNotificationcubit extends Cubit<Candidatenotificationstate> {
           );
 
           if (state is CandidateNotificationLoaded) {
-            final currentList = (state as CandidateNotificationLoaded).notifications;
+            final currentList =
+                (state as CandidateNotificationLoaded).notifications;
 
             final isExists = currentList.any((n) => n.id == newEntity.id);
 
@@ -51,7 +53,10 @@ class CandidateNotificationcubit extends Cubit<Candidatenotificationstate> {
                 time: newEntity.time,
                 isRead: newEntity.isRead,
               );
-              final updatedList = <CandidateNotificationEntity>[entity, ...currentList];
+              final updatedList = <CandidateNotificationEntity>[
+                entity,
+                ...currentList,
+              ];
               emit(CandidateNotificationLoaded(updatedList));
             }
           } else {
@@ -68,7 +73,7 @@ class CandidateNotificationcubit extends Cubit<Candidatenotificationstate> {
             );
           }
         } catch (e) {
-          print("Error Parsing SignalR Notification: $e");
+          debugPrint("Error Parsing SignalR Notification: $e");
         }
       },
     );
@@ -99,9 +104,8 @@ class CandidateNotificationcubit extends Cubit<Candidatenotificationstate> {
     if (state is CandidateNotificationLoaded) {
       final currentState = state as CandidateNotificationLoaded;
 
-      final List<CandidateNotificationEntity> updatedNotifications = currentState
-          .notifications
-          .map((n) {
+      final List<CandidateNotificationEntity> updatedNotifications =
+          currentState.notifications.map((n) {
             return CandidateNotificationEntity(
               id: n.id,
               title: n.title,
@@ -109,23 +113,22 @@ class CandidateNotificationcubit extends Cubit<Candidatenotificationstate> {
               time: n.time,
               isRead: true, // بنبيضهم كلهم
             );
-          })
-          .toList();
+          }).toList();
 
       emit(CandidateNotificationLoaded(updatedNotifications));
 
       final result = await markAllAsReadUseCase.call();
 
       result.fold((failure) {
-        print("Error marking as read: ${failure.message}");
-      }, (_) => print("Marked as read successfully"));
+        debugPrint("Error marking as read: ${failure.message}");
+      }, (_) => debugPrint("Marked as read successfully"));
     }
   }
 
   Future<void> reconnectSignalR() async {
     if (isClosed) return;
-    hubService.stopConnection(); 
-    initRealTimeNotifications(); 
+    hubService.stopConnection();
+    initRealTimeNotifications();
   }
 
   void deleteNotificationLocally(String id) async {
@@ -136,7 +139,9 @@ class CandidateNotificationcubit extends Cubit<Candidatenotificationstate> {
       emit(CandidateNotificationLoaded(updatedList));
 
       if (id.startsWith("temp_")) {
-        print("⚠️ Notification has a client-generated ID ($id). Skipping backend API deletion call.");
+        debugPrint(
+          "⚠️ Notification has a client-generated ID ($id). Skipping backend API deletion call.",
+        );
         return;
       }
 
@@ -144,10 +149,11 @@ class CandidateNotificationcubit extends Cubit<Candidatenotificationstate> {
 
       result.fold((failure) {
         emit(CandidateNotificationLoaded(oldList));
-        print("Failed to delete: ${failure.message}");
-      }, (_) => print("Successfully deleted"));
+        debugPrint("Failed to delete: ${failure.message}");
+      }, (_) => debugPrint("Successfully deleted"));
     }
   }
+
   void deleteAllNotificationsLocally() async {
     if (state is CandidateNotificationLoaded) {
       final currentState = state as CandidateNotificationLoaded;
@@ -165,7 +171,7 @@ class CandidateNotificationcubit extends Cubit<Candidatenotificationstate> {
           await deleteNotificationUseCase.call(notification.id!);
         }
       }
-      print("Successfully deleted all notifications in the background");
+      debugPrint("Successfully deleted all notifications in the background");
     }
   }
 

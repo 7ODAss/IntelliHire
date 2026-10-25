@@ -13,6 +13,7 @@ class AssessmentSessionState extends Equatable {
   final PerformanceReport? submittedReport;
   final String errorMessage;
   final bool isCheck;
+  final bool isTimeUp;
   final RequestState sendAssessment;
   final String sendAssessmentMessage;
   final int remainingTimeInSeconds;
@@ -37,6 +38,7 @@ class AssessmentSessionState extends Equatable {
     this.submittedReport,
     this.errorMessage = '',
     this.isCheck = false,
+    this.isTimeUp = false,
     this.sendAssessment = RequestState.initial,
     this.sendAssessmentMessage = '',
     this.remainingTimeInSeconds = 1800,
@@ -68,6 +70,7 @@ class AssessmentSessionState extends Equatable {
     PerformanceReport? submittedReport,
     String? errorMessage,
     bool? isCheck,
+    bool? isTimeUp,
     RequestState? sendAssessment,
     String? sendAssessmentMessage,
     int? remainingTimeInSeconds,
@@ -91,6 +94,7 @@ class AssessmentSessionState extends Equatable {
     submittedReport: submittedReport ?? this.submittedReport,
     errorMessage: errorMessage ?? this.errorMessage,
     isCheck: isCheck ?? this.isCheck,
+    isTimeUp: isTimeUp ?? this.isTimeUp,
     sendAssessment: sendAssessment ?? this.sendAssessment,
     sendAssessmentMessage: sendAssessmentMessage ?? this.sendAssessmentMessage,
     remainingTimeInSeconds:
@@ -118,6 +122,7 @@ class AssessmentSessionState extends Equatable {
     submittedReport,
     errorMessage,
     isCheck,
+    isTimeUp,
     sendAssessment,
     sendAssessmentMessage,
     remainingTimeInSeconds,

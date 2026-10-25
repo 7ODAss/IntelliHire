@@ -52,7 +52,9 @@ class TokenInterceptor extends Interceptor {
           return handler.next(retryError); // لو فشل يرجع الإيرور باحترام
         }
       } else {
-        print("🚨 الـ Refresh Token كمان خلصان! لازم اليوزر يعمل Login تاني");
+        debugPrint(
+          "🚨 الـ Refresh Token كمان خلصان! لازم اليوزر يعمل Login تاني",
+        );
         await CacheHelper.removeData(key: 'token');
         await CacheHelper.removeData(key: 'refreshToken');
         await CacheHelper.removeData(key: 'expiresOn');
@@ -101,14 +103,16 @@ class TokenInterceptor extends Interceptor {
             );
           }
 
-          print("✅ تم تجديد التوكن بنجاح في الخفاء!");
+          debugPrint("✅ تم تجديد التوكن بنجاح في الخفاء!");
           return true;
         }
       }
       return false;
     } catch (e) {
       if (e is DioException) {
-        print("🚨 تفاصيل رفض السيرفر للريفرش (400/401): ${e.response?.data}");
+        debugPrint(
+          "🚨 تفاصيل رفض السيرفر للريفرش (400/401): ${e.response?.data}",
+        );
       }
       return false;
     }

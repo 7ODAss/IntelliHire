@@ -19,16 +19,12 @@ class _AssessManageScreenState extends State<AssessManageScreen> {
     super.didChangeDependencies();
     if (!_initialized) {
       _initialized = true;
-      // Load fresh history on first mount. BlocProvider.value (below) ensures
-      // the lazySingleton cubit is never .close()d when this widget is disposed.
       getIt<AssessManageCubit>().loadAssessmentHistory();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // BlocProvider.value does NOT call .close() when this widget is disposed,
-    // which is correct for a lazySingleton cubit that must outlive this screen.
     return BlocProvider.value(
       value: getIt<AssessManageCubit>(),
       child: const AssessmentHistoryScreen(),

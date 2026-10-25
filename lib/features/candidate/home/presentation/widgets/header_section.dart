@@ -16,7 +16,7 @@ class Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('header build');
+    debugPrint('header build');
 
     final String displayName = performance.firstName;
 

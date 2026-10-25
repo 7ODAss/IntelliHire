@@ -28,13 +28,13 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
     if (_isCvPickerActive) return;
     _isCvPickerActive = true;
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf', 'doc', 'docx'],
       );
 
-      if (result != null && result.files.single.path != null) {
-        File file = File(result.files.single.path!);
+      if (result.isNotEmpty && result.single.path != null) {
+        File file = File(result.single.path!);
         if (file.lengthSync() <= 5 * 1024 * 1024) {
           selectedCv = file;
           emit(ProfileFilePicked());
@@ -110,7 +110,6 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
 
       emit(ProfileSuccess());
     } on DioException catch (e) {
- 
       String errorMsg = 'Failed to complete profile';
 
       if (e.response?.data != null &&

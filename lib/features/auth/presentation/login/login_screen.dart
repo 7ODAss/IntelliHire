@@ -9,7 +9,6 @@ import '../../controller/external login/external_login_cubit.dart';
 import '../../controller/login_cubit/login_cubit.dart';
 
 class LoginScreen extends StatelessWidget {
-  /// Pass 'Company' or 'Individual' (default) to control social login type.
   final String userType;
   const LoginScreen({super.key, this.userType = 'Individual'});
 
@@ -22,15 +21,23 @@ class LoginScreen extends StatelessWidget {
           children: [
             SvgPicture.asset('assets/images/login/logo.svg', height: 60),
             const SizedBox(height: 16),
-            Text('Welcome back to IntelliHire', style: AppTextStyle.loginTitleStyle),
+            Text(
+              'Welcome back to IntelliHire',
+              style: AppTextStyle.loginTitleStyle,
+            ),
             const SizedBox(height: 8),
-            Text('Step into the future of hiring', style: AppTextStyle.loginSubTitleStyle),
+            Text(
+              'Step into the future of hiring',
+              style: AppTextStyle.loginSubTitleStyle,
+            ),
           ],
         ),
         bodyContent: MultiBlocProvider(
           providers: [
             BlocProvider(create: (_) => LoginCubit()),
-            BlocProvider(create: (_) => ExternalLoginCubit()..initDeepLinkListener()),
+            BlocProvider(
+              create: (_) => ExternalLoginCubit()..initDeepLinkListener(),
+            ),
           ],
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

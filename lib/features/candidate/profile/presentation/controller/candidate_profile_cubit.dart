@@ -233,7 +233,7 @@ class CandidateProfileCubit extends Cubit<CandidateProfileState> {
           changeCareerDetailsMessage: l.message,
         ),
       ),
-      (r) async{
+      (r) async {
         await Future.delayed(const Duration(seconds: 4));
         await loadProfile();
         emit(state.copyWith(changeCareerDetailsStatus: RequestState.success));
@@ -251,14 +251,14 @@ class CandidateProfileCubit extends Cubit<CandidateProfileState> {
       ),
     );
 
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'doc', 'docx'],
     );
 
-    if (result == null) return;
+    if (result.isEmpty) return;
 
-    final file = File(result.files.single.path!);
+    final file = File(result.single.path!);
 
     if (file.lengthSync() > 5 * 1024 * 1024) {
       emit(

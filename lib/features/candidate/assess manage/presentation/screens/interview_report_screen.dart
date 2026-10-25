@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
 import 'package:intelli_hire/features/candidate/assess%20manage/domain/entities/performance_report.dart';
-import 'package:intelli_hire/features/candidate/assess%20manage/domain/entities/question_result.dart';
 
-import '../widgets/answer_bubble.dart';
 import '../controller/assess_manage_cubit.dart';
 import '../widgets/question_result_card.dart';
 
@@ -34,7 +31,6 @@ class InterviewReportScreen extends StatelessWidget {
           padding: EdgeInsets.zero,
           itemCount: report.questions.length,
           itemBuilder: (context, index) {
-            // 🌟 بنستخدم BlocSelector عشان الكارت ده بس اللي يتعمله Rebuild لما حالته تتغير
             return BlocSelector<AssessManageCubit, AssessManageState, bool>(
               selector: (state) => state.expandedQuestions.contains(index),
               builder: (context, isExpanded) {
@@ -43,7 +39,6 @@ class InterviewReportScreen extends StatelessWidget {
                   questionNumber: index + 1,
                   isExpanded: isExpanded,
                   onTap: () {
-                    // بننادي على الفانكشن من الكيوبت عشان تغير الـ State
                     context.read<AssessManageCubit>().toggleExpansion(index);
                   },
                 );
@@ -55,4 +50,3 @@ class InterviewReportScreen extends StatelessWidget {
     );
   }
 }
-

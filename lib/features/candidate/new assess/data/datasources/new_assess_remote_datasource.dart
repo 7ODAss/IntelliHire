@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intelli_hire/core/utils/apis/api_constant.dart';
 import 'package:intelli_hire/core/utils/apis/dio_config.dart';
@@ -49,7 +50,7 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
     Dio dio,
   ) async {
     try {
-      print("🎙️ جاري تفريغ الملف الصوتي: $filePath...");
+      debugPrint("🎙️ جاري تفريغ الملف الصوتي: $filePath...");
 
       // بنجهز الملف عشان يترفع (Multipart)
       FormData formData = FormData.fromMap({
@@ -72,14 +73,14 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
 
       if (response.statusCode == 200) {
         final text = response.data['text'] ?? "No Answer Here";
-        print("✅ تم التفريغ: $text");
+        debugPrint("✅ تم التفريغ: $text");
         return text;
       } else {
-        print("🚨 فشل التفريغ: ${response.statusCode}");
+        debugPrint("🚨 فشل التفريغ: ${response.statusCode}");
         return "No Answer Here";
       }
     } catch (e) {
-      print("🚨 خطأ أثناء تفريغ الصوت: $e");
+      debugPrint("🚨 خطأ أثناء تفريغ الصوت: $e");
       return "No Answer Here"; // لو حصل إيرور نعتبره مجاوبش عشان التقييم ميكراشش
     }
   }
@@ -129,7 +130,7 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
     """;
 
     try {
-      print("🤖 جاري طلب الأسئلة من الذكاء الاصطناعي...");
+      debugPrint("🤖 جاري طلب الأسئلة من الذكاء الاصطناعي...");
       final response = await aiDio.post(
         'https://api.groq.com/openai/v1/chat/completions',
         options: Options(
@@ -139,7 +140,7 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
           },
         ),
         data: {
-          "model": "qwen/qwen3-32b",
+          "model": "openai/gpt-oss-120b",
           "messages": [
             {"role": "user", "content": prompt},
           ],
@@ -150,7 +151,7 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
       );
 
       if (response.statusCode == 200) {
-        print('response.data: ${response.data}');
+        debugPrint('response.data: ${response.data}');
         final String aiContent =
             response.data['choices'][0]['message']['content'];
 
@@ -179,16 +180,16 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
           questions.add(QuestionModel.fromJson(jsonItem));
         }
 
-        print("✅ تم جلب ${questions.length} أسئلة بنجاح!");
+        debugPrint("✅ تم جلب ${questions.length} أسئلة بنجاح!");
         return questions;
       } else {
         throw 'Failed to load questions from AI';
       }
     } catch (e) {
       if (e is DioException) {
-        print('🚨 تفاصيل رفض Groq (400): ${e.response?.data}');
+        debugPrint('🚨 تفاصيل رفض Groq (400): ${e.response?.data}');
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       throw 'حدث خطأ أثناء التواصل مع الذكاء الاصطناعي';
     }
@@ -211,7 +212,7 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
         : "Software Engineer";
 
     try {
-      print("🧠 جاري إرسال الإجابات النصية للتقييم...");
+      debugPrint("🧠 جاري إرسال الإجابات النصية للتقييم...");
 
       List<Map<String, dynamic>> assessmentData = [];
       final List<QuestionModel> originalQuestionsModel = originalQuestions
@@ -298,7 +299,7 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
           },
         ),
         data: {
-          "model": "qwen/qwen3-32b", // أو الموديل اللي استخدمته وظبط معاك
+          "model": "openai/gpt-oss-120b",
           "messages": [
             {"role": "user", "content": prompt},
           ],
@@ -309,7 +310,7 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
       );
 
       if (evaluationRes.statusCode == 200) {
-        print('evaluationRes.data: ${evaluationRes.data}');
+        debugPrint('evaluationRes.data: ${evaluationRes.data}');
         final String aiContent =
             evaluationRes.data['choices'][0]['message']['content'];
 
@@ -326,7 +327,7 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
 
         final Map<String, dynamic> reportJson = jsonDecode(cleanJson);
 
-        print("✅ تم التقييم بنجاح!");
+        debugPrint("✅ تم التقييم بنجاح!");
 
         return PerformanceReportModel(
           title: targetJobTitle,
@@ -350,9 +351,9 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
       }
     } catch (e) {
       if (e is DioException) {
-        print('🚨 تفاصيل رفض Groq في التقييم (400): ${e.response?.data}');
+        debugPrint('🚨 تفاصيل رفض Groq في التقييم (400): ${e.response?.data}');
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       throw 'حدث خطأ أثناء تقييم المقابلة';
     }
@@ -370,12 +371,12 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
     List<QuestionResult> questions,
   ) async {
     // 🌟 1. اختبار الطباعة: عشان نتأكد إن الـ UI باصى قيم حقيقية مش فاضية
-    print("--------------------------------------------------");
-    print("📤 [CHECK FLUTTER DATA] جاري التحقق من البيانات قبل الإرسال:");
-    print("Track Name: '$trackName'");
-    print("Assessment Name: '$assessmentName'");
-    print("Total Questions: $totalQuestions");
-    print("--------------------------------------------------");
+    debugPrint("--------------------------------------------------");
+    debugPrint("📤 [CHECK FLUTTER DATA] جاري التحقق من البيانات قبل الإرسال:");
+    debugPrint("Track Name: '$trackName'");
+    debugPrint("Assessment Name: '$assessmentName'");
+    debugPrint("Total Questions: $totalQuestions");
+    debugPrint("--------------------------------------------------");
     final Map<String, dynamic> requestBody = {
       "track": trackName,
       "title": assessmentName,
@@ -400,15 +401,15 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
         path: ApiConstant.candidateAssessmentSubmit,
         data: requestBody,
       );
-      print("Response: $response");
+      debugPrint("Response: $response");
       return response.data.toString();
     } catch (e) {
       if (e is DioException) {
         // 🌟 السطر ده هيجيبلك الخلاصة وكلام السيرفر بالظبط
-        print('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
-        print('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
+        debugPrint('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
+        debugPrint('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       rethrow;
     }
@@ -421,23 +422,21 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
         path: ApiConstant.getCandidateId,
       );
       if (response.statusCode == 200) {
-        print("Response: $response");
+        debugPrint("Response: $response");
         final String id = response.data['id'] ?? '';
         final String yearsOfExperience =
             response.data['yearsOfExperience'] ?? '0';
 
-        // 🌟 رجعناهم كـ Record في قوسين
         return (id, yearsOfExperience);
       } else {
         throw 'Server Error: ${response.statusCode}';
       }
     } catch (e) {
       if (e is DioException) {
-        // 🌟 السطر ده هيجيبلك الخلاصة وكلام السيرفر بالظبط
-        print('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
-        print('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
+        debugPrint('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
+        debugPrint('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       rethrow;
     }
@@ -450,17 +449,17 @@ class NewAssessRemoteDataSource implements BaseNewAssessDataSource {
         path: ApiConstant.getCandidateCv(candidateId),
       );
       if (response.statusCode == 200) {
-        print("Response: $response");
+        debugPrint("Response: $response");
         return CvDataModel.fromJson(response.data);
       } else {
         throw Exception('Server Error: ${response.statusCode}');
       }
     } catch (e) {
       if (e is DioException) {
-        print('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
-        print('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
+        debugPrint('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
+        debugPrint('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       rethrow;
     }

@@ -7,7 +7,6 @@ import '../../../../../core/utils/apis/dio_config.dart';
 import '../model/logout_model.dart';
 import '../model/company_account_model.dart';
 
-
 abstract class BaseUserProfileDataSource {
   Future<LogoutModel> logOutUserProfile();
   Future<void> updateCompanyInfo({
@@ -26,7 +25,11 @@ abstract class BaseUserProfileDataSource {
   Future<CompanyAccountModel> getCompanyAccount();
   Future<void> requestEmailPasswordChange(String password, String currentEmail);
   Future<void> requestEmailChange(String currentEmail, String newEmail);
-  Future<void> confirmEmailChange(String currentEmail, String newEmail, String code);
+  Future<void> confirmEmailChange(
+    String currentEmail,
+    String newEmail,
+    String code,
+  );
   Future<void> requestPasswordChange(String email);
   Future<String> sendOtp(String email, String code);
   Future<void> confirmPasswordChange({
@@ -49,10 +52,7 @@ class UserProfileDataSource extends BaseUserProfileDataSource {
 
     final response = await DioConfig.postData(
       path: ApiConstant.logout,
-      data: {
-        'refreshToken': refreshToken,
-        'deviceName': 'mobile'
-      },
+      data: {'refreshToken': refreshToken, 'deviceName': 'mobile'},
     );
 
     if (response.statusCode == 200) {
@@ -75,7 +75,9 @@ class UserProfileDataSource extends BaseUserProfileDataSource {
     String? photoPath,
   }) async {
     MultipartFile? logoFile;
-    if (photoPath != null && photoPath.isNotEmpty && !photoPath.startsWith('http')) {
+    if (photoPath != null &&
+        photoPath.isNotEmpty &&
+        !photoPath.startsWith('http')) {
       logoFile = await MultipartFile.fromFile(
         photoPath,
         filename: photoPath.split('/').last,
@@ -94,10 +96,6 @@ class UserProfileDataSource extends BaseUserProfileDataSource {
       formData: formData,
     );
 
-    print("--- [API RESPONSE] updateCompanyInfo ---");
-    print("Status Code: ${response.statusCode}");
-    print("Data: ${response.data}");
-
     if (response.statusCode != 200) {
       throw ServerException(
         serverMessage: ErrorMessageModel.fromJson(response.data),
@@ -114,27 +112,15 @@ class UserProfileDataSource extends BaseUserProfileDataSource {
     required String city,
   }) async {
     final data = {
-      "locations": {
-        "city": city,
-        "country": country,
-        "government": government,
-      },
+      "locations": {"city": city, "country": country, "government": government},
       "about": about,
       "websiteUrl": websiteUrl,
     };
-
-    print("--- [API REQUEST] updateCompanyAbout ---");
-    print("Path: ${ApiConstant.updateCompanyAbout}");
-    print("Body: $data");
 
     final response = await DioConfig.patchData(
       path: ApiConstant.updateCompanyAbout,
       data: data,
     );
-
-    print("--- [API RESPONSE] updateCompanyAbout ---");
-    print("Status Code: ${response.statusCode}");
-    print("Data: ${response.data}");
 
     if (response.statusCode != 200) {
       throw ServerException(
@@ -150,7 +136,8 @@ class UserProfileDataSource extends BaseUserProfileDataSource {
     );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> dataMap = response.data['data'] as Map<String, dynamic>? ?? {};
+      final Map<String, dynamic> dataMap =
+          response.data['data'] as Map<String, dynamic>? ?? {};
       return CompanyAccountModel.fromJson(dataMap);
     } else {
       throw ServerException(
@@ -160,13 +147,13 @@ class UserProfileDataSource extends BaseUserProfileDataSource {
   }
 
   @override
-  Future<void> requestEmailPasswordChange(String password, String currentEmail) async {
+  Future<void> requestEmailPasswordChange(
+    String password,
+    String currentEmail,
+  ) async {
     final response = await DioConfig.postData(
       path: ApiConstant.changeEmailPasswordRequest,
-      data: {
-        'currentPassword': password,
-        'email': currentEmail,
-      },
+      data: {'currentPassword': password, 'email': currentEmail},
     );
 
     if (response.statusCode != 200) {
@@ -180,10 +167,7 @@ class UserProfileDataSource extends BaseUserProfileDataSource {
   Future<void> requestEmailChange(String currentEmail, String newEmail) async {
     final response = await DioConfig.postData(
       path: ApiConstant.changeEmailRequest,
-      data: {
-        'currentEmail': currentEmail,
-        'newEmail': newEmail,
-      },
+      data: {'currentEmail': currentEmail, 'newEmail': newEmail},
     );
 
     if (response.statusCode != 200) {
@@ -194,7 +178,11 @@ class UserProfileDataSource extends BaseUserProfileDataSource {
   }
 
   @override
-  Future<void> confirmEmailChange(String currentEmail, String newEmail, String code) async {
+  Future<void> confirmEmailChange(
+    String currentEmail,
+    String newEmail,
+    String code,
+  ) async {
     final response = await DioConfig.postData(
       path: ApiConstant.changeEmailConfirm,
       data: {
@@ -215,9 +203,7 @@ class UserProfileDataSource extends BaseUserProfileDataSource {
   Future<void> requestPasswordChange(String email) async {
     final response = await DioConfig.postData(
       path: ApiConstant.requestPasswordChange,
-      data: {
-        'email': email,
-      },
+      data: {'email': email},
     );
 
     if (response.statusCode != 200) {
@@ -231,14 +217,15 @@ class UserProfileDataSource extends BaseUserProfileDataSource {
   Future<String> sendOtp(String email, String code) async {
     final response = await DioConfig.postData(
       path: ApiConstant.sendOtp,
-      data: {
-        'email': email,
-        'code': code,
-      },
+      data: {'email': email, 'code': code},
     );
 
     if (response.statusCode == 200) {
-      final token = response.data['data'] ?? response.data['token'] ?? response.data['tokenValue'] ?? code;
+      final token =
+          response.data['data'] ??
+          response.data['token'] ??
+          response.data['tokenValue'] ??
+          code;
       return token.toString();
     } else {
       throw ServerException(
@@ -280,10 +267,7 @@ class UserProfileDataSource extends BaseUserProfileDataSource {
   }) async {
     final response = await DioConfig.putData(
       path: ApiConstant.deleteAccount,
-      data: {
-        'email': email,
-        'currentPassword': currentPassword,
-      },
+      data: {'email': email, 'currentPassword': currentPassword},
     );
 
     if (response.statusCode != 200) {

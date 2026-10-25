@@ -31,7 +31,7 @@ class LogInPage extends StatefulWidget {
 enum UserType { candidate, company }
 
 class _LogInPageState extends State<LogInPage> {
-  UserType selectedType = UserType.candidate; // الافتراضي مترشح
+  UserType selectedType = UserType.candidate;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -83,12 +83,12 @@ class _LogInPageState extends State<LogInPage> {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        // 1. المستمع الأول: الخاص بتسجيل الدخول بجوجل (External Login)
         BlocListener<ExternalLoginCubit, ExternalLoginState>(
           listener: (context, state) {
             if (state is ExternalLoginSuccess) {
               Future.delayed(Duration.zero, () {
-                final bool isCompany = state.userType == 'Company' || state.userType == 'company';
+                final bool isCompany =
+                    state.userType == 'Company' || state.userType == 'company';
                 if (isCompany) {
                   if (state.isProfileComplete) {
                     Navigator.pushAndRemoveUntil(
@@ -143,17 +143,16 @@ class _LogInPageState extends State<LogInPage> {
           },
         ),
 
-        // 🌟 2. المستمع التاني: الخاص بتسجيل الدخول العادي (تم تعديله لمنع الدخول ببروفايل ناقص)
         BlocListener<LoginCubit, LoginState>(
           listener: (context, state) {
             if (state.loginState == RequestState.success) {
-              // 🔴 جلب حالة اكتمال البروفايل ونوع الحساب من استجابة السيرفر تلقائياً
-              final bool isProfileComplete = state.loginModel?.isProfileComplete ?? true;
+              final bool isProfileComplete =
+                  state.loginModel?.isProfileComplete ?? true;
               final String userType = state.loginModel?.userType ?? '';
-              final bool isCompany = userType == 'Company' || userType == 'company';
+              final bool isCompany =
+                  userType == 'Company' || userType == 'company';
 
               if (isProfileComplete) {
-                // ✅ البروفايل كامل -> التوجيه لـ Home حسب نوع الحساب الحقيقي
                 if (isCompany) {
                   Navigator.pushAndRemoveUntil(
                     context,
@@ -166,13 +165,13 @@ class _LogInPageState extends State<LogInPage> {
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const CustomBottomNavBarWrapperCandidate(),
+                      builder: (_) =>
+                          const CustomBottomNavBarWrapperCandidate(),
                     ),
                     (route) => false,
                   );
                 }
               } else {
-                // ❌ البروفايل ناقص -> التوجيه لشاشات إكمال البيانات حسب نوع الحساب الحقيقي
                 if (isCompany) {
                   Navigator.pushAndRemoveUntil(
                     context,
@@ -209,7 +208,6 @@ class _LogInPageState extends State<LogInPage> {
           },
         ),
       ],
-      // 🌟 BlocBuilder عشان نحدث الشاشة لو بيحمل (Loading)
       child: BlocBuilder<LoginCubit, LoginState>(
         builder: (context, loginState) {
           return SingleChildScrollView(
@@ -222,7 +220,6 @@ class _LogInPageState extends State<LogInPage> {
                 ),
                 child: Column(
                   children: [
-                    // الـ Tab الاحترافي
                     Container(
                       height: 50,
                       decoration: BoxDecoration(
@@ -270,7 +267,9 @@ class _LogInPageState extends State<LogInPage> {
                           message: "Please enter your password",
                           type: TextInputType.visiblePassword,
                           obscureText: state,
-                          suffixIcon: state ? Icons.visibility_off : Icons.visibility,
+                          suffixIcon: state
+                              ? Icons.visibility_off
+                              : Icons.visibility,
                           suffixIconColor: const Color(0xFF134CC7),
                           onSuffixPressed: () {
                             context.read<LoginCubit>().changeSuffix();
@@ -320,7 +319,6 @@ class _LogInPageState extends State<LogInPage> {
                     ),
                     const SizedBox(height: 16),
 
-                    // زرار تسجيل الدخول
                     loginState.loginState == RequestState.loading
                         ? const Center(child: CircularProgressIndicator())
                         : ButtonAction(
@@ -337,7 +335,6 @@ class _LogInPageState extends State<LogInPage> {
                           ),
 
                     const SizedBox(height: 20),
-                    // إرسال '0' أو '1'
                     SocialButtons(
                       type: selectedType == UserType.candidate ? '0' : '1',
                     ),

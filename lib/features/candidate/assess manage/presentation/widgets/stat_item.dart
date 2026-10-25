@@ -23,7 +23,7 @@ class StatItem extends StatelessWidget {
                   height: 25,
                   width: 120,
                   decoration: BoxDecoration(
-                    color: Colors.white10, // لون البوكس وقت التحميل
+                    color: Colors.white10,
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),

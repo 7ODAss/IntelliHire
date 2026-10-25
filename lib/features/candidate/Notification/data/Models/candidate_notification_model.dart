@@ -15,38 +15,30 @@ class CandidateNotificationModel {
     this.isRead = false,
   });
 
-factory CandidateNotificationModel.fromJson(Map<String, dynamic> json) {
-    // 🌟 السطر ده هيفضح الباك إند بالكامل!
-    print("========================================");
-    print("🔥 RAW JSON FROM BACKEND: $json");
-    print("⏰ Value of createdAt: ${json['createdAt']}");
-    print("⏰ Value of Time: ${json['time']}");
-    print("========================================");
-
-    String rawTime = json['time']?.toString() ?? 
-                     json['createdAt']?.toString() ?? 
-                     json['CreatedAt']?.toString() ?? '';
+  factory CandidateNotificationModel.fromJson(Map<String, dynamic> json) {
+    String rawTime =
+        json['time']?.toString() ??
+        json['createdAt']?.toString() ??
+        json['CreatedAt']?.toString() ??
+        '';
 
     if (rawTime.isEmpty) {
-      rawTime = DateTime.now().toIso8601String(); 
+      rawTime = DateTime.now().toIso8601String();
     }
 
     String formattedTime = rawTime.toTimeAgo();
 
-    final String? parsedId = json['id']?.toString() ??
-                             json['Id']?.toString() ??
-                             json['notificationId']?.toString() ??
-                             json['NotificationId']?.toString() ??
-                             json['notificationID']?.toString() ??
-                             json['NotificationID']?.toString() ??
-                             json['entityId']?.toString() ??
-                             json['EntityId']?.toString() ??
-                             json['messageId']?.toString() ??
-                             json['MessageId']?.toString();
-
-    if (parsedId == null) {
-      print("⚠️ WARNING: Notification ID is missing in JSON payload! Raw JSON: $json");
-    }
+    final String? parsedId =
+        json['id']?.toString() ??
+        json['Id']?.toString() ??
+        json['notificationId']?.toString() ??
+        json['NotificationId']?.toString() ??
+        json['notificationID']?.toString() ??
+        json['NotificationID']?.toString() ??
+        json['entityId']?.toString() ??
+        json['EntityId']?.toString() ??
+        json['messageId']?.toString() ??
+        json['MessageId']?.toString();
 
     return CandidateNotificationModel(
       id: parsedId ?? "temp_${DateTime.now().millisecondsSinceEpoch}",

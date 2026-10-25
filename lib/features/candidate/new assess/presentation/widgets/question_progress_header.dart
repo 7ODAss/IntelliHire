@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
-import 'package:intelli_hire/core/utils/shared/liquid_glass_custom_pop_button.dart';
 import 'package:intelli_hire/features/candidate/new%20assess/presentation/widgets/pulse_timer_badge.dart';
-
-import '../../../../../core/utils/app_color.dart';
-import '../controller/assessment_session_cubit.dart';
 
 class QuestionProgressHeader extends StatelessWidget {
   final int currentQuestion;
   final int totalQuestions;
   final VoidCallback onClose;
+  final Stream<int>? timerStream;
+  final int initialRemainingTime;
 
   const QuestionProgressHeader({
     super.key,
     required this.currentQuestion,
     required this.totalQuestions,
     required this.onClose,
+    this.timerStream,
+    this.initialRemainingTime = 600,
   });
 
   @override
@@ -29,13 +28,35 @@ class QuestionProgressHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       decoration: BoxDecoration(
         color: const Color(0xFF0F172A),
-        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(40), bottomRight: Radius.circular(40)),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(40),
+          bottomRight: Radius.circular(40),
+        ),
       ),
       child: Column(
         children: [
           Row(
             children: [
-              LiquidGlassCustomPopButton(onTap: onClose,),
+              GestureDetector(
+                onTap: onClose,
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.12),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.close_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+              ),
               Expanded(
                 child: Text(
                   'Question $currentQuestion of $totalQuestions',
@@ -66,12 +87,17 @@ class QuestionProgressHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          BlocSelector<AssessmentSessionCubit, AssessmentSessionState, int>(
-            selector: (state) => state.remainingTimeInSeconds ?? 1800,
-            builder: (context, remainingTime) {
-             return PulseTimerBadge(remainingTime: remainingTime);
-            },
-          ),
+          timerStream != null
+              ? StreamBuilder<int>(
+                  stream: timerStream,
+                  initialData: initialRemainingTime,
+                  builder: (context, snapshot) {
+                    return PulseTimerBadge(
+                      remainingTime: snapshot.data ?? initialRemainingTime,
+                    );
+                  },
+                )
+              : PulseTimerBadge(remainingTime: initialRemainingTime),
         ],
       ),
     );

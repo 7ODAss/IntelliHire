@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/features/auth/controller/sign_up_cubit/sign_up_cubit.dart';
 import 'package:intelli_hire/features/auth/controller/external%20login/external_login_cubit.dart';
 import 'package:intelli_hire/features/auth/controller/external%20login/external_login_state.dart';
-import 'package:intelli_hire/features/auth/presentation/signup/company/process/sign_up_information_company.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/company/widget/check_email_screen.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/company/widget/navigator_to_account.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/company/widget/pop_action.dart';
@@ -58,7 +57,9 @@ class _SignUpCompanyState extends State<SignUpCompany> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => SignUpCubit()),
-        BlocProvider(create: (context) => ExternalLoginCubit()..initDeepLinkListener()),
+        BlocProvider(
+          create: (context) => ExternalLoginCubit()..initDeepLinkListener(),
+        ),
       ],
       child: BlocListener<ExternalLoginCubit, ExternalLoginState>(
         listener: (context, state) {
@@ -98,7 +99,10 @@ class _SignUpCompanyState extends State<SignUpCompany> {
                   context,
                   MaterialPageRoute(
                     builder: (_) => BlocProvider(
-                      create: (context) => ProfileSetupCubit(ApiService(), userToken: state.token),
+                      create: (context) => ProfileSetupCubit(
+                        ApiService(),
+                        userToken: state.token,
+                      ),
                       child: const AccountSetupView(),
                     ),
                   ),
@@ -111,7 +115,8 @@ class _SignUpCompanyState extends State<SignUpCompany> {
           }
         },
         child: BlocConsumer<SignUpCubit, SignUpState>(
-          listenWhen: (previous, current) => previous.signUpState != current.signUpState,
+          listenWhen: (previous, current) =>
+              previous.signUpState != current.signUpState,
           listener: (context, state) {
             if (state.signUpState == RequestState.success) {
               Navigator.pushReplacement(
@@ -170,13 +175,11 @@ class _SignUpCompanyState extends State<SignUpCompany> {
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return "Email is required";
-                              }
-                              else if (!RegExp(
+                              } else if (!RegExp(
                                 r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.com$",
                               ).hasMatch(value)) {
                                 return "Please enter a valid email ending in .com";
-                              }
-                              else if (RegExp(
+                              } else if (RegExp(
                                 r'@(gmail\.com|yahoo\.com|hotmail\.com|outlook\.com)$',
                                 caseSensitive: false,
                               ).hasMatch(value)) {
@@ -196,7 +199,9 @@ class _SignUpCompanyState extends State<SignUpCompany> {
                                 message: 'Enter Your Password',
                                 type: TextInputType.visiblePassword,
                                 obscureText: state,
-                                suffixIcon: state ? Icons.visibility_off : Icons.visibility,
+                                suffixIcon: state
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                                 suffixIconColor: const Color(0xFF134CC7),
                                 onSuffixPressed: () {
                                   cubit.changePasswordSuffix();
@@ -208,7 +213,9 @@ class _SignUpCompanyState extends State<SignUpCompany> {
                                   if (value.length < 8) {
                                     return "Password must be at least 8 characters long";
                                   }
-                                  if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z]).+$').hasMatch(value)) {
+                                  if (!RegExp(
+                                    r'^(?=.*[a-z])(?=.*[A-Z]).+$',
+                                  ).hasMatch(value)) {
                                     return "Password must contain both uppercase and lowercase letters";
                                   }
                                   return null;
@@ -219,7 +226,8 @@ class _SignUpCompanyState extends State<SignUpCompany> {
                           const SizedBox(height: 16),
 
                           BlocSelector<SignUpCubit, SignUpState, bool>(
-                            selector: (state) => state.changeConfirmPasswordSuffix,
+                            selector: (state) =>
+                                state.changeConfirmPasswordSuffix,
                             builder: (context, state) {
                               return FieldItem(
                                 controller: workConfirmPasswordController,
@@ -227,7 +235,9 @@ class _SignUpCompanyState extends State<SignUpCompany> {
                                 message: 'Enter Your Password again',
                                 type: TextInputType.visiblePassword,
                                 obscureText: state,
-                                suffixIcon: state ? Icons.visibility_off : Icons.visibility,
+                                suffixIcon: state
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                                 suffixIconColor: const Color(0xFF134CC7),
                                 onSuffixPressed: () {
                                   cubit.changeConfirmPasswordSuffix();
@@ -248,18 +258,20 @@ class _SignUpCompanyState extends State<SignUpCompany> {
 
                           ButtonAction(
                             title: 'Create Account',
-                            isLoading: state.signUpState == RequestState.loading,
+                            isLoading:
+                                state.signUpState == RequestState.loading,
                             onPressed: () {
                               if (workFormKey.currentState!.validate()) {
                                 cubit.signUpCompany(
                                   email: workEmailController.text,
                                   password: workPasswordController.text,
-                                  confirmPassword: workConfirmPasswordController.text,
+                                  confirmPassword:
+                                      workConfirmPasswordController.text,
                                 );
                               }
                             },
                           ),
-                          
+
                           Padding(
                             padding: const EdgeInsets.symmetric(
                               vertical: 32.0,
@@ -276,9 +288,9 @@ class _SignUpCompanyState extends State<SignUpCompany> {
                               ),
                             ),
                           ),
-                          
+
                           const SocialButtons(type: '1'),
-                          
+
                           const SizedBox(height: 24),
                         ],
                       ),

@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:signalr_netcore/http_connection_options.dart';
 import 'package:signalr_netcore/hub_connection.dart';
 import 'package:signalr_netcore/hub_connection_builder.dart';
-import 'package:intelli_hire/core/helpers/cache_helper.dart'; 
+import 'package:intelli_hire/core/helpers/cache_helper.dart';
 
 class NotificationHubService {
   HubConnection? _hubConnection;
@@ -11,7 +12,7 @@ class NotificationHubService {
   void Function()? onTokenExpiredOrRefreshed;
 
   Future<void> initHub({
-    required Function(dynamic) onNotificationReceived, 
+    required Function(dynamic) onNotificationReceived,
   }) async {
     if (_isConnecting ||
         (_hubConnection != null &&
@@ -31,7 +32,6 @@ class NotificationHubService {
           options: HttpConnectionOptions(
             accessTokenFactory: () async {
               String? freshToken = await CacheHelper.getData(key: 'token');
-              print("🔑 SignalR dynamically fetched token: $freshToken");
               return freshToken ?? "";
             },
             requestTimeout: 15000,
@@ -44,36 +44,27 @@ class NotificationHubService {
     if (userType == 'Company') {
       connection.on("ReceiveCompanyNotification", (arguments) {
         if (arguments != null && arguments.isNotEmpty) {
-          print("🏢 SignalR Message Received (Company): ${arguments[0]}");
           try {
             onNotificationReceived(arguments[0]);
-          } catch (e) {
-            print("Error parsing company notification data: $e");
-          }
+          } catch (e) {}
         }
       });
-    } 
-    else {
+    } else {
       connection.on("ReceiveUserNotification", (arguments) {
         if (arguments != null && arguments.isNotEmpty) {
-          print("👤 SignalR Message Received (User): ${arguments[0]}");
           try {
             onNotificationReceived(arguments[0]);
-          } catch (e) {
-            print("Error parsing user notification data: $e");
-          }
+          } catch (e) {}
         }
       });
     }
-    
+
     _hubConnection = connection;
 
     try {
-      print("Attempting to connect to SignalR...");
       await connection.start();
-      print("✅ SignalR Connected Successfully to /quizHub");
     } catch (e) {
-      print("❌ SignalR Connection Error: $e");
+      debugPrint("❌ SignalR Connection Error: $e");
     } finally {
       _isConnecting = false;
     }

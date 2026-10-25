@@ -6,12 +6,14 @@ class PerformanceLineChart extends StatefulWidget {
   final List<double> scores;
   final List<int> examsTakenList; // number of exams taken each day
   final List<String> weekDays;
+  final int todayIndex;
 
   const PerformanceLineChart({
     super.key,
     required this.scores,
     required this.examsTakenList,
     required this.weekDays,
+    this.todayIndex = -1,
   });
 
   @override
@@ -32,17 +34,13 @@ class _PerformanceLineChartState extends State<PerformanceLineChart> {
 
   LineChartData mainData() {
     return LineChartData(
-      // 🌟 التفاعل والـ Tooltip الأبيض
       lineTouchData: LineTouchData(
         touchTooltipData: LineTouchTooltipData(
-          // 🌟 الطريقة الجديدة لتخصيص لون الخلفية
           getTooltipColor: (touchedSpot) => Colors.white,
 
-          // ✅ Constrain tooltip inside the card — prevents overflow at edges
           fitInsideHorizontally: true,
           fitInsideVertically: true,
 
-          // 🌟 الطريقة الجديدة للـ Padding والحواف الدائرية
           tooltipPadding: const EdgeInsets.all(8),
           tooltipBorder: BorderSide(color: Colors.white),
           getTooltipItems: (touchedSpots) {
@@ -55,16 +53,13 @@ class _PerformanceLineChartState extends State<PerformanceLineChart> {
                 '',
                 const TextStyle(),
                 children: [
-                  // النص العادي (أسود)
                   TextSpan(text: 'Exams Taken: $exams\n'),
 
-                  // النص العادي (أسود)
                   TextSpan(text: 'Avg Score: '),
-                  // النص الأخضر (الرقم فقط)
                   TextSpan(
                     text: '${spot.y.toInt()}%',
                     style: const TextStyle(
-                      color: Color(0xFF10B981), // 🌟 الرقم بالأخضر
+                      color: Color(0xFF10B981),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -113,18 +108,60 @@ class _PerformanceLineChartState extends State<PerformanceLineChart> {
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            reservedSize: 28,
-            getTitlesWidget: (value, meta) => Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Text(
-                widget.weekDays[value.toInt()],
-                style: const TextStyle(
-                  color: Color(0xFF8F9DB2),
-                  fontSize: 14,
-                  fontFamily: AppFont.poppinsSemiBold,
+            reservedSize: 36,
+            getTitlesWidget: (value, meta) {
+              final index = value.toInt();
+              if (index < 0 || index >= widget.weekDays.length) {
+                return const SizedBox.shrink();
+              }
+              final isToday = index == widget.todayIndex;
+              final dayText = widget.weekDays[index];
+
+              if (isToday) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: Container(
+                    width: 26,
+                    height: 26,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Color(0xFF0F172A), Color(0xFF28355F)],
+                      ),
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.15),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        dayText,
+                        style: const TextStyle(
+                          fontFamily: AppFont.interBold,
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              return Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  dayText,
+                  style: const TextStyle(
+                    color: Color(0xFF8F9DB2),
+                    fontSize: 14,
+                    fontFamily: AppFont.poppinsSemiBold,
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
         ),
       ),
@@ -140,12 +177,9 @@ class _PerformanceLineChartState extends State<PerformanceLineChart> {
             (i) => FlSpot(i.toDouble(), widget.scores[i]),
           ),
           isCurved: true,
-          color: const Color(0xFF37CD6E), // 🌟 الأخضر المطلوب
+          color: const Color(0xFF37CD6E),
           barWidth: 3,
-          dotData: const FlDotData(
-            show: true,
-            getDotPainter: _getDotPainter,
-          ), // 🌟 النقاط ظاهرة
+          dotData: const FlDotData(show: true, getDotPainter: _getDotPainter),
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
@@ -169,7 +203,7 @@ class _PerformanceLineChartState extends State<PerformanceLineChart> {
     int index,
   ) {
     return FlDotCirclePainter(
-      radius: 4, // 🌟 هنا بتكبر النقطة (الرقم الافتراضي كان 4)
+      radius: 4,
       color: Color(0xFF1A2441),
       strokeWidth: 3,
       strokeColor: Color(0xFF37CD6E),

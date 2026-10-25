@@ -2,21 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:intelli_hire/features/candidate/profile/data/models/candidate_profile_model.dart';
 import 'package:intelli_hire/features/candidate/profile/data/models/logout_model.dart';
-import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_email_enter_current_password_usecase.dart';
-import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_email_enter_new_email_usecase.dart';
-import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_email_otp_usecase.dart';
-import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_password_candidate_usecase.dart';
-import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_personal_info_usecase.dart';
 
 import '../../../../../core/error/exception.dart';
 import '../../../../../core/helpers/cache_helper.dart';
 import '../../../../../core/network/error_message_model.dart';
 import '../../../../../core/utils/apis/api_constant.dart';
 import '../../../../../core/utils/apis/dio_config.dart';
-import '../../domain/usecases/change_career_details_usecase.dart';
-import '../models/candidate_profile_model.dart';
-import 'package:http_parser/http_parser.dart';
 
 abstract class BaseCandidateProfileDataSource {
   Future<CandidateProfileModel> fetchProfile();
@@ -70,7 +64,7 @@ class CandidateProfileRemoteDataSource
         path: ApiConstant.candidateProfile,
       );
       if (response.statusCode == 200) {
-        print('profile respomse: $response');
+        debugPrint('profile respomse: $response');
         return CandidateProfileModel.fromJson(response.data);
       } else {
         throw ServerException(
@@ -80,13 +74,13 @@ class CandidateProfileRemoteDataSource
     } catch (e) {
       if (e is DioException) {
         // 🌟 السطر ده هيجيبلك الخلاصة وكلام السيرفر بالظبط
-        print('🚨 [STATUS CODE]: ${e.response?.statusCode}');
-        print('🚨 [SERVER RAW RESPONSE]: ${e.response?.data}');
-        print(
+        debugPrint('🚨 [STATUS CODE]: ${e.response?.statusCode}');
+        debugPrint('🚨 [SERVER RAW RESPONSE]: ${e.response?.data}');
+        debugPrint(
           '🚨 [DIO EXCEPTION TYPE]: ${e.type}',
         ); // 🌟 ده هيقولك بالظبط ليه الـ response بـ null (مثلاً DioExceptionType.cancel)
-        print('🚨 [ERROR MESSAGE]: ${e.message}');
-        print('🚨 [EXACT URL SENT]: ${e.requestOptions.uri}');
+        debugPrint('🚨 [ERROR MESSAGE]: ${e.message}');
+        debugPrint('🚨 [EXACT URL SENT]: ${e.requestOptions.uri}');
       }
       rethrow;
     }
@@ -120,8 +114,8 @@ class CandidateProfileRemoteDataSource
       );
 
       if (response.statusCode == 200) {
-        print('✅ Changed successfully');
-        print('Response: ${response.data}');
+        debugPrint('✅ Changed successfully');
+        debugPrint('Response: ${response.data}');
         return response.data;
       } else {
         throw ServerException(
@@ -130,11 +124,11 @@ class CandidateProfileRemoteDataSource
       }
     } catch (e) {
       if (e is DioException) {
-        print('🚨 تفاصيل رفض السيرفر (Multipart): ${e.response?.data}');
-        print('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
+        debugPrint('🚨 تفاصيل رفض السيرفر (Multipart): ${e.response?.data}');
+        debugPrint('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
         throw e.response?.data['success'];
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       rethrow;
     }
@@ -164,10 +158,10 @@ class CandidateProfileRemoteDataSource
     } catch (e) {
       if (e is DioException) {
         // 🌟 السطر ده هيجيبلك الخلاصة وكلام السيرفر بالظبط
-        print('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
-        print('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
+        debugPrint('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
+        debugPrint('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       rethrow;
     }
@@ -185,8 +179,8 @@ class CandidateProfileRemoteDataSource
       );
 
       if (response.statusCode == 200) {
-        print('changed');
-        print('response: ${response.data}');
+        debugPrint('changed');
+        debugPrint('response: ${response.data}');
         return response.data;
       } else {
         throw ServerException(
@@ -196,10 +190,10 @@ class CandidateProfileRemoteDataSource
     } catch (e) {
       if (e is DioException) {
         // 🌟 السطر ده هيجيبلك الخلاصة وكلام السيرفر بالظبط
-        print('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
-        print('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
+        debugPrint('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
+        debugPrint('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       rethrow;
     }
@@ -216,11 +210,9 @@ class CandidateProfileRemoteDataSource
         data: {"email": currentEmail, "currentPassword": currentPassword},
       );
       if (response.statusCode == 200) {
-        print('account deleted');
-        print('response: ${response.data}');
-        // 🌟 FIX: return the message String so the repository and cubit can use it.
-        // Previously the method returned void, so this value was silently discarded
-        // and the success Snackbar always showed an empty string.
+        debugPrint('account deleted');
+        debugPrint('response: ${response.data}');
+
         return response.data['message'].toString();
       } else {
         throw ServerException(
@@ -229,12 +221,9 @@ class CandidateProfileRemoteDataSource
       }
     } catch (e) {
       if (e is DioException) {
-        print('🚨 تفاصيل رفض السيرفر (400): \${e.response?.data}');
-        print('🚨 اللينك اللي راح للسيرفر: \${e.requestOptions.uri}');
-        // 🌟 FIX: throw ServerException (not a raw String).
-        // Previously did: throw e.response?.data['message']
-        // That threw a String which the repository's `on ServerException` could NOT catch,
-        // causing the exception to propagate uncaught → unhandled exception → UI freeze.
+        debugPrint('🚨 تفاصيل رفض السيرفر (400): \${e.response?.data}');
+        debugPrint('🚨 اللينك اللي راح للسيرفر: \${e.requestOptions.uri}');
+
         final errorData = e.response?.data;
         if (errorData is Map<String, dynamic>) {
           throw ServerException(
@@ -261,16 +250,14 @@ class CandidateProfileRemoteDataSource
     try {
       final Map<String, dynamic> dataMap = {};
 
-      if (newCvPath != null && newCvPath!.isNotEmpty) {
+      if (newCvPath != null && newCvPath.isNotEmpty) {
         dataMap["CvFile"] = await MultipartFile.fromFile(
-          newCvPath!,
-          filename: newCvPath!.split('/').last,
+          newCvPath,
+          filename: newCvPath.split('/').last,
         );
-      }
-      // 🌟 2. لو مفيش ملف جديد، هل في داتا قديمة مبعوتة？
-      else if (oldCvData != null && oldCvData!.isNotEmpty) {
+      } else if (oldCvData != null && oldCvData.isNotEmpty) {
         dataMap["CvFile"] = MultipartFile.fromBytes(
-          base64Decode(oldCvData!),
+          base64Decode(oldCvData),
           filename: 'resume.pdf',
         );
       }
@@ -281,8 +268,8 @@ class CandidateProfileRemoteDataSource
         formData: formData,
       );
       if (response.statusCode == 200) {
-        print('data changed');
-        print('response: ${response.data}');
+        debugPrint('data changed');
+        debugPrint('response: ${response.data}');
       } else {
         throw ServerException(
           serverMessage: ErrorMessageModel.fromJson(response.data),
@@ -290,11 +277,10 @@ class CandidateProfileRemoteDataSource
       }
     } catch (e) {
       if (e is DioException) {
-        // 🌟 السطر ده هيجيبلك الخلاصة وكلام السيرفر بالظبط
-        print('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
-        print('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
+        debugPrint('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
+        debugPrint('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       rethrow;
     }
@@ -311,8 +297,8 @@ class CandidateProfileRemoteDataSource
         data: {'email': currentEmail, 'currentPassword': currentPassword},
       );
       if (response.statusCode == 200) {
-        print('password verified');
-        print('response: ${response.data}');
+        debugPrint('password verified');
+        debugPrint('response: ${response.data}');
         return response.data['message'];
       } else {
         throw ServerException(
@@ -323,7 +309,7 @@ class CandidateProfileRemoteDataSource
       if (e is DioException) {
         throw e.response?.data['message'];
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       rethrow;
     }
@@ -340,8 +326,8 @@ class CandidateProfileRemoteDataSource
         data: {'currentEmail': currentEmail, 'newEmail': newEmail},
       );
       if (response.statusCode == 200) {
-        print('OTP requested');
-        print('response: ${response.data}');
+        debugPrint('OTP requested');
+        debugPrint('response: ${response.data}');
         return response.data['message'];
       } else {
         throw ServerException(
@@ -352,7 +338,7 @@ class CandidateProfileRemoteDataSource
       if (e is DioException) {
         throw e.response?.data['message'];
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       rethrow;
     }
@@ -374,11 +360,11 @@ class CandidateProfileRemoteDataSource
         },
       );
       if (response.statusCode == 200) {
-        print('OTP verified');
-        print('response: ${response.data}');
+        debugPrint('OTP verified');
+        debugPrint('response: ${response.data}');
         return response.data['message'];
       } else {
-        print('دخل جوه ال else');
+        debugPrint('دخل جوه ال else');
         throw ServerException(
           serverMessage: ErrorMessageModel.fromJson(
             response.data['errors'][0]['description'],
@@ -389,7 +375,7 @@ class CandidateProfileRemoteDataSource
       if (e is DioException) {
         throw e.response?.data['errors'][0]['description'];
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       rethrow;
     }
@@ -403,8 +389,8 @@ class CandidateProfileRemoteDataSource
         data: {'email': currentEmail},
       );
       if (response.statusCode == 200) {
-        print('OTP requested');
-        print('response: ${response.data}');
+        debugPrint('OTP requested');
+        debugPrint('response: ${response.data}');
         // 🌟 FIX: The backend returns a plain String body (not a JSON Map).
         // Using response.data['message'] caused crash:
         //   type 'String' is not a subtype of type 'int' of 'index'
@@ -420,7 +406,7 @@ class CandidateProfileRemoteDataSource
       if (e is DioException) {
         throw e.response?.data;
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       rethrow;
     }
@@ -437,8 +423,8 @@ class CandidateProfileRemoteDataSource
         data: {'email': currentEmail, 'code': otp},
       );
       if (response.statusCode == 200) {
-        print('OTP verified');
-        print('response: ${response.data}');
+        debugPrint('OTP verified');
+        debugPrint('response: ${response.data}');
         final String message = response.data['message'] ?? '';
         final String token = response.data['token'] ?? '';
         return (message, token);
@@ -451,7 +437,7 @@ class CandidateProfileRemoteDataSource
       if (e is DioException) {
         throw e.response?.data['message'];
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       rethrow;
     }
@@ -477,8 +463,8 @@ class CandidateProfileRemoteDataSource
         },
       );
       if (response.statusCode == 200) {
-        print('OTP verified');
-        print('response: ${response.data}');
+        debugPrint('OTP verified');
+        debugPrint('response: ${response.data}');
         return response.data['message'];
       } else {
         throw ServerException(
@@ -491,7 +477,7 @@ class CandidateProfileRemoteDataSource
       if (e is DioException) {
         throw e.response?.data['errors'][0]['description'];
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       rethrow;
     }

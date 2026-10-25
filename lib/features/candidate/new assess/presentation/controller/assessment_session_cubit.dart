@@ -36,42 +36,43 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
     this.getCandidateCvUseCase,
   ) : super(const AssessmentSessionState());
 
-  // 🌟 متغيرات الوقت
   Timer? _assessmentTimer;
   DateTime? _questionStartTime;
   final List<int> _replyTimesInSeconds = [];
 
   @override
   Future<void> close() {
-    _assessmentTimer?.cancel(); // 🌟 تأمين التايمر لما الشاشة تتقفل
+    _assessmentTimer?.cancel();
+    _timerController.close();
     return super.close();
   }
 
   final int _totalAssessmentMinutes = 10;
+  int _remainingSeconds = 10 * 60;
+  int get remainingSeconds => _remainingSeconds;
+  final _timerController = StreamController<int>.broadcast();
+  Stream<int> get timerStream => _timerController.stream;
 
-  // 🌟 دالة بداية الامتحان والتايمر
   void startAssessmentTimer() {
-    int remainingSeconds = _totalAssessmentMinutes * 60;
+    _remainingSeconds = _totalAssessmentMinutes * 60;
 
     _assessmentTimer?.cancel();
-    emit(state.copyWith(remainingTimeInSeconds: remainingSeconds));
+    _timerController.add(_remainingSeconds);
 
     _assessmentTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (remainingSeconds > 0) {
-        remainingSeconds--;
-        emit(state.copyWith(remainingTimeInSeconds: remainingSeconds));
+      if (_remainingSeconds > 0) {
+        _remainingSeconds--;
+        _timerController.add(_remainingSeconds);
       } else {
-        // 🌟 الوقت خلص!
         _assessmentTimer?.cancel();
         if (state.submitStatus != RequestState.loading &&
             state.submitStatus != RequestState.success) {
-          submitInterview();
+          submitInterview(isTimeUp: true);
         }
       }
     });
   }
 
-  // 🌟 دوال الـ avgReply
   void onQuestionShown() {
     _questionStartTime = DateTime.now();
   }
@@ -82,7 +83,7 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
           .difference(_questionStartTime!)
           .inSeconds;
       _replyTimesInSeconds.add(timeSpent);
-      _questionStartTime = null; // Reset
+      _questionStartTime = null;
     }
   }
 
@@ -113,7 +114,6 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
             currentIndex: 0,
           ),
         );
-        // 🌟 بدأنا الامتحان! شغل التايمر وسجل أول سؤال
         startAssessmentTimer();
         onQuestionShown();
       },
@@ -131,7 +131,6 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
           selectedOption: '',
         ),
       );
-      // 🌟 سجلنا سؤال جديد
       onQuestionShown();
     }
   }
@@ -186,14 +185,18 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
     emit(state.copyWith(selectedOption: option, mcqAnswers: updatedMcq));
   }
 
-  Future<void> submitInterview() async {
-    _assessmentTimer?.cancel(); // 🌟 وقف التايمر
-    // 🌟 بنحسب الوقت الفعلي اللي أخدوه (30 دقيقة ناقص اللي اتبقى)
+  Future<void> submitInterview({bool isTimeUp = false}) async {
+    _assessmentTimer?.cancel();
     final timeSpentInSeconds =
-        (_totalAssessmentMinutes * 60) - (state.remainingTimeInSeconds ?? 1800);
+        (_totalAssessmentMinutes * 60) - _remainingSeconds;
     final timeSpentInMinutes = (timeSpentInSeconds / 60).toStringAsFixed(1);
-    emit(state.copyWith(submitStatus: RequestState.loading));
-    final recordingPaths = state.recordingPathsMap.values.toList();
+    emit(
+      state.copyWith(
+        submitStatus: RequestState.loading,
+        isTimeUp: isTimeUp,
+        remainingTimeInSeconds: _remainingSeconds,
+      ),
+    );
 
     final result = await submitInterviewUseCase(
       SubmitInterviewParams(
@@ -236,17 +239,8 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
     required List<QuestionResult> questions,
   }) async {
     emit(state.copyWith(sendAssessment: RequestState.loading));
-    final String exp = state.candidateExp;
-    final double years = double.tryParse(exp) ?? 0.0;
 
-    String level = "Junior";
-    if (years > 1.5 && years <= 4.0) {
-      level = "Mid-Level";
-    } else if (years > 4.0) {
-      level = "Senior";
-    }
-
-    final String finalTitle = "$level $trackName Assessment";
+    final String finalTitle = "$trackName Assessment";
 
     final result = await sendAssessmentUseCase(
       SendAssessmentParams(
@@ -272,13 +266,6 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
         );
       },
       (r) {
-        // Do NOT call loadHomeData() here. HomeScreen is alive in the
-        // IndexedStack under the newassess route and would rebuild immediately,
-        // combining chart/calendar/header work with audio encoding on the main
-        // thread → 500+ skipped frames → ANR → Signal 3.
-        //
-        // Instead, mark the cubit so HomeScreen fetches fresh data the moment
-        // it becomes the visible screen again (didChangeDependencies).
         getIt<HomeCubitCandidate>().markNeedsRefresh();
         getIt<AssessManageCubit>().loadAssessmentHistory();
         if (isClosed) return;
@@ -321,13 +308,9 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
   }
 
   Future<void> startAssessmentFlow() async {
-    // 1. نوري اليوزر الـ Loading الأساسي للشاشة
     emit(state.copyWith(status: RequestState.loading));
-
-    // 2. نجيب الـ ID ونستنى الدالة تخلص
     await getCandidateId();
 
-    // نشيك: لو حصل إيرور وإحنا بنجيب الـ ID، نوقف ونعرض الإيرور
     if (state.candidateIdStatus == RequestState.error) {
       emit(
         state.copyWith(
@@ -335,16 +318,13 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
           errorMessage: state.candidateIdMessage,
         ),
       );
-      return; // 🌟 بنوقف التنفيذ هنا عشان ميكملش
+      return;
     }
 
-    // بما إنه نجح، نقرأ الـ ID من الـ State
     final String id = state.candidateId;
 
-    // 3. نجيب الـ CV باستخدام الـ ID ونستنى يخلص
     await getCandidateCv(id);
 
-    // نشيك: لو حصل إيرور وإحنا بنجيب الـ CV، نوقف ونعرض الإيرور
     if (state.cvStatus == RequestState.error) {
       emit(
         state.copyWith(
@@ -355,10 +335,8 @@ class AssessmentSessionCubit extends Cubit<AssessmentSessionState> {
       return;
     }
 
-    // بما إنه نجح، نقرأ الـ CV من الـ State
     final CvData cv = state.cv!;
 
-    // 4. أخيراً، نبعت الـ CV لدالة الأسئلة (وهي جواها بتعمل emit للـ Success أو الـ Error بتاعها)
     await loadQuestions(cv);
   }
 }

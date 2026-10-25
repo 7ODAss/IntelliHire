@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/utils/shared/context_extension.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/button_action.dart';
-import 'package:intelli_hire/features/candidate/profile/domain/usecases/change_career_details_usecase.dart';
 import '../../../../../core/enums/request.dart';
 import '../../../../../core/enums/snack_bar_type.dart';
 import '../../../../../core/utils/app_text_style.dart';

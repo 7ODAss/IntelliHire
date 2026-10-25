@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intelli_hire/core/service/service_locator.dart';
 import 'package:intelli_hire/core/utils/app_text_style.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/button_action.dart';
 import 'package:intelli_hire/features/auth/presentation/signup/company/widget/navigator_to_account.dart';

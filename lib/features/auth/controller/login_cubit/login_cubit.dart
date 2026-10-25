@@ -46,10 +46,12 @@ class LoginCubit extends Cubit<LoginState> {
           },
         )
         .then((value) async {
-          //print(value.data);
+          //debugPrint(value.data);
           loginModel = LoginModel.fromJson(value.data);
 
-          if (loginModel != null && loginModel!.isSuccess && loginModel!.token.isNotEmpty) {
+          if (loginModel != null &&
+              loginModel!.isSuccess &&
+              loginModel!.token.isNotEmpty) {
             await CacheHelper.saveData(key: 'token', value: loginModel!.token);
             await CacheHelper.saveData(
               key: 'refreshToken',
@@ -75,7 +77,8 @@ class LoginCubit extends Cubit<LoginState> {
             emit(
               state.copyWith(
                 loginState: RequestState.error,
-                loginMessage: loginModel?.message ?? 'Login failed. Please try again.',
+                loginMessage:
+                    loginModel?.message ?? 'Login failed. Please try again.',
               ),
             );
           }
@@ -88,7 +91,6 @@ class LoginCubit extends Cubit<LoginState> {
                 error.type == DioExceptionType.receiveTimeout ||
                 error.type == DioExceptionType.sendTimeout) {
               message = 'Connection timed out. Please check your internet.';
-              
             } else if (error.type == DioExceptionType.connectionError) {
               message = 'No internet connection or server is unreachable.';
             } else if (error.response?.data != null) {
@@ -104,7 +106,7 @@ class LoginCubit extends Cubit<LoginState> {
               message = 'An unexpected error occurred: ${error.message}';
             }
           }
-          print('message: $message');
+          debugPrint('message: $message');
           emit(
             state.copyWith(
               loginState: RequestState.error,
@@ -115,33 +117,24 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginWithExternalProvider({
-    required String provider, // "Google" or "Microsoft"
-    required String userType, // "company" or "candidate"
+    required String provider,
+    required String userType,
     required BuildContext context,
   }) async {
     try {
-      // 1. اللينك زي ما الباك إند قالهولك بالظبط (مع تعديل localhost لـ 10.0.2.2 للمحاكي)
       final String authUrl = ApiConstant.externalLogin(provider, userType);
 
-      // 2. هنفتح المتصفح ونستنى الـ Scheme بتاعنا
       final result = await FlutterWebAuth2.authenticate(
         url: authUrl,
-        callbackUrlScheme:
-            "intellihire", // ده الـ Scheme اللي في AndroidManifest
+        callbackUrlScheme: "intellihire",
       );
 
-      // 3. اللينك هيرجعلك من الباك إند بالشكل ده:
-      // intellihire://CustomBottomNavBarWrapper?token=12345
       final uri = Uri.parse(result);
-      final token = uri.queryParameters['token']; // بناخد التوكن
-
-      // (اختياري) لو الباك إند رجع اسم الشاشة في اللينك، نقدر نقرأها
-      final screenName = uri.host;
+      final token = uri.queryParameters['token'];
 
       if (token != null) {
-        print('Login Success! Token: $token');
+        debugPrint('Login Success! Token: $token');
 
-        // 4. هنا بقى احنا اللي بنعمل النافيجيشن للشاشة اللي طلبناها!
         if (context.mounted) {
           Navigator.pushReplacement(
             context,
@@ -152,7 +145,7 @@ class LoginCubit extends Cubit<LoginState> {
         }
       }
     } catch (e) {
-      print('Login Failed or Canceled by user: $e');
+      debugPrint('Login Failed or Canceled by user: $e');
     }
   }
 }

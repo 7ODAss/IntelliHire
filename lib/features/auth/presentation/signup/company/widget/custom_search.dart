@@ -4,7 +4,6 @@ import 'package:intelli_hire/core/utils/app_color.dart';
 import '../../../../../../core/utils/app_text_style.dart';
 import '../../../../controller/sign_up_cubit/sign_up_cubit.dart';
 
-// 1. The Main Reusable Widget (The Trigger)
 class SharedBottomSheetSelector extends StatelessWidget {
   final String title;
   final String hintText;
@@ -69,7 +68,9 @@ class SharedBottomSheetSelector extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: hasSelection ? AppColor.signUpConditionColor2 : AppColor.hintColor,
+            color: hasSelection
+                ? AppColor.signUpConditionColor2
+                : AppColor.hintColor,
             width: hasSelection ? 1.5 : 1,
           ),
         ),
@@ -80,7 +81,9 @@ class SharedBottomSheetSelector extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
                 child: Text(
-                  hasSelection ? selectedItem! : title, // Show title if no selection
+                  hasSelection
+                      ? selectedItem!
+                      : title, // Show title if no selection
                   maxLines: 1,
                   softWrap: false,
                   style: hasSelection
@@ -91,7 +94,9 @@ class SharedBottomSheetSelector extends StatelessWidget {
             ),
             Icon(
               Icons.keyboard_arrow_down_outlined,
-              color: isEnabled ? AppColor.signUpConditionColor2 : AppColor.hintColor,
+              color: isEnabled
+                  ? AppColor.signUpConditionColor2
+                  : AppColor.hintColor,
             ),
           ],
         ),
@@ -168,17 +173,14 @@ class _SelectionSheetContentState extends State<_SelectionSheetContent> {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          const SizedBox(height: 8,),
+          const SizedBox(height: 8),
           // Header (Title + Close Button)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                    widget.title,
-                    style:  AppTextStyle.searchTitleStyle
-                ),
+                Text(widget.title, style: AppTextStyle.searchTitleStyle),
                 CircleAvatar(
                   radius: 20,
                   backgroundColor: Color(0xFFF1F1F1),
@@ -192,9 +194,9 @@ class _SelectionSheetContentState extends State<_SelectionSheetContent> {
               ],
             ),
           ),
-          const SizedBox(height: 16,),
-          Divider(color: Color(0xFFD6D6D6),thickness: 1,),
-          const SizedBox(height: 16,),
+          const SizedBox(height: 16),
+          Divider(color: Color(0xFFD6D6D6), thickness: 1),
+          const SizedBox(height: 16),
           // Search Bar
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -206,14 +208,19 @@ class _SelectionSheetContentState extends State<_SelectionSheetContent> {
                 prefixIcon: const Icon(Icons.search, color: Colors.grey),
                 filled: true,
                 fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 0,
+                  horizontal: 16,
+                ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(color: Colors.grey[300]!),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColor.signUpConditionColor2),
+                  borderSide: const BorderSide(
+                    color: AppColor.signUpConditionColor2,
+                  ),
                 ),
               ),
             ),
@@ -225,50 +232,54 @@ class _SelectionSheetContentState extends State<_SelectionSheetContent> {
           Expanded(
             child: _filteredItems.isEmpty
                 ? Center(
-              child: Text(
-                'No results found',
-                style: AppTextStyle.hintTextStyle,
-              ),
-            )
-                : ListView.builder(
-              itemCount: _filteredItems.length,
-              itemBuilder: (context, index) {
-                final item = _filteredItems[index];
-                final isSelected = widget.selectedItem == item;
-
-                return InkWell(
-                  onTap: () {
-                    widget.onSelected(item);
-                    Navigator.pop(context);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      width: double.infinity,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: isSelected ? AppColor.searchCardItemColor : Colors.transparent,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                              item,
-                              style: isSelected
-                                  ? AppTextStyle.signUpDropDownCompanyStyle.copyWith(
-                                color: AppColor.signUpConditionColor2,
-                              )
-                                  : AppTextStyle.signUpDropDownCompanyStyle
-                          ),
-                        ],
-                      ),
+                    child: Text(
+                      'No results found',
+                      style: AppTextStyle.hintTextStyle,
                     ),
+                  )
+                : ListView.builder(
+                    itemCount: _filteredItems.length,
+                    itemBuilder: (context, index) {
+                      final item = _filteredItems[index];
+                      final isSelected = widget.selectedItem == item;
+
+                      return InkWell(
+                        onTap: () {
+                          widget.onSelected(item);
+                          Navigator.pop(context);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            width: double.infinity,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              color: isSelected
+                                  ? AppColor.searchCardItemColor
+                                  : Colors.transparent,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item,
+                                  style: isSelected
+                                      ? AppTextStyle.signUpDropDownCompanyStyle
+                                            .copyWith(
+                                              color: AppColor
+                                                  .signUpConditionColor2,
+                                            )
+                                      : AppTextStyle.signUpDropDownCompanyStyle,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
         ],
       ),
@@ -317,8 +328,8 @@ class LocationSelectionSection extends StatelessWidget {
           title: 'Select Governorate',
           hintText: 'Search...',
           items: (cubit.countryGovernorates[cubit.state.selectedCountry] ?? []),
-          selectedItem: cubit.state.selectedGovernorate, // Use state value directly
-          isEnabled: cubit.state.selectedCountry != null,
+          selectedItem: cubit.state.selectedGovernorate,
+          isEnabled: cubit.state.selectedCountry.isNotEmpty,
           disabledMessage: 'Please select a country first',
           onSelected: (value) {
             cubit.setGovernorateName(value);

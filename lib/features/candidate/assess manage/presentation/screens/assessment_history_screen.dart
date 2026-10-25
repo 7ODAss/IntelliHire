@@ -49,7 +49,6 @@ class AssessmentHistoryScreen extends StatelessWidget {
       body: BlocBuilder<AssessManageCubit, AssessManageState>(
         buildWhen: (prev, curr) => prev.historyStatus != curr.historyStatus,
         builder: (context, state) {
-          // ── Error state: pull-to-refresh still works via CustomScrollView ──
           if (state.historyStatus == RequestState.error) {
             return RefreshIndicator(
               onRefresh: () async {
@@ -62,8 +61,9 @@ class AssessmentHistoryScreen extends StatelessWidget {
                     hasScrollBody: false,
                     child: CandidateErrorWidget(
                       message: state.errorMessage,
-                      onRetry: () =>
-                          context.read<AssessManageCubit>().loadAssessmentHistory(),
+                      onRetry: () => context
+                          .read<AssessManageCubit>()
+                          .loadAssessmentHistory(),
                     ),
                   ),
                 ],
@@ -74,7 +74,6 @@ class AssessmentHistoryScreen extends StatelessWidget {
           final isLoading = state.historyStatus != RequestState.success;
           final assessments = isLoading ? _dummyList : state.assessments;
 
-          // ── Empty state: pull-to-refresh still works via CustomScrollView ──
           if (!isLoading && assessments.isEmpty) {
             return RefreshIndicator(
               onRefresh: () async {
@@ -92,7 +91,6 @@ class AssessmentHistoryScreen extends StatelessWidget {
             );
           }
 
-          // ── Normal / loading state ──
           return RefreshIndicator(
             onRefresh: () async {
               context.read<AssessManageCubit>().loadAssessmentHistory();
@@ -113,7 +111,10 @@ class AssessmentHistoryScreen extends StatelessWidget {
                         );
 
                         final String userJobTitle =
-                            getIt<AssessmentSessionCubit>().state.cv?.jobTitle ??
+                            getIt<AssessmentSessionCubit>()
+                                .state
+                                .cv
+                                ?.jobTitle ??
                             assessments[index].title;
 
                         Navigator.of(context, rootNavigator: true).push(

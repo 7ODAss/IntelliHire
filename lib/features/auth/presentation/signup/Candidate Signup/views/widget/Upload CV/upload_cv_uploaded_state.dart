@@ -55,7 +55,7 @@ class UploadCvUploadedState extends StatelessWidget {
                     const SizedBox(height: 12),
                     TextButton.icon(
                       onPressed: onClear,
-                      icon: const Icon(
+                      icon: const FaIcon(
                         FontAwesomeIcons.trashCan,
                         color: Color(0xff0F172A),
                       ),

@@ -54,7 +54,6 @@ class PerformanceReportScreen extends StatelessWidget {
     this.comeFromAssess = false,
   });
 
-  // 🌟 دالة تحديث داتا الـ Home المشتركة عشان ميتكررش الكود
   void _refreshHomeData() {
     if (getIt.isRegistered<HomeCubitCandidate>()) {
       getIt<HomeCubitCandidate>().loadHomeData();
@@ -114,7 +113,6 @@ class PerformanceReportScreen extends StatelessWidget {
                 PerformanceCard(report: report),
                 const SizedBox(height: 24),
 
-                // View interview report button
                 if (!isLoading && report.questions.isNotEmpty)
                   InterviewReportScreen(report: report),
                 if (comeFromAssess)

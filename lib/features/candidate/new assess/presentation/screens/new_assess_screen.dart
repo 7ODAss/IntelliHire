@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intelli_hire/core/helpers/cache_helper.dart';
-import 'package:intelli_hire/core/service/service_locator.dart';
 import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
-import 'package:intelli_hire/features/candidate/new%20assess/domain/entities/cv_data.dart';
-import 'package:intelli_hire/features/candidate/new%20assess/presentation/controller/assessment_session_cubit.dart';
+
 import 'package:intelli_hire/features/candidate/new%20assess/presentation/screens/interview_question_screen.dart';
 import 'package:intelli_hire/features/candidate/profile/presentation/widgets/pop_action_menu.dart';
 
@@ -25,10 +21,7 @@ class NewAssessScreen extends StatelessWidget {
           builder: (context, constraints) {
             return SingleChildScrollView(
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight:
-                      constraints.maxHeight, // بنقوله أقل طول ليك هو طول الشاشة
-                ),
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: IntrinsicHeight(
                   child: Padding(
                     padding: const EdgeInsets.all(24),

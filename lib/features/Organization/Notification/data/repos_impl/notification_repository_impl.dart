@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/error/exception.dart';
 import 'package:intelli_hire/core/error/failure.dart';
 import 'package:intelli_hire/features/Organization/Notification/data/DataSources/notification_remote_data_source.dart';
@@ -15,13 +16,17 @@ class NotificationRepositoryImpl implements BaseNotificationRepository {
   Future<Either<Failure, List<NotificationEntity>>> getNotifications() async {
     try {
       final result = await remoteDataSource.getNotifications();
-      final entities = result.map((model) => NotificationEntity(
-        id: model.id,
-        title: model.title,
-        description: model.description,
-        time: model.time,
-        isRead: model.isRead,
-      )).toList();
+      final entities = result
+          .map(
+            (model) => NotificationEntity(
+              id: model.id,
+              title: model.title,
+              description: model.description,
+              time: model.time,
+              isRead: model.isRead,
+            ),
+          )
+          .toList();
 
       return Right(entities);
     } on ServerException catch (failure) {
@@ -60,10 +65,12 @@ class NotificationRepositoryImpl implements BaseNotificationRepository {
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel.statusMessage));
     } on DioException catch (e) {
-      print("🚨 DioException in deleteNotification: Status: ${e.response?.statusCode}, Path: ${e.requestOptions.path}, Data: ${e.response?.data}, Message: ${e.message}");
+      debugPrint(
+        "🚨 DioException in deleteNotification: Status: ${e.response?.statusCode}, Path: ${e.requestOptions.path}, Data: ${e.response?.data}, Message: ${e.message}",
+      );
       return Left(ServerFailure(e.message ?? 'خطأ في الاتصال'));
     } catch (e) {
-      print("🚨 Unexpected error in deleteNotification: $e");
+      debugPrint("🚨 Unexpected error in deleteNotification: $e");
       return Left(ServerFailure(e.toString()));
     }
   }

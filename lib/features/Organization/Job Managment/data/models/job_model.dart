@@ -24,21 +24,23 @@ class JobItemModel extends JobItemEntity {
   });
 
   factory JobItemModel.fromJson(Map<String, dynamic> json) {
-    print("JobItemModel.fromJson raw JSON map for job '${json['title']}': $json");
-
     // 🌟 1. تأمين قراءة المهارات (من requiredSkills أو skillsAndTools)
     List<String> parsedSkills = [];
     final skillsData = json['requiredSkills'] ?? json['skillsAndTools'];
     if (skillsData != null) {
       if (skillsData is String) {
-        parsedSkills = skillsData.toString().split(',').map((e) => e.trim()).toList();
+        parsedSkills = skillsData
+            .toString()
+            .split(',')
+            .map((e) => e.trim())
+            .toList();
       } else if (skillsData is List) {
         parsedSkills = List<String>.from(skillsData);
       }
     }
 
     String expStr = (json['experienceYears'] ?? '').toString();
-    String expNumOnly = expStr.replaceAll(RegExp(r'[^0-9]'), ''); 
+    String expNumOnly = expStr.replaceAll(RegExp(r'[^0-9]'), '');
     int? expParsed = int.tryParse(expNumOnly);
 
     int parseApplicantsCount(Map<String, dynamic> json) {
@@ -73,27 +75,35 @@ class JobItemModel extends JobItemEntity {
       id: json['id']?.toString() ?? '',
       title: json['title']?.toString() ?? '',
       type: json['type']?.toString() ?? '',
-      // دعمنا locations و location
       location: json['location']?.toString() ?? json['locations']?.toString(),
       postedAt: json['postedAt']?.toString() ?? '',
       applicantsCount: parseApplicantsCount(json),
       description: json['description']?.toString(),
-      
-      requirements: json['requirements']?.toString() ?? json['jobrequirements']?.toString(),
+
+      requirements:
+          json['requirements']?.toString() ??
+          json['jobrequirements']?.toString(),
       careerLevel: json['careerLevel']?.toString(),
-      
+
       experienceYears: expParsed,
-      
-      requiredSkills: parsedSkills, 
-          
+
+      requiredSkills: parsedSkills,
+
       category: json['category']?.toString(),
-      
-      subCategory: json['subCategory']?.toString() ?? json['subCtegory']?.toString(),
-      
-      startedAt: json['startedAt']?.toString() ?? json['startDateTime']?.toString(),
+
+      subCategory:
+          json['subCategory']?.toString() ?? json['subCtegory']?.toString(),
+
+      startedAt:
+          json['startedAt']?.toString() ?? json['startDateTime']?.toString(),
       endedAt: json['endedAt']?.toString() ?? json['endDateTime']?.toString(),
-      
-      cvCount: int.tryParse(json['cvCount']?.toString() ?? json['questionCount']?.toString() ?? json['questionsCount']?.toString() ?? '0'),
+
+      cvCount: int.tryParse(
+        json['cvCount']?.toString() ??
+            json['questionCount']?.toString() ??
+            json['questionsCount']?.toString() ??
+            '0',
+      ),
       codingCount: int.tryParse(json['codingCount']?.toString() ?? '0'),
       behavioralCount: int.tryParse(json['behavioralCount']?.toString() ?? '0'),
       technicalCount: int.tryParse(json['technicalCount']?.toString() ?? '0'),

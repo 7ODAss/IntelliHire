@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/features/candidate/assess%20manage/presentation/widgets/candidate_error_widget.dart';
 import 'package:intelli_hire/features/candidate/home/presentation/widgets/empty_screen.dart';
-import 'package:intelli_hire/features/candidate/home/presentation/widgets/error_banner.dart';
 import 'package:intelli_hire/features/candidate/home/presentation/widgets/header_section.dart';
 import 'package:intelli_hire/features/candidate/home/presentation/widgets/interviews_summary_section.dart';
 import 'package:intelli_hire/features/candidate/home/presentation/widgets/training_performance_card.dart';
@@ -21,7 +20,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // 🌟 الداتا الوهمية دي ضرورية جداً عشان Skeletonizer يعرف يرسم العضم (Bones)
   static const _emptyPerformance = TrainingPerformance(
     firstName: 'Loading Name',
     totalExams: 0,
@@ -45,15 +43,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final cubit = getIt<HomeCubitCandidate>();
 
     if (!_initialized) {
-      // First mount: always load fresh data.
       _initialized = true;
       cubit.reset();
       cubit.loadHomeData();
     } else if (cubit.needsRefresh) {
-      // Re-entry after an assessment: the newassess flow set this flag instead
-      // of calling loadHomeData() directly (which caused ANR while HomeScreen
-      // was buried under the assessment route). Consume the flag and refresh now
-      // that HomeScreen is actually visible again.
       cubit.needsRefresh = false;
       cubit.loadHomeData();
     }
@@ -61,11 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // BlocProvider.value does NOT call .close() when this widget is disposed,
-    // which is correct for a lazySingleton cubit that must outlive this screen.
-    // BlocProvider(create:) always calls .close() — that was closing the
-    // singleton and causing StateError aborts when other cubits tried to
-    // emit() into it after navigation.
     return BlocProvider.value(
       value: getIt<HomeCubitCandidate>(),
       child: Scaffold(
@@ -74,8 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
             return previous.homeSummaryStatus != current.homeSummaryStatus;
           },
           builder: (context, state) {
-            // Shared refresh callback — the _isLoadingHome guard inside the
-            // cubit safely prevents duplicate in-flight requests.
             Future<void> onRefresh() async {
               await context.read<HomeCubitCandidate>().loadHomeData();
             }
@@ -106,7 +92,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     state.homeSummaryStatus == RequestState.loading ||
                     state.homeSummaryStatus == RequestState.initial;
 
-                // تجهيز الداتا (لو بيحمل هياخد الوهمية، لو خلص هياخد الحقيقية)
                 final performance =
                     state.homeSummary?.trainingPerformance ?? _emptyPerformance;
                 final interviews =

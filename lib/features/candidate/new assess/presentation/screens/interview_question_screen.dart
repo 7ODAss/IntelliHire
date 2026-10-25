@@ -5,8 +5,6 @@ import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
 import 'package:intelli_hire/core/utils/shared/context_extension.dart';
 import 'package:intelli_hire/features/candidate/assess%20manage/presentation/screens/performance_report_screen.dart';
-import 'package:intelli_hire/features/candidate/home/presentation/controller/home_cubit.dart';
-import 'package:intelli_hire/features/candidate/new%20assess/domain/entities/cv_data.dart';
 import 'package:intelli_hire/features/candidate/new%20assess/domain/entities/question_type.dart';
 import 'package:intelli_hire/features/candidate/new%20assess/presentation/controller/assessment_session_cubit.dart';
 import 'package:intelli_hire/features/candidate/new%20assess/presentation/widgets/exit_assessment_dialog.dart';
@@ -26,36 +24,7 @@ class InterviewQuestionScreen extends StatefulWidget {
       _InterviewQuestionScreenState();
 }
 
-class _InterviewQuestionScreenState extends State<InterviewQuestionScreen>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _entryController;
-  late final Animation<Offset> _slideAnim;
-  late final Animation<double> _fadeAnim;
-
-  @override
-  void initState() {
-    super.initState();
-    _entryController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _slideAnim = Tween<Offset>(
-      begin: const Offset(0, 0.15),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _entryController, curve: Curves.easeOut));
-    _fadeAnim = CurvedAnimation(
-      parent: _entryController,
-      curve: Curves.easeOut,
-    );
-    _entryController.forward();
-  }
-
-  @override
-  void dispose() {
-    _entryController.dispose();
-    super.dispose();
-  }
-
+class _InterviewQuestionScreenState extends State<InterviewQuestionScreen> {
   void _showExitDialog() {
     showDialog(
       context: context,
@@ -63,24 +32,20 @@ class _InterviewQuestionScreenState extends State<InterviewQuestionScreen>
       builder: (_) => ExitAssessmentDialog(
         onCancel: () => Navigator.pop(context),
         onConfirmExit: () {
-          Navigator.pop(context); // close dialog
-          Navigator.pop(context); // exit screen
+          Navigator.pop(context);
+          Navigator.pop(context);
         },
       ),
     );
   }
 
   void _onNext(AssessmentSessionCubit cubit, AssessmentSessionState state) {
-    // 🌟 سجل إنه جاوب وخد الوقت
     cubit.onQuestionAnswered();
 
     if (state.isLastQuestion) {
       cubit.submitInterview();
     } else {
       cubit.nextQuestion();
-      _entryController
-        ..reset()
-        ..forward();
     }
   }
 
@@ -100,15 +65,10 @@ class _InterviewQuestionScreenState extends State<InterviewQuestionScreen>
     return BlocProvider(
       create: (context) =>
           getIt<AssessmentSessionCubit>()..startAssessmentFlow(),
-
-      child: BlocConsumer<AssessmentSessionCubit, AssessmentSessionState>(
-        // Only react to submitStatus changes — NOT to every timer-tick
-        // (remainingTimeInSeconds changes every second and would cause
-        // the listener body to run 180 times, risking double-navigation).
+      child: BlocListener<AssessmentSessionCubit, AssessmentSessionState>(
         listenWhen: (prev, curr) => prev.submitStatus != curr.submitStatus,
         listener: (context, state) async {
-          if (state.submitStatus == RequestState.loading &&
-              state.remainingTimeInSeconds == 0) {
+          if (state.submitStatus == RequestState.loading && state.isTimeUp) {
             context.showSnackBar(
               type: SnackBarType.error,
               'Time is up! Submitting your answers automatically...',
@@ -120,10 +80,6 @@ class _InterviewQuestionScreenState extends State<InterviewQuestionScreen>
             final report = state.submittedReport!;
             final cubit = context.read<AssessmentSessionCubit>();
 
-            // Await sendAssessment so it finishes BEFORE we navigate away
-            // and tear down the BlocProvider that owns this cubit.
-            // Without await, the cubit is closed mid-flight and emitting
-            // to it throws a StateError that aborts the process.
             await cubit.sendAssessment(
               trackName: state.cv?.jobTitle ?? 'Unknown Position',
               assessmentName: report.title,
@@ -135,13 +91,8 @@ class _InterviewQuestionScreenState extends State<InterviewQuestionScreen>
               questions: report.questions,
             );
 
-            // Guard: widget may have been disposed while we awaited.
             if (!context.mounted) return;
 
-            // Use pushAndRemoveUntil so the entire assessment back-stack
-            // (NewAssessScreen + InterviewQuestionScreen) is cleared.
-            // The back-button on PerformanceReportScreen and the "Done"
-            // button both call popUntil(isFirst), landing on HomeScreen.
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
@@ -154,169 +105,220 @@ class _InterviewQuestionScreenState extends State<InterviewQuestionScreen>
                   ),
                 ),
               ),
-              (route) => route.isFirst, // keep only HomeScreen (root)
+              (route) => route.isFirst,
             );
           } else if (state.submitStatus == RequestState.error) {
             context.showSnackBar(type: SnackBarType.error, state.errorMessage);
           }
         },
-        builder: (context, state) {
-          final cubit = context.read<AssessmentSessionCubit>();
+        child: BlocBuilder<AssessmentSessionCubit, AssessmentSessionState>(
+          buildWhen: (prev, curr) => prev.status != curr.status,
+          builder: (context, state) {
+            final cubit = context.read<AssessmentSessionCubit>();
 
-          if (state.status == RequestState.loading) {
-            return const Scaffold(
-              backgroundColor: AppColor.backgroundColor,
-              body: Center(
-                child: CircularProgressIndicator(color: AppColor.primary),
-              ),
-            );
-          }
+            if (state.status == RequestState.loading) {
+              return const Scaffold(
+                backgroundColor: AppColor.backgroundColor,
+                body: Center(
+                  child: CircularProgressIndicator(color: AppColor.primary),
+                ),
+              );
+            }
 
-          if (state.status == RequestState.error) {
+            if (state.status == RequestState.error) {
+              return Scaffold(
+                backgroundColor: AppColor.backgroundColor,
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Colors.red,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(state.errorMessage),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () => cubit.startAssessmentFlow(),
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            if (state.questions.isEmpty) return const SizedBox.shrink();
+
             return Scaffold(
               backgroundColor: AppColor.backgroundColor,
-              body: Center(
+              body: SafeArea(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: 48,
-                      color: Colors.red,
+                    BlocSelector<
+                      AssessmentSessionCubit,
+                      AssessmentSessionState,
+                      ({int number, int total})
+                    >(
+                      selector: (s) {
+                        final q = s.currentQuestion;
+                        return (number: q?.number ?? 1, total: q?.total ?? 1);
+                      },
+                      builder: (context, qInfo) {
+                        return QuestionProgressHeader(
+                          currentQuestion: qInfo.number,
+                          totalQuestions: qInfo.total,
+                          onClose: _showExitDialog,
+                          timerStream: cubit.timerStream,
+                          initialRemainingTime: cubit.remainingSeconds,
+                        );
+                      },
                     ),
-                    const SizedBox(height: 16),
-                    Text(state.errorMessage),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => cubit.startAssessmentFlow(),
-                      child: const Text('Retry'),
+
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          children: [
+                            BlocSelector<
+                              AssessmentSessionCubit,
+                              AssessmentSessionState,
+                              String
+                            >(
+                              selector: (s) => s.currentQuestion?.text ?? '',
+                              builder: (context, questionText) {
+                                return Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.06),
+                                        blurRadius: 12,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(
+                                    questionText,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontFamily: AppFont.interBold,
+                                      fontSize: 17,
+                                      color: Color(0xFF0F172A),
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 32),
+
+                            BlocBuilder<
+                              AssessmentSessionCubit,
+                              AssessmentSessionState
+                            >(
+                              buildWhen: (prev, curr) =>
+                                  prev.currentIndex != curr.currentIndex ||
+                                  prev.selectedOption != curr.selectedOption ||
+                                  prev.recordingState != curr.recordingState,
+                              builder: (context, s) {
+                                final currentQ = s.currentQuestion;
+                                if (currentQ == null) {
+                                  return const SizedBox.shrink();
+                                }
+
+                                if (currentQ.type == QuestionType.mcq) {
+                                  return Column(
+                                    children: currentQ.options
+                                        .map(
+                                          (option) => McqOptionTile(
+                                            option: option,
+                                            isSelected:
+                                                s.selectedOption == option,
+                                            onTap: () =>
+                                                cubit.selectOption(option),
+                                          ),
+                                        )
+                                        .toList(),
+                                  );
+                                } else {
+                                  return const RecordingControlsWidget();
+                                }
+                              },
+                            ),
+
+                            const SizedBox(height: 32),
+
+                            BlocBuilder<
+                              AssessmentSessionCubit,
+                              AssessmentSessionState
+                            >(
+                              buildWhen: (prev, curr) =>
+                                  prev.currentIndex != curr.currentIndex ||
+                                  prev.selectedOption != curr.selectedOption ||
+                                  prev.recordingState != curr.recordingState ||
+                                  prev.submitStatus != curr.submitStatus,
+                              builder: (context, s) {
+                                final canProceed = _canProceed(s);
+                                final isSubmitting =
+                                    s.submitStatus == RequestState.loading;
+
+                                return SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: canProceed && !isSubmitting
+                                        ? () => _onNext(cubit, s)
+                                        : null,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColor.primary,
+                                      disabledBackgroundColor: const Color(
+                                        0xFFCBD5E1,
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                    ),
+                                    child: isSubmitting
+                                        ? const SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : Text(
+                                            s.isLastQuestion
+                                                ? 'Submit Interview'
+                                                : 'Next Question',
+                                            style: const TextStyle(
+                                              fontFamily: AppFont.interBold,
+                                              fontSize: 15,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
             );
-          }
-
-          final question = state.currentQuestion;
-          if (question == null) return const SizedBox.shrink();
-
-          return Scaffold(
-            backgroundColor: AppColor.backgroundColor,
-            body: SafeArea(
-              child: Column(
-                children: [
-                  // Dark header
-                  QuestionProgressHeader(
-                    currentQuestion: question.number,
-                    totalQuestions: question.total,
-                    onClose: _showExitDialog,
-                  ),
-
-                  // Question content
-                  Expanded(
-                    child: FadeTransition(
-                      opacity: _fadeAnim,
-                      child: SlideTransition(
-                        position: _slideAnim,
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            children: [
-                              // Question card
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.06),
-                                      blurRadius: 12,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: Text(
-                                  question.text,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontFamily: AppFont.interBold,
-                                    fontSize: 17,
-                                    color: Color(0xFF0F172A),
-                                    height: 1.5,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 32),
-
-                              // MCQ or Audio controls
-                              if (question.type == QuestionType.mcq) ...[
-                                ...question.options.map(
-                                  (option) => McqOptionTile(
-                                    option: option,
-                                    isSelected: state.selectedOption == option,
-                                    onTap: () => cubit.selectOption(option),
-                                  ),
-                                ),
-                              ] else ...[
-                                const RecordingControlsWidget(),
-                              ],
-
-                              const SizedBox(height: 32),
-
-                              // Next / Submit button
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: _canProceed(state)
-                                      ? () => _onNext(cubit, state)
-                                      : null,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColor.primary,
-                                    disabledBackgroundColor: const Color(
-                                      0xFFCBD5E1,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 16,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(14),
-                                    ),
-                                  ),
-                                  child:
-                                      state.submitStatus == RequestState.loading
-                                      ? const SizedBox(
-                                          height: 20,
-                                          width: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.white,
-                                          ),
-                                        )
-                                      : Text(
-                                          state.isLastQuestion
-                                              ? 'Submit Interview'
-                                              : 'Next Question',
-                                          style: const TextStyle(
-                                            fontFamily: AppFont.interBold,
-                                            fontSize: 15,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }

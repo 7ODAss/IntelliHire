@@ -16,18 +16,13 @@ class CustomBottomNavBarWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String?>(
-      // 🟢 نقوم بجلب التوكن الذي تم إدخاله في الصفحة السابقة وحفظه في الـ Storage
       future: StorageService.getToken(),
       builder: (context, snapshot) {
-        // ننتظر حتى تكتمل عملية القراءة من الذاكرة
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
-
-        // التوكن المجلوب (إذا لم يوجد نرسل نص فارغ)
-        final String token = snapshot.data ?? "";
 
         return MultiBlocProvider(
           providers: [

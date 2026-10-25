@@ -5,8 +5,6 @@ import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signu
 import 'package:intelli_hire/features/auth/presentation/signup/Candidate%20Signup/views/widget/Upload%20CV/upload_cv_uploading_state.dart';
 
 import '../../../../../core/enums/request.dart';
-import '../../../../../core/service/service_locator.dart';
-import '../../domain/usecases/change_career_details_usecase.dart';
 import '../controller/candidate_profile_cubit.dart';
 
 class UploadCvCandidate extends StatelessWidget {
@@ -26,7 +24,6 @@ class UploadCvCandidate extends StatelessWidget {
 
         if (state.cvUploadStatus == RequestState.initial) {
           return UploadCvIdleState(onPressed: cubit.pickCv, isDisabled: false);
-          return UploadCvIdleState(onPressed: cubit.pickCv);
         }
 
         if (state.cvUploadStatus == RequestState.loading) {
@@ -49,7 +46,6 @@ class UploadCvCandidate extends StatelessWidget {
             onClear: cubit.clearCv,
             onPressed: cubit.pickCv,
             isDisabled: false,
-
           );
         }
 
@@ -67,7 +63,6 @@ class UploadCvCandidate extends StatelessWidget {
           );
         }
         return UploadCvIdleState(onPressed: cubit.pickCv, isDisabled: false);
-        return UploadCvIdleState(onPressed: cubit.pickCv);
       },
     );
   }

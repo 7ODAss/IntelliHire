@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intelli_hire/features/onboarding/model/onboarding_model.dart';
 import '../../../../../core/utils/app_text_style.dart';
 import '../../../models/forget_password_model.dart';
 
 class ForgetPasswordItem extends StatelessWidget {
   final int pageIndex;
   final List<ForgetPasswordModel> forgetPasswordList;
-  const ForgetPasswordItem({super.key,required this.pageIndex, required this.forgetPasswordList});
+  const ForgetPasswordItem({
+    super.key,
+    required this.pageIndex,
+    required this.forgetPasswordList,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +33,7 @@ class ForgetPasswordItem extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 16,),
+          const SizedBox(height: 16),
           forgetPasswordList[pageIndex].widget,
         ],
       ),

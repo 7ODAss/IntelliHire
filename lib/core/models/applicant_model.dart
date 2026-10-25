@@ -3,40 +3,33 @@ import 'package:intelli_hire/core/helpers/cache_helper.dart';
 class ApplicantModel {
   // Static cache to store candidate score and photo by sessionId
   static final Map<String, Map<String, dynamic>> sessionCache = {};
-  
+
   // Static set to track processed sessions (accepted/rejected) during the app run
   static final Set<String> processedSessionIds = {};
   static bool isProcessedSessionIdsLoaded = false;
 
   static Future<void> markSessionAsProcessed(String sessionId) async {
     processedSessionIds.add(sessionId);
-    print("--- [PERSIST] Marking session as processed: $sessionId. Current list: $processedSessionIds");
     try {
       await CacheHelper.saveData(
         key: 'processed_session_ids',
         value: processedSessionIds.join(','),
       );
-      print("--- [PERSIST] Saved successfully to CacheHelper.");
-    } catch (e) {
-      print("--- [PERSIST ERROR] Failed to save session IDs: $e");
-    }
+    } catch (e) {}
   }
 
   static Future<void> loadProcessedSessionIds() async {
     if (isProcessedSessionIdsLoaded) return;
-    print("--- [PERSIST] Loading processed session IDs from CacheHelper...");
     try {
-      final String? savedIds = await CacheHelper.getData(key: 'processed_session_ids');
-      print("--- [PERSIST] Raw saved IDs from CacheHelper: '$savedIds'");
+      final String? savedIds = await CacheHelper.getData(
+        key: 'processed_session_ids',
+      );
       if (savedIds != null && savedIds.trim().isNotEmpty) {
         processedSessionIds.addAll(
           savedIds.split(',').map((s) => s.trim()).where((id) => id.isNotEmpty),
         );
-        print("--- [PERSIST] Loaded session IDs: $processedSessionIds");
       }
-    } catch (e) {
-      print("--- [PERSIST ERROR] Failed to load session IDs: $e");
-    }
+    } catch (e) {}
     isProcessedSessionIdsLoaded = true;
   }
 
@@ -44,8 +37,8 @@ class ApplicantModel {
   final String sessionId;
   final String name;
   final String role;
-  final String? email; // 🔴 ضفنا الإيميل
-  final String? phone; // 🔴 ضفنا التليفون
+  final String? email;
+  final String? phone;
   final int experienceYears;
   final double averageResponseTime;
   final double accuracyPercent;
@@ -53,15 +46,15 @@ class ApplicantModel {
   final List<String> strengths;
   final List<String> weaknesses;
   final String status;
-  final String? photo; // 🔴 حقل الصورة
+  final String? photo;
 
   ApplicantModel({
     required this.id,
     required this.sessionId,
     required this.name,
     required this.role,
-    this.email, // 🔴
-    this.phone, // 🔴
+    this.email,
+    this.phone,
     required this.experienceYears,
     required this.averageResponseTime,
     required this.accuracyPercent,
@@ -69,12 +62,10 @@ class ApplicantModel {
     required this.strengths,
     required this.weaknesses,
     required this.status,
-    this.photo, // 🔴
+    this.photo,
   });
 
   factory ApplicantModel.fromJson(Map<String, dynamic> json) {
-    print("ApplicantModel.fromJson raw JSON map for '${json['fullName'] ?? json['name'] ?? 'unknown'}': $json");
-
     List<String> parsePoints(String? points) {
       if (points == null || points.trim() == "N/A" || points.isEmpty) return [];
       if (points.contains('|')) {
@@ -126,58 +117,63 @@ class ApplicantModel {
     }
 
     return ApplicantModel(
-      id: json['sessionId'] ?? json['SessionId'] ?? json['id'] ?? json['Id'] ?? '',
-      sessionId: json['sessionId'] ?? json['SessionId'] ?? json['id'] ?? json['Id'] ?? '',
-      // 🔴 الباك إند بيبعت fullName بدل name
+      id:
+          json['sessionId'] ??
+          json['SessionId'] ??
+          json['id'] ??
+          json['Id'] ??
+          '',
+      sessionId:
+          json['sessionId'] ??
+          json['SessionId'] ??
+          json['id'] ??
+          json['Id'] ??
+          '',
+
       name: json['fullName'] ?? json['name'] ?? 'Unknown Candidate',
-      // 🔴 الباك إند بيبعت currentRole بدل role
+
       role: json['currentRole'] ?? json['role'] ?? 'Candidate',
- 
-      // 🔴 قراءة الإيميل والرقم
+
       email: json['email']?.toString(),
       phone: json['phone']?.toString(),
- 
+
       experienceYears: parseInt(
         json['experienceYears'] ??
-        json['ExperienceYears'] ??
-        json['experience'] ??
-        json['Experience'] ??
-        json['yearsOfExperience'] ??
-        json['YearsOfExperience'] ??
-        json['yrsOfExperience'] ??
-        json['experienceYrs'] ??
-        0,
+            json['ExperienceYears'] ??
+            json['experience'] ??
+            json['Experience'] ??
+            json['yearsOfExperience'] ??
+            json['YearsOfExperience'] ??
+            json['yrsOfExperience'] ??
+            json['experienceYrs'] ??
+            0,
       ),
       averageResponseTime: parseDouble(
         json['averageResponseTime'] ?? json['avgResponseTime'] ?? 0,
       ),
- 
+
       accuracyPercent: parseDouble(
         json['accuracyPercent'] ?? json['aiScore'] ?? 0,
       ),
       aiScore: (json['aiScore'] ?? json['accuracyPercent'] ?? 0).toInt(),
- 
+
       strengths: parsePoints(json['strengthPoints']),
       weaknesses: parsePoints(
         json['weaknessesPoints'] ?? json['weaknessPoints'],
-      ), // 🔴 عدلنا الاسم حسب الـ JSON
+      ),
       status: parseStatus(json['status']),
       photo: json['photo']?.toString() ?? json['photoUrl']?.toString(),
     );
   }
 
-  ApplicantModel copyWith({
-    String? status,
-    int? aiScore,
-    String? photo,
-  }) {
+  ApplicantModel copyWith({String? status, int? aiScore, String? photo}) {
     return ApplicantModel(
       id: id,
       sessionId: sessionId,
       name: name,
       role: role,
-      email: email, // 🔴
-      phone: phone, // 🔴
+      email: email,
+      phone: phone,
       experienceYears: experienceYears,
       averageResponseTime: averageResponseTime,
       accuracyPercent: accuracyPercent,

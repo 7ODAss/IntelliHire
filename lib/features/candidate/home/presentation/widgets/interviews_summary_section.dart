@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/utils/app_font.dart';
 import '../../domain/entities/interview_summary.dart';
-import 'center_interview_card.dart';
 import 'corner_interview_card.dart';
 
 class InterviewsSummarySection extends StatelessWidget {
   final InterviewSummary interviews;
-  const InterviewsSummarySection({super.key,required this.interviews});
+  const InterviewsSummarySection({super.key, required this.interviews});
 
   @override
   Widget build(BuildContext context) {
-    print('interviews summary section build');
+    debugPrint('interviews summary section build');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -51,7 +50,6 @@ class InterviewsSummarySection extends StatelessWidget {
                 label: 'Rejected',
                 icon: Icons.cancel_outlined,
                 iconColor: const Color(0xFFDC2626),
-
               ),
             ),
           ],

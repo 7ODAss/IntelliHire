@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/enums/request.dart';
 import 'package:intelli_hire/core/enums/snack_bar_type.dart';
-import 'package:intelli_hire/core/utils/app_color.dart';
 import 'package:intelli_hire/core/utils/app_font.dart';
-import 'package:intelli_hire/core/utils/app_text_style.dart';
 import 'package:intelli_hire/core/utils/shared/context_extension.dart';
 import 'package:intelli_hire/features/auth/presentation/login/login_screen.dart';
 import 'package:intelli_hire/features/auth/presentation/login/widget/field_item.dart';
@@ -62,9 +60,6 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
           },
         ),
 
-        // 🌟 Navigate to LoginScreen once logout completes after account deletion.
-        // Previously there was no logout listener here so the user was stranded
-        // on the deleted account's screen.
         BlocListener<CandidateProfileCubit, CandidateProfileState>(
           listenWhen: (previous, current) =>
               previous.userProfileCandidateLogOutState !=

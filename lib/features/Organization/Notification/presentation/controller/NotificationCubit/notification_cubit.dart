@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/service/notification_hub_service.dart';
 import 'package:intelli_hire/features/Organization/Notification/domain/Usecases/get_notifications_usecase.dart';
@@ -68,7 +69,7 @@ class NotificationCubit extends Cubit<NotificationState> {
             );
           }
         } catch (e) {
-          print("Error Parsing SignalR Notification: $e");
+          debugPrint("Error Parsing SignalR Notification: $e");
         }
       },
     );
@@ -117,16 +118,16 @@ class NotificationCubit extends Cubit<NotificationState> {
       final result = await markAllAsReadUseCase.call();
 
       result.fold((failure) {
-        print("Error marking as read: ${failure.message}");
-      }, (_) => print("Marked as read successfully"));
+        debugPrint("Error marking as read: ${failure.message}");
+      }, (_) => debugPrint("Marked as read successfully"));
     }
   }
 
   Future<void> reconnectSignalR() async {
     if (isClosed) return;
-    print("🔄 Reconnecting SignalR...");
-    hubService.stopConnection(); 
-    initRealTimeNotifications(); 
+    debugPrint("🔄 Reconnecting SignalR...");
+    hubService.stopConnection();
+    initRealTimeNotifications();
   }
 
   void deleteNotificationLocally(String id) async {
@@ -139,7 +140,9 @@ class NotificationCubit extends Cubit<NotificationState> {
       emit(NotificationLoaded(updatedList));
 
       if (id.startsWith("temp_")) {
-        print("⚠️ Notification has a client-generated ID ($id). Skipping backend API deletion call.");
+        debugPrint(
+          "⚠️ Notification has a client-generated ID ($id). Skipping backend API deletion call.",
+        );
         return;
       }
 
@@ -147,16 +150,17 @@ class NotificationCubit extends Cubit<NotificationState> {
 
       result.fold((failure) {
         emit(NotificationLoaded(oldList));
-        print("Failed to delete: ${failure.message}");
-      }, (_) => print("Successfully deleted"));
+        debugPrint("Failed to delete: ${failure.message}");
+      }, (_) => debugPrint("Successfully deleted"));
     }
   }
+
   void deleteAllNotificationsLocally() async {
     if (state is NotificationLoaded) {
       final currentState = state as NotificationLoaded;
       final oldList = currentState.notifications;
 
-      if (oldList.isEmpty) return; 
+      if (oldList.isEmpty) return;
 
       emit(const NotificationLoaded([]));
 
@@ -165,7 +169,9 @@ class NotificationCubit extends Cubit<NotificationState> {
           await deleteNotificationUseCase.call(notification.id!);
         }
       }
-      print("Successfully deleted all organization notifications in the background");
+      debugPrint(
+        "Successfully deleted all organization notifications in the background",
+      );
     }
   }
 

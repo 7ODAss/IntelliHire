@@ -86,18 +86,15 @@ class QuestionResultCard extends StatelessWidget {
                 ),
               ),
             ),
-            // 🌟 الجزء المتحرك (بيظهر ويختفي بـ Animation)
             AnimatedCrossFade(
               firstChild: const SizedBox(width: double.infinity, height: 0),
               secondChild: Padding(
-                padding: const EdgeInsets.only(top: 10), // مسافة من فوق
+                padding: const EdgeInsets.only(top: 10),
                 child: IntrinsicHeight(
-                  // 🌟 السر الأول: بيخلي الـ Row ياخد ارتفاع أطول حاجة جواه
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    // 🌟 السر التاني: بيخلي عمود الـ Timeline يتمط لآخر الـ Row
+
                     children: [
-                      // 1. عامود الـ Timeline
                       Column(
                         children: [
                           const SizedBox(height: 40),
@@ -129,8 +126,7 @@ class QuestionResultCard extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(width: 16),
-                      // مسافة بين الـ Timeline والإجابات
-                      // 2. عامود الإجابات
+
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,7 +144,7 @@ class QuestionResultCard extends StatelessWidget {
                               text: result.userAnswer,
                               isCandidate: true,
                             ),
-                            const SizedBox(height: 24), // مسافة بين الإجابتين
+                            const SizedBox(height: 24),
                             const Text(
                               'Ideal AI Answer',
                               style: TextStyle(

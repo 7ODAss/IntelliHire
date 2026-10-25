@@ -1,11 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:intelli_hire/core/helpers/cache_helper.dart';
+import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/utils/apis/api_constant.dart';
 import 'package:intelli_hire/core/utils/apis/dio_config.dart';
 
 import '../models/assessment_model.dart';
 import '../models/performance_report_model.dart';
-import '../models/question_result_model.dart';
 
 abstract class BaseAssessManageDataSource {
   Future<List<AssessmentModel>> fetchAssessmentHistory();
@@ -20,7 +19,7 @@ class AssessManageRemoteDataSource implements BaseAssessManageDataSource {
         path: ApiConstant.candidateAssessmentHistory,
       );
       if (response.statusCode == 200) {
-        print('assessment history: ${response.data}');
+        debugPrint('assessment history: ${response.data}');
         return List<AssessmentModel>.from(
           response.data.map((e) => AssessmentModel.fromJson(e)),
         );
@@ -30,10 +29,10 @@ class AssessManageRemoteDataSource implements BaseAssessManageDataSource {
     } catch (e) {
       if (e is DioException) {
         // 🌟 السطر ده هيجيبلك الخلاصة وكلام السيرفر بالظبط
-        print('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
-        print('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
+        debugPrint('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
+        debugPrint('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       rethrow;
     }
@@ -48,7 +47,7 @@ class AssessManageRemoteDataSource implements BaseAssessManageDataSource {
         path: ApiConstant.candidatePerformanceReport(assessmentId),
       );
       if (response.statusCode == 200) {
-        print('performance report: ${response.data}');
+        debugPrint('performance report: ${response.data}');
         return PerformanceReportModel.fromJson(response.data);
       } else {
         throw Exception('Server Error: ${response.statusCode}');
@@ -56,10 +55,10 @@ class AssessManageRemoteDataSource implements BaseAssessManageDataSource {
     } catch (e) {
       if (e is DioException) {
         // 🌟 السطر ده هيجيبلك الخلاصة وكلام السيرفر بالظبط
-        print('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
-        print('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
+        debugPrint('🚨 تفاصيل رفض السيرفر (400): ${e.response?.data}');
+        debugPrint('🚨 اللينك اللي راح للسيرفر: ${e.requestOptions.uri}');
       } else {
-        print('🚨 خطأ غير متوقع: $e');
+        debugPrint('🚨 خطأ غير متوقع: $e');
       }
       rethrow;
     }

@@ -143,24 +143,24 @@ class CurrentJobCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const PopupMenuItem<String>(
+                  PopupMenuItem<String>(
                     value: 'edit',
                     height: 30,
                     padding: EdgeInsets.zero,
                     child: Center(
-                      child: Icon(
+                      child: FaIcon(
                         FontAwesomeIcons.penToSquare,
                         color: Color(0xFF475467),
                         size: 17,
                       ),
                     ),
                   ),
-                  const PopupMenuItem<String>(
+                  PopupMenuItem<String>(
                     value: 'delete',
                     height: 30,
                     padding: EdgeInsets.zero,
                     child: Center(
-                      child: Icon(
+                      child: FaIcon(
                         FontAwesomeIcons.trashCan,
                         color: Color(0xFFF04438),
                         size: 17,

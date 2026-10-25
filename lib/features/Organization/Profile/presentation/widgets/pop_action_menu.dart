@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intelli_hire/core/utils/shared/liquid_glass_custom_pop_button.dart';
 
 import '../../../../../core/utils/app_text_style.dart';
 import '../../../Job Managment/presentation/views/widget/custom_pop_button.dart';
@@ -15,9 +14,7 @@ class PopActionMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        isLiquid == true
-            ? LiquidGlassCustomPopButton()
-            : CustomPopButton(onTap: fun),
+        CustomPopButton(onTap: fun),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),

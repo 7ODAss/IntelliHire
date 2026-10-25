@@ -11,7 +11,6 @@ import '../../signup/company/widget/navigator_to_account.dart';
 class OtpStep extends StatelessWidget {
   const OtpStep({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<ForgetPasswordCubit>();
@@ -23,16 +22,10 @@ class OtpStep extends StatelessWidget {
             duration: const Duration(milliseconds: 500),
             curve: Curves.easeIn,
           );
-          context.showSnackBar(
-            state.otpMessage,
-            type: SnackBarType.success,
-          );
+          context.showSnackBar(state.otpMessage, type: SnackBarType.success);
         }
         if (state.otpState == RequestState.error) {
-          context.showSnackBar(
-            state.otpMessage,
-            type: SnackBarType.error,
-          );
+          context.showSnackBar(state.otpMessage, type: SnackBarType.error);
         }
       },
       child: Padding(
@@ -40,42 +33,46 @@ class OtpStep extends StatelessWidget {
         child: Column(
           children: [
             PinInput(
-                length: 6,
-                autoFocus: true,
-                pinController: cubit.otpController,
-                builder: (context, cells) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: cells.map((cell) {
-                      return Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: AspectRatio(
-                            aspectRatio: 1,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.rectangle,
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.white,
-                                border: Border.all(color: Color(0xFFAFAFAF)),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  cell.character ?? '',
-                                  style: TextStyle(fontSize: 24),
-                                ),
+              length: 6,
+              autoFocus: true,
+              pinController: cubit.otpController,
+              builder: (context, cells) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: cells.map((cell) {
+                    return Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                              border: Border.all(color: Color(0xFFAFAFAF)),
+                            ),
+                            child: Center(
+                              child: Text(
+                                cell.character ?? '',
+                                style: TextStyle(fontSize: 24),
                               ),
                             ),
                           ),
                         ),
-                      );
-                    }).toList(),
-                  );
-                },
-                onCompleted: (pin) => cubit.verifyCode(code: pin,)
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+              onCompleted: (pin) => cubit.verifyCode(code: pin),
             ),
-            const SizedBox(height: 48,),
-            BlocSelector<ForgetPasswordCubit, ForgetPasswordState, RequestState>(
+            const SizedBox(height: 48),
+            BlocSelector<
+              ForgetPasswordCubit,
+              ForgetPasswordState,
+              RequestState
+            >(
               selector: (state) {
                 return state.otpState;
               },
@@ -85,17 +82,19 @@ class OtpStep extends StatelessWidget {
                   isLoading: state == RequestState.loading,
                   onPressed: () {
                     if (cubit.otpController.text.length == 6) {
-                      print("OTP: ${cubit.otpController.text}");
+                      debugPrint("OTP: ${cubit.otpController.text}");
                       cubit.verifyCode(code: cubit.otpController.text);
                     } else {
-                      context.showSnackBar('Please enter the full 6-digit code',
-                          type: SnackBarType.error);
+                      context.showSnackBar(
+                        'Please enter the full 6-digit code',
+                        type: SnackBarType.error,
+                      );
                     }
                   },
                 );
               },
             ),
-            const SizedBox(height: 24,),
+            const SizedBox(height: 24),
             NavigatorToAccount(
               text: 'Didn\'t get OTP? ',
               actionText: 'Resend OTP',

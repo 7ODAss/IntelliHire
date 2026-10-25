@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intelli_hire/core/utils/shared/date_formatter.dart';
 import '../../domain/Entities/notification_entity.dart';
 
@@ -25,19 +26,22 @@ class NotificationModel extends NotificationEntity {
       formattedTime = rawTime;
     }
 
-    final String? parsedId = json['id']?.toString() ??
-                             json['Id']?.toString() ??
-                             json['notificationId']?.toString() ??
-                             json['NotificationId']?.toString() ??
-                             json['notificationID']?.toString() ??
-                             json['NotificationID']?.toString() ??
-                             json['entityId']?.toString() ??
-                             json['EntityId']?.toString() ??
-                             json['messageId']?.toString() ??
-                             json['MessageId']?.toString();
+    final String? parsedId =
+        json['id']?.toString() ??
+        json['Id']?.toString() ??
+        json['notificationId']?.toString() ??
+        json['NotificationId']?.toString() ??
+        json['notificationID']?.toString() ??
+        json['NotificationID']?.toString() ??
+        json['entityId']?.toString() ??
+        json['EntityId']?.toString() ??
+        json['messageId']?.toString() ??
+        json['MessageId']?.toString();
 
     if (parsedId == null) {
-      print("⚠️ WARNING: Notification ID is missing in JSON payload! Raw JSON: $json");
+      debugPrint(
+        "⚠️ WARNING: Notification ID is missing in JSON payload! Raw JSON: $json",
+      );
     }
 
     return NotificationModel(

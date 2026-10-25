@@ -56,7 +56,6 @@ class ProfileCubit extends Cubit<ProfileState> {
   final TextEditingController newPassController = TextEditingController();
   final GlobalKey<FormState> securityInfoKey = GlobalKey<FormState>();
 
-
   final List<String> countries = [
     'Egypt',
     'Saudi Arabia',
@@ -155,7 +154,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       final newLocation = CompanyLocation(
         country: state.selectedCountry!,
         governorate: state.selectedGovernorate!,
-        address:detailedAddress,
+        address: detailedAddress,
       );
 
       final currentLocations = state.locations ?? [];
@@ -213,11 +212,7 @@ class ProfileCubit extends Cubit<ProfileState> {
           userProfileLogOutState: RequestState.error,
         ),
       ),
-      (r) => emit(
-        state.copyWith(
-          userProfileLogOutState: RequestState.success,
-        ),
-      ),
+      (r) => emit(state.copyWith(userProfileLogOutState: RequestState.success)),
     );
   }
 
@@ -228,8 +223,10 @@ class ProfileCubit extends Cubit<ProfileState> {
     String? photoPath,
   }) async {
     emit(state.copyWith(changeAccountDetailsState: RequestState.loading));
-    print("--- [CUBIT ACTION] updateCompanyInfo ---");
-    print("Parameters: Name=$name, Industry=$industry, PhoneNumber=$phoneNumber, PhotoPath=$photoPath");
+    debugPrint("--- [CUBIT ACTION] updateCompanyInfo ---");
+    debugPrint(
+      "Parameters: Name=$name, Industry=$industry, PhoneNumber=$phoneNumber, PhotoPath=$photoPath",
+    );
 
     final result = await updateCompanyInfoUseCase(
       UpdateCompanyInfoParams(
@@ -242,23 +239,27 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     result.fold(
       (failure) {
-        print("Cubit updateCompanyInfo Fail: ${failure.message}");
-        emit(state.copyWith(
-          changeAccountDetailsState: RequestState.error,
-          changeAccountDetailsMessage: failure.message,
-        ));
+        debugPrint("Cubit updateCompanyInfo Fail: ${failure.message}");
+        emit(
+          state.copyWith(
+            changeAccountDetailsState: RequestState.error,
+            changeAccountDetailsMessage: failure.message,
+          ),
+        );
       },
       (success) {
-        print("Cubit updateCompanyInfo Success!");
-        emit(state.copyWith(
-          changeAccountDetailsState: RequestState.success,
-          changeAccountDetailsMessage: "Company details updated successfully",
-        ));
+        debugPrint("Cubit updateCompanyInfo Success!");
+        emit(
+          state.copyWith(
+            changeAccountDetailsState: RequestState.success,
+            changeAccountDetailsMessage: "Company details updated successfully",
+          ),
+        );
         getCompanyAccountDetails();
         try {
           getIt<HomeOrganizationCubit>().fetchDashboard();
         } catch (e) {
-          print("Failed to fetch dashboard: $e");
+          debugPrint("Failed to fetch dashboard: $e");
         }
       },
     );
@@ -272,8 +273,10 @@ class ProfileCubit extends Cubit<ProfileState> {
     required String city,
   }) async {
     emit(state.copyWith(changeAboutCompanyState: RequestState.loading));
-    print("--- [CUBIT ACTION] updateCompanyAbout ---");
-    print("Parameters: About=$about, WebsiteUrl=$websiteUrl, Country=$country, Government=$government, City=$city");
+    debugPrint("--- [CUBIT ACTION] updateCompanyAbout ---");
+    debugPrint(
+      "Parameters: About=$about, WebsiteUrl=$websiteUrl, Country=$country, Government=$government, City=$city",
+    );
 
     final result = await updateCompanyAboutUseCase(
       UpdateCompanyAboutParams(
@@ -287,24 +290,32 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     result.fold(
       (failure) {
-        print("Cubit updateCompanyAbout Fail: ${failure.message}");
-        emit(state.copyWith(
-          changeAboutCompanyState: RequestState.error,
-          changeAboutCompanyMessage: failure.message,
-        ));
+        debugPrint("Cubit updateCompanyAbout Fail: ${failure.message}");
+        emit(
+          state.copyWith(
+            changeAboutCompanyState: RequestState.error,
+            changeAboutCompanyMessage: failure.message,
+          ),
+        );
       },
       (success) {
-        print("Cubit updateCompanyAbout Success!");
-        emit(state.copyWith(
-          changeAboutCompanyState: RequestState.success,
-          changeAboutCompanyMessage: "Company description/location updated successfully",
-        ));
+        debugPrint("Cubit updateCompanyAbout Success!");
+        emit(
+          state.copyWith(
+            changeAboutCompanyState: RequestState.success,
+            changeAboutCompanyMessage:
+                "Company description/location updated successfully",
+          ),
+        );
         getCompanyAccountDetails();
       },
     );
   }
 
-  Future<void> changePassword(String currentPassword, String newPassword) async {
+  Future<void> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
     final email = state.companyEmail ?? state.companyAccount?.email ?? '';
     await requestPasswordChange(
       email: email,
@@ -318,30 +329,36 @@ class ProfileCubit extends Cubit<ProfileState> {
     required String currentPassword,
     required String newPassword,
   }) async {
-    emit(state.copyWith(
-      changePasswordRequestState: RequestState.loading,
-      pendingCurrentPassword: currentPassword,
-      pendingNewPassword: newPassword,
-    ));
-    print("--- [CUBIT ACTION] requestPasswordChange ---");
-    print("Email: $email");
+    emit(
+      state.copyWith(
+        changePasswordRequestState: RequestState.loading,
+        pendingCurrentPassword: currentPassword,
+        pendingNewPassword: newPassword,
+      ),
+    );
+    debugPrint("--- [CUBIT ACTION] requestPasswordChange ---");
+    debugPrint("Email: $email");
 
     final result = await requestPasswordChangeUseCase(email);
 
     result.fold(
       (failure) {
-        print("requestPasswordChange failed: ${failure.message}");
-        emit(state.copyWith(
-          changePasswordRequestState: RequestState.error,
-          changePasswordRequestMessage: failure.message,
-        ));
+        debugPrint("requestPasswordChange failed: ${failure.message}");
+        emit(
+          state.copyWith(
+            changePasswordRequestState: RequestState.error,
+            changePasswordRequestMessage: failure.message,
+          ),
+        );
       },
       (success) {
-        print("requestPasswordChange success!");
-        emit(state.copyWith(
-          changePasswordRequestState: RequestState.success,
-          changePasswordRequestMessage: "Verification code sent to $email",
-        ));
+        debugPrint("requestPasswordChange success!");
+        emit(
+          state.copyWith(
+            changePasswordRequestState: RequestState.success,
+            changePasswordRequestMessage: "Verification code sent to $email",
+          ),
+        );
       },
     );
   }
@@ -351,21 +368,25 @@ class ProfileCubit extends Cubit<ProfileState> {
     required String code,
   }) async {
     emit(state.copyWith(changePasswordOtpState: RequestState.loading));
-    print("--- [CUBIT ACTION] verifyPasswordOtp ---");
-    print("Email: $email, Code: $code");
+    debugPrint("--- [CUBIT ACTION] verifyPasswordOtp ---");
+    debugPrint("Email: $email, Code: $code");
 
-    final otpResult = await sendOtpUseCase(SendOtpParams(email: email, code: code));
+    final otpResult = await sendOtpUseCase(
+      SendOtpParams(email: email, code: code),
+    );
 
     await otpResult.fold(
       (failure) async {
-        print("sendOtp failed: ${failure.message}");
-        emit(state.copyWith(
-          changePasswordOtpState: RequestState.error,
-          changePasswordOtpMessage: failure.message,
-        ));
+        debugPrint("sendOtp failed: ${failure.message}");
+        emit(
+          state.copyWith(
+            changePasswordOtpState: RequestState.error,
+            changePasswordOtpMessage: failure.message,
+          ),
+        );
       },
       (token) async {
-        print("sendOtp success, token obtained: $token");
+        debugPrint("sendOtp success, token obtained: $token");
         final confirmResult = await confirmPasswordChangeUseCase(
           ConfirmPasswordChangeParams(
             email: email,
@@ -378,20 +399,26 @@ class ProfileCubit extends Cubit<ProfileState> {
 
         confirmResult.fold(
           (confirmFailure) {
-            print("confirmPasswordChange failed: ${confirmFailure.message}");
-            emit(state.copyWith(
-              changePasswordOtpState: RequestState.error,
-              changePasswordOtpMessage: confirmFailure.message,
-            ));
+            debugPrint(
+              "confirmPasswordChange failed: ${confirmFailure.message}",
+            );
+            emit(
+              state.copyWith(
+                changePasswordOtpState: RequestState.error,
+                changePasswordOtpMessage: confirmFailure.message,
+              ),
+            );
           },
           (confirmSuccess) {
-            print("confirmPasswordChange success!");
-            emit(state.copyWith(
-              changePasswordOtpState: RequestState.success,
-              changePasswordOtpMessage: "Password updated successfully!",
-              pendingCurrentPassword: '',
-              pendingNewPassword: '',
-            ));
+            debugPrint("confirmPasswordChange success!");
+            emit(
+              state.copyWith(
+                changePasswordOtpState: RequestState.success,
+                changePasswordOtpMessage: "Password updated successfully!",
+                pendingCurrentPassword: '',
+                pendingNewPassword: '',
+              ),
+            );
           },
         );
       },
@@ -399,14 +426,14 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> resendPasswordOtp({required String email}) async {
-    print("--- [CUBIT ACTION] resendPasswordOtp ---");
+    debugPrint("--- [CUBIT ACTION] resendPasswordOtp ---");
     final result = await requestPasswordChangeUseCase(email);
     result.fold(
       (failure) {
-        print("resendPasswordOtp failed: ${failure.message}");
+        debugPrint("resendPasswordOtp failed: ${failure.message}");
       },
       (success) {
-        print("resendPasswordOtp success!");
+        debugPrint("resendPasswordOtp success!");
       },
     );
   }
@@ -416,8 +443,8 @@ class ProfileCubit extends Cubit<ProfileState> {
     required String currentPassword,
   }) async {
     emit(state.copyWith(deleteAccountState: RequestState.loading));
-    print("--- [CUBIT ACTION] deleteCompanyAccount ---");
-    print("Email: $email");
+    debugPrint("--- [CUBIT ACTION] deleteCompanyAccount ---");
+    debugPrint("Email: $email");
 
     final result = await deleteCompanyAccountUseCase(
       DeleteCompanyAccountParams(
@@ -428,18 +455,22 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     result.fold(
       (failure) {
-        print("deleteCompanyAccount failed: ${failure.message}");
-        emit(state.copyWith(
-          deleteAccountState: RequestState.error,
-          deleteAccountMessage: failure.message,
-        ));
+        debugPrint("deleteCompanyAccount failed: ${failure.message}");
+        emit(
+          state.copyWith(
+            deleteAccountState: RequestState.error,
+            deleteAccountMessage: failure.message,
+          ),
+        );
       },
       (success) async {
-        print("deleteCompanyAccount success!");
-        emit(state.copyWith(
-          deleteAccountState: RequestState.success,
-          deleteAccountMessage: "Account deleted successfully",
-        ));
+        debugPrint("deleteCompanyAccount success!");
+        emit(
+          state.copyWith(
+            deleteAccountState: RequestState.success,
+            deleteAccountMessage: "Account deleted successfully",
+          ),
+        );
         await CacheHelper.removeData(key: 'token');
         await CacheHelper.removeData(key: 'refreshToken');
         await CacheHelper.removeData(key: 'userType');
@@ -448,31 +479,33 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   void deleteAccount() {
-    print("--- [CUBIT ACTION] deleteAccount ---");
+    debugPrint("--- [CUBIT ACTION] deleteAccount ---");
   }
 
   void resetPasswordChangeStates() {
-    emit(state.copyWith(
-      changePasswordRequestState: RequestState.initial,
-      changePasswordRequestMessage: '',
-      changePasswordOtpState: RequestState.initial,
-      changePasswordOtpMessage: '',
-      pendingCurrentPassword: '',
-      pendingNewPassword: '',
-    ));
+    emit(
+      state.copyWith(
+        changePasswordRequestState: RequestState.initial,
+        changePasswordRequestMessage: '',
+        changePasswordOtpState: RequestState.initial,
+        changePasswordOtpMessage: '',
+        pendingCurrentPassword: '',
+        pendingNewPassword: '',
+      ),
+    );
   }
 
   void resetPasswordRequestState() {
-    emit(state.copyWith(
-      changePasswordRequestState: RequestState.initial,
-    ));
+    emit(state.copyWith(changePasswordRequestState: RequestState.initial));
   }
 
   void resetDeleteAccountState() {
-    emit(state.copyWith(
-      deleteAccountState: RequestState.initial,
-      deleteAccountMessage: '',
-    ));
+    emit(
+      state.copyWith(
+        deleteAccountState: RequestState.initial,
+        deleteAccountMessage: '',
+      ),
+    );
   }
 
   void changeObsecure() {
@@ -480,54 +513,53 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   void resetEmailChangeStepsStates() {
-    emit(state.copyWith(
-      changeEmailPasswordCheckState: RequestState.initial,
-      changeEmailPasswordCheckMessage: '',
-      changeEmailEmailCheckState: RequestState.initial,
-      changeEmailEmailCheckMessage: '',
-    ));
+    emit(
+      state.copyWith(
+        changeEmailPasswordCheckState: RequestState.initial,
+        changeEmailPasswordCheckMessage: '',
+        changeEmailEmailCheckState: RequestState.initial,
+        changeEmailEmailCheckMessage: '',
+      ),
+    );
   }
 
   void resetOtpState() {
-    emit(state.copyWith(
-      otpState: RequestState.initial,
-      otpMessage: '',
-    ));
+    emit(state.copyWith(otpState: RequestState.initial, otpMessage: ''));
   }
 
   void resetChangeAccountDetailsState() {
-    emit(state.copyWith(
-      changeAccountDetailsState: RequestState.initial,
-    ));
+    emit(state.copyWith(changeAccountDetailsState: RequestState.initial));
   }
 
   void resetChangeAboutCompanyState() {
-    emit(state.copyWith(
-      changeAboutCompanyState: RequestState.initial,
-    ));
+    emit(state.copyWith(changeAboutCompanyState: RequestState.initial));
   }
 
   Future<void> getCompanyAccountDetails() async {
     emit(state.copyWith(getCompanyAccountState: RequestState.loading));
-    print("--- [CUBIT ACTION] getCompanyAccountDetails ---");
+    debugPrint("--- [CUBIT ACTION] getCompanyAccountDetails ---");
 
     final result = await getCompanyAccountUseCase(const NoParameters());
 
     result.fold(
       (failure) {
-        print("Cubit getCompanyAccountDetails Fail: ${failure.message}");
-        emit(state.copyWith(
-          getCompanyAccountState: RequestState.error,
-          getCompanyAccountMessage: failure.message,
-        ));
+        debugPrint("Cubit getCompanyAccountDetails Fail: ${failure.message}");
+        emit(
+          state.copyWith(
+            getCompanyAccountState: RequestState.error,
+            getCompanyAccountMessage: failure.message,
+          ),
+        );
       },
       (companyAccount) {
-        print("Cubit getCompanyAccountDetails Success!");
-        emit(state.copyWith(
-          getCompanyAccountState: RequestState.success,
-          companyAccount: companyAccount,
-          companyEmail: companyAccount.email,
-        ));
+        debugPrint("Cubit getCompanyAccountDetails Success!");
+        emit(
+          state.copyWith(
+            getCompanyAccountState: RequestState.success,
+            companyAccount: companyAccount,
+            companyEmail: companyAccount.email,
+          ),
+        );
       },
     );
   }
@@ -537,8 +569,10 @@ class ProfileCubit extends Cubit<ProfileState> {
     required String currentPassword,
   }) async {
     emit(state.copyWith(changeEmailPasswordCheckState: RequestState.loading));
-    print("--- [CUBIT ACTION] confirmCurrentPassword ---");
-    print("Current Email: $currentEmail, Current Password: $currentPassword");
+    debugPrint("--- [CUBIT ACTION] confirmCurrentPassword ---");
+    debugPrint(
+      "Current Email: $currentEmail, Current Password: $currentPassword",
+    );
 
     final result = await changeEmailPasswordRequestUseCase(
       ChangeEmailPasswordRequestParams(
@@ -549,18 +583,22 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     result.fold(
       (failure) {
-        print("confirmCurrentPassword failed: ${failure.message}");
-        emit(state.copyWith(
-          changeEmailPasswordCheckState: RequestState.error,
-          changeEmailPasswordCheckMessage: failure.message,
-        ));
+        debugPrint("confirmCurrentPassword failed: ${failure.message}");
+        emit(
+          state.copyWith(
+            changeEmailPasswordCheckState: RequestState.error,
+            changeEmailPasswordCheckMessage: failure.message,
+          ),
+        );
       },
       (r) {
-        print("confirmCurrentPassword success");
-        emit(state.copyWith(
-          changeEmailPasswordCheckState: RequestState.success,
-          changeEmailPasswordCheckMessage: "Password verified successfully",
-        ));
+        debugPrint("confirmCurrentPassword success");
+        emit(
+          state.copyWith(
+            changeEmailPasswordCheckState: RequestState.success,
+            changeEmailPasswordCheckMessage: "Password verified successfully",
+          ),
+        );
       },
     );
   }
@@ -570,30 +608,31 @@ class ProfileCubit extends Cubit<ProfileState> {
     required String newEmail,
   }) async {
     emit(state.copyWith(changeEmailEmailCheckState: RequestState.loading));
-    print("--- [CUBIT ACTION] sendCode (Change Email) ---");
-    print("Current Email: $currentEmail, New Email: $newEmail");
+    debugPrint("--- [CUBIT ACTION] sendCode (Change Email) ---");
+    debugPrint("Current Email: $currentEmail, New Email: $newEmail");
 
     final result = await changeEmailRequestUseCase(
-      ChangeEmailRequestParams(
-        currentEmail: currentEmail,
-        newEmail: newEmail,
-      ),
+      ChangeEmailRequestParams(currentEmail: currentEmail, newEmail: newEmail),
     );
 
     result.fold(
       (failure) {
-        print("sendCode failed: ${failure.message}");
-        emit(state.copyWith(
-          changeEmailEmailCheckState: RequestState.error,
-          changeEmailEmailCheckMessage: failure.message,
-        ));
+        debugPrint("sendCode failed: ${failure.message}");
+        emit(
+          state.copyWith(
+            changeEmailEmailCheckState: RequestState.error,
+            changeEmailEmailCheckMessage: failure.message,
+          ),
+        );
       },
       (r) {
-        print("sendCode success");
-        emit(state.copyWith(
-          changeEmailEmailCheckState: RequestState.success,
-          changeEmailEmailCheckMessage: "Verification code sent to $newEmail",
-        ));
+        debugPrint("sendCode success");
+        emit(
+          state.copyWith(
+            changeEmailEmailCheckState: RequestState.success,
+            changeEmailEmailCheckMessage: "Verification code sent to $newEmail",
+          ),
+        );
       },
     );
   }
@@ -604,8 +643,10 @@ class ProfileCubit extends Cubit<ProfileState> {
     required String code,
   }) async {
     emit(state.copyWith(otpState: RequestState.loading));
-    print("--- [CUBIT ACTION] verifyCode (Change Email) ---");
-    print("Current Email: $currentEmail, New Email: $newEmail, Code: $code");
+    debugPrint("--- [CUBIT ACTION] verifyCode (Change Email) ---");
+    debugPrint(
+      "Current Email: $currentEmail, New Email: $newEmail, Code: $code",
+    );
 
     final result = await changeEmailConfirmUseCase(
       ChangeEmailConfirmParams(
@@ -617,19 +658,23 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     result.fold(
       (failure) {
-        print("verifyCode failed: ${failure.message}");
-        emit(state.copyWith(
-          otpState: RequestState.error,
-          otpMessage: failure.message,
-        ));
+        debugPrint("verifyCode failed: ${failure.message}");
+        emit(
+          state.copyWith(
+            otpState: RequestState.error,
+            otpMessage: failure.message,
+          ),
+        );
       },
       (r) {
-        print("verifyCode success");
-        emit(state.copyWith(
-          otpState: RequestState.success,
-          otpMessage: "Email updated successfully!",
-          companyEmail: newEmail,
-        ));
+        debugPrint("verifyCode success");
+        emit(
+          state.copyWith(
+            otpState: RequestState.success,
+            otpMessage: "Email updated successfully!",
+            companyEmail: newEmail,
+          ),
+        );
         getCompanyAccountDetails();
       },
     );

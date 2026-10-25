@@ -1,4 +1,3 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intelli_hire/core/utils/app_text_style.dart';
@@ -9,7 +8,6 @@ import '../../../../../core/utils/app_font.dart';
 import '../../domain/entities/training_performance.dart';
 import '../../domain/entities/weekly_activity_summary.dart';
 import '../controller/home_cubit.dart';
-import 'activity_bar.dart';
 import 'date_glass_card.dart';
 import 'liquid_glass_card.dart';
 import 'nav_btn.dart';
@@ -26,7 +24,7 @@ class TrainingPerformanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('✅ Training Performance Card Built (Main)');
+    debugPrint('✅ Training Performance Card Built (Main)');
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: Container(
@@ -72,7 +70,7 @@ class TrainingPerformanceCard extends StatelessWidget {
                       child: Container(
                         height: 90,
                         decoration: BoxDecoration(
-                          color: Colors.white10,
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
@@ -82,7 +80,7 @@ class TrainingPerformanceCard extends StatelessWidget {
                       child: Container(
                         height: 90,
                         decoration: BoxDecoration(
-                          color: Colors.white10,
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
@@ -98,7 +96,7 @@ class TrainingPerformanceCard extends StatelessWidget {
             BlocSelector<HomeCubitCandidate, HomeState, WeeklyActivitySummary?>(
               selector: (state) => state.weekActivity,
               builder: (context, state) {
-                print('🔄 إعادة بناء جزء التقويم فقط');
+                debugPrint('🔄 إعادة بناء جزء التقويم فقط');
                 final labelString = state?.weekLabel ?? performance.weekLabel;
 
                 final textPainter = TextPainter(
@@ -153,14 +151,10 @@ class TrainingPerformanceCard extends StatelessWidget {
             BlocSelector<HomeCubitCandidate, HomeState, WeeklyActivitySummary?>(
               selector: (state) => state.weekActivity,
               builder: (context, state) {
-                print('📊 إعادة بناء العواميد فقط');
+                debugPrint('📊 إعادة بناء العواميد فقط');
                 final activity =
                     state?.weeklyActivity ?? performance.weeklyActivity;
-                final maxVal = activity.isEmpty
-                    ? 0
-                    : activity.reduce((a, b) => a > b ? a : b);
-                // ✅ Read scores from weekActivity state when available,
-                // falling back to the initial performance data.
+
                 final scores =
                     state?.dailyAverageScores ?? performance.dailyAverageScores;
                 return Skeleton.replace(
@@ -173,7 +167,7 @@ class TrainingPerformanceCard extends StatelessWidget {
                             height: 25,
                             width: 25,
                             decoration: BoxDecoration(
-                              color: Colors.white10, // لون البوكس وقت التحميل
+                              color: Colors.white, // لون البوكس وقت التحميل
                               borderRadius: BorderRadius.circular(14),
                             ),
                           ),
@@ -183,11 +177,13 @@ class TrainingPerformanceCard extends StatelessWidget {
                   ),
                   child: SizedBox(
                     height: 200,
-                    child: PerformanceLineChart(
-                      scores: scores,
-                      weekDays:
-                          cubit.weekDays, // باصينا أيام الأسبوع من الكيوبت
-                      examsTakenList: activity, // عدد الامتحانات اليومية
+                    child: RepaintBoundary(
+                      child: PerformanceLineChart(
+                        scores: scores,
+                        weekDays: cubit.weekDays,
+                        examsTakenList: activity,
+                        todayIndex: cubit.todayIndex,
+                      ),
                     ),
                   ),
                 );
