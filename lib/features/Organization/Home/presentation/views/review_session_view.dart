@@ -262,6 +262,10 @@ class _ReviewSessionViewState extends State<ReviewSessionView> {
 
               return Skeletonizer(
                 enabled: isLoading,
+                effect: ShimmerEffect(
+                  baseColor: Colors.grey.shade200,
+                  highlightColor: Colors.grey.shade100,
+                ),
                 child: Column(
                   children: [
                     Padding(

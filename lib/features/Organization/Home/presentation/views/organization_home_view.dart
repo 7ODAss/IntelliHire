@@ -25,9 +25,7 @@ class OrganizationHomeView extends StatelessWidget {
         BlocProvider.value(
           value: getIt<HomeOrganizationCubit>()..fetchDashboard(),
         ),
-        BlocProvider.value(
-          value: context.read<JobManagementCubit>(),
-        ),
+        BlocProvider.value(value: context.read<JobManagementCubit>()),
       ],
       child: Scaffold(
         body: MultiBlocListener(
@@ -43,7 +41,7 @@ class OrganizationHomeView extends StatelessWidget {
               listener: (context, state) {
                 if (state is DecisionSuccess) {
                   context.read<HomeOrganizationCubit>().fetchDashboard();
-                  context.read<JobManagementCubit>().fetchJobs(); 
+                  context.read<JobManagementCubit>().fetchJobs();
                 }
               },
             ),
@@ -58,8 +56,9 @@ class OrganizationHomeView extends StatelessWidget {
                       Text(state.message),
                       const SizedBox(height: 16),
                       ElevatedButton(
-                        onPressed: () =>
-                            context.read<HomeOrganizationCubit>().fetchDashboard(),
+                        onPressed: () => context
+                            .read<HomeOrganizationCubit>()
+                            .fetchDashboard(),
                         child: const Text("Retry"),
                       ),
                     ],
@@ -101,6 +100,10 @@ class OrganizationHomeView extends StatelessWidget {
 
               return Skeletonizer(
                 enabled: isLoading,
+                effect: ShimmerEffect(
+                  baseColor: Colors.grey.shade200,
+                  highlightColor: Colors.grey.shade100,
+                ),
                 child: SingleChildScrollView(
                   physics: const ClampingScrollPhysics(),
                   child: Column(

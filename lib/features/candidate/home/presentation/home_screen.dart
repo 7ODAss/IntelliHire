@@ -101,6 +101,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   onRefresh: onRefresh,
                   child: Skeletonizer(
                     enabled: isLoading,
+                    effect: ShimmerEffect(
+                      baseColor: Colors.grey.shade200,
+                      highlightColor: Colors.grey.shade100,
+                    ),
                     child: CustomScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       slivers: [

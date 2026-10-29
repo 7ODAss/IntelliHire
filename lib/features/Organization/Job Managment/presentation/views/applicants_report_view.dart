@@ -76,14 +76,18 @@ class CandidateReportView extends StatelessWidget {
             String email = "";
             String phone = "";
             double displayScore = applicant.aiScore.toDouble();
-            
+
             final cached = ApplicantModel.sessionCache[applicant.sessionId];
             if (cached != null && cached['score'] != null) {
               final rawScore = cached['score'];
               if (rawScore is num) {
                 displayScore = rawScore.toDouble();
               } else if (rawScore is String) {
-                displayScore = double.tryParse(rawScore.replaceAll(RegExp(r'[^\d.]'), '').trim()) ?? displayScore;
+                displayScore =
+                    double.tryParse(
+                      rawScore.replaceAll(RegExp(r'[^\d.]'), '').trim(),
+                    ) ??
+                    displayScore;
               }
             }
 
@@ -103,7 +107,8 @@ class CandidateReportView extends StatelessWidget {
             if (state is ApplicantPreviewLoaded) {
               email = state.reportData.email ?? "";
               phone = state.reportData.phone ?? "";
-              if (state.reportData.photo != null && state.reportData.photo!.isNotEmpty) {
+              if (state.reportData.photo != null &&
+                  state.reportData.photo!.isNotEmpty) {
                 photoUrl = state.reportData.photo;
               }
 
@@ -231,6 +236,10 @@ class CandidateReportView extends StatelessWidget {
                   const SizedBox(height: 26),
                   Skeletonizer(
                     enabled: state is ApplicantPreviewLoading,
+                    effect: ShimmerEffect(
+                      baseColor: Colors.grey.shade200,
+                      highlightColor: Colors.grey.shade100,
+                    ),
                     child: ReportCard(
                       report: currentReport,
                       isreviewSession: false,

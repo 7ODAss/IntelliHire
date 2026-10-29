@@ -141,8 +141,16 @@ class _ApplicantsScreenState extends State<ApplicantsScreen> {
 
                     return Skeletonizer(
                       enabled: isLoading,
+                      effect: ShimmerEffect(
+                        baseColor: Colors.grey.shade200,
+                        highlightColor: Colors.grey.shade100,
+                      ),
                       child: ListView.builder(
-                        padding: const EdgeInsets.only(left: 24, right: 24, bottom: 100),
+                        padding: const EdgeInsets.only(
+                          left: 24,
+                          right: 24,
+                          bottom: 100,
+                        ),
                         itemCount: itemCount,
                         itemBuilder: (context, index) {
                           if (isLoading) {
@@ -168,7 +176,8 @@ class _ApplicantsScreenState extends State<ApplicantsScreen> {
                           final applicantEntity =
                               state.filteredApplicants[index];
 
-                          final cached = ApplicantModel.sessionCache[applicantEntity.sessionId];
+                          final cached = ApplicantModel
+                              .sessionCache[applicantEntity.sessionId];
                           final applicantModel = ApplicantModel.fromJson({
                             "sessionId": applicantEntity.sessionId,
                             "name": applicantEntity.fullName,
@@ -177,9 +186,11 @@ class _ApplicantsScreenState extends State<ApplicantsScreen> {
                                     applicantEntity.currentRole!.isNotEmpty)
                                 ? applicantEntity.currentRole
                                 : "Candidate",
-                            "aiScore": cached?['score'] ?? (applicantEntity.overallScore ?? 0)
-                                .round()
-                                .toInt(),
+                            "aiScore":
+                                cached?['score'] ??
+                                (applicantEntity.overallScore ?? 0)
+                                    .round()
+                                    .toInt(),
                             "status": applicantEntity.status ?? "Pending",
                             "experienceYears": 0,
                             "avgResponseTime": 0.0,

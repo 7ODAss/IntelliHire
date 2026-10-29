@@ -32,22 +32,18 @@ class JobManagementView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: Colors.grey.shade400,
-                ),
+                border: Border.all(color: Colors.grey.shade400),
               ),
               child: TextField(
                 onChanged: (value) => cubit.searchJobs(value),
                 decoration: InputDecoration(
                   hintText: "Search your jobs...",
-                  hintStyle: TextStyle(
-                    color: Colors.grey.shade400,
-                  ),
+                  hintStyle: TextStyle(color: Colors.grey.shade400),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 20,
@@ -79,7 +75,8 @@ class JobManagementView extends StatelessWidget {
                 },
                 builder: (context, state) {
                   bool isLoading =
-                      state is JobManagementInitial || state is JobManagementLoading;
+                      state is JobManagementInitial ||
+                      state is JobManagementLoading;
                   List<JobItemEntity> displayJobs = [];
 
                   if (state is JobManagementLoaded) {
@@ -89,13 +86,17 @@ class JobManagementView extends StatelessWidget {
                   }
 
                   bool shouldShowSkeleton = isLoading && displayJobs.isEmpty;
-                  
+
                   int itemCount = shouldShowSkeleton
                       ? 5
                       : (displayJobs.isEmpty ? 1 : displayJobs.length);
 
                   return Skeletonizer(
                     enabled: shouldShowSkeleton,
+                    effect: ShimmerEffect(
+                      baseColor: Colors.grey.shade200,
+                      highlightColor: Colors.grey.shade100,
+                    ),
                     child: RefreshIndicator(
                       onRefresh: () async => cubit.fetchJobs(),
                       child: ListView.builder(

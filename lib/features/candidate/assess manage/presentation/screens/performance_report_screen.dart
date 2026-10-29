@@ -105,6 +105,10 @@ class PerformanceReportScreen extends StatelessWidget {
         ),
         body: Skeletonizer(
           enabled: isLoading,
+          effect: ShimmerEffect(
+            baseColor: Colors.grey.shade200,
+            highlightColor: Colors.grey.shade100,
+          ),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
             child: Column(

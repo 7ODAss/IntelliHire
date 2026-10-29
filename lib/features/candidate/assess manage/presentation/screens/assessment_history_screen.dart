@@ -97,6 +97,10 @@ class AssessmentHistoryScreen extends StatelessWidget {
             },
             child: Skeletonizer(
               enabled: isLoading,
+              effect: ShimmerEffect(
+                baseColor: Colors.grey.shade200,
+                highlightColor: Colors.grey.shade100,
+              ),
               child: ListView.builder(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.all(16),

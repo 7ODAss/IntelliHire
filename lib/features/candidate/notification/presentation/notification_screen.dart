@@ -25,7 +25,7 @@ class _NotificationsView extends StatelessWidget {
 
   static final _dummyList = List.generate(
     4,
-        (i) => NotificationItem(
+    (i) => NotificationItem(
       id: 'dummy_$i',
       title: 'New Applicant',
       body: 'Someone applied for Backend Engineer',
@@ -54,9 +54,7 @@ class _NotificationsView extends StatelessWidget {
         actions: [
           BlocBuilder<NotificationsCubit, NotificationsState>(
             builder: (context, state) {
-              final unread = state.notifications
-                  .where((n) => !n.isRead)
-                  .length;
+              final unread = state.notifications.where((n) => !n.isRead).length;
               if (unread == 0) return const SizedBox.shrink();
               return Padding(
                 padding: const EdgeInsets.only(right: 20),
@@ -92,8 +90,9 @@ class _NotificationsView extends StatelessWidget {
           }
 
           final isLoading = state.status != RequestState.success;
-          final List<NotificationItem> notifications =
-          isLoading ? _dummyList : state.notifications;
+          final List<NotificationItem> notifications = isLoading
+              ? _dummyList
+              : state.notifications;
 
           if (!isLoading && notifications.isEmpty) {
             return _buildEmpty();
@@ -101,6 +100,10 @@ class _NotificationsView extends StatelessWidget {
 
           return Skeletonizer(
             enabled: isLoading,
+            effect: ShimmerEffect(
+              baseColor: Colors.grey.shade200,
+              highlightColor: Colors.grey.shade100,
+            ),
             child: ListView.separated(
               padding: const EdgeInsets.all(16),
               itemCount: notifications.length,
@@ -252,9 +255,7 @@ class _NotificationCard extends StatelessWidget {
               child: Icon(
                 _iconForTitle(item.title),
                 size: 22,
-                color: item.isRead
-                    ? const Color(0xFF94A3B8)
-                    : AppColor.primary,
+                color: item.isRead ? const Color(0xFF94A3B8) : AppColor.primary,
               ),
             ),
             const SizedBox(width: 12),
